@@ -1,6 +1,5 @@
 import React from 'react';
 import Typography from '@material-ui/core/Typography';
-import BottomNavigation from '@material-ui/core/BottomNavigation';
 
 
 export const Footer = () => {
