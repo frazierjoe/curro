@@ -41,14 +41,6 @@ const styles = theme => ({
       duration: theme.transitions.duration.leavingScreen,
     }),
   },
-  // appBarShift: {
-  //   width: `calc(100% - ${drawerWidth}px)`,
-  //   marginLeft: drawerWidth,
-  //   transition: theme.transitions.create(['margin', 'width'], {
-  //     easing: theme.transitions.easing.easeOut,
-  //     duration: theme.transitions.duration.enteringScreen,
-  //   }),
-  // },
   menuButton: {
     marginRight: theme.spacing(2),
   },
@@ -138,9 +130,7 @@ class Header extends Component {
           <div ref={this.menuButtonRef}>
             {!auth.isAuthenticated() ? <Button className={classes.loginButton} onClick={
               () => {
-                auth.login(() => {
-                  history.push('/feed');
-                })
+                history.push('/login')
               }
             }>Login</Button> : <div><IconButton
               aria-label="account of current user"
