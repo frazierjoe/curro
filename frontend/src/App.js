@@ -1,6 +1,7 @@
 import React from 'react';
 import './App.css';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import { Home } from './pages/Home';
 import { Calendar } from './pages/Calendar';
 import { Feed } from './pages/Feed';
@@ -9,13 +10,25 @@ import { Settings } from './pages/Settings';
 import { PageNotFound } from './pages/PageNotFound';
 import { ProtectedRoute } from './protected.route';
 import { Login } from './pages/Login';
-import CreateAccount from './pages/CreateAccount'
+import { CreateAccount } from './pages/CreateAccount'
 import Header from './components/Header';
 
 
+const theme = createMuiTheme({
+  palette: {
+    primary: {
+      main: '#DC1E65'
+    },
+    secondary: {
+      main: '#8B51FF'
+    }
+  },
+});
+
 function App() {
+
   return (
-    <div>
+    <ThemeProvider theme={theme}>
       <BrowserRouter>
         <Header/>
         <Switch>
@@ -35,7 +48,7 @@ function App() {
           <Route exact path='*' component={ PageNotFound }/>
         </Switch>
       </BrowserRouter>
-    </div>
+    </ThemeProvider>
   );
 }
 

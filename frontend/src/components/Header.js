@@ -37,12 +37,12 @@ const styles = theme => ({
   root: {
     display: 'flex',
   },
-  appBar: {
-    transition: theme.transitions.create(['margin', 'width'], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen,
-    }),
-  },
+  // appBar: {
+  //   transition: theme.transitions.create(['margin', 'width'], {
+  //     easing: theme.transitions.easing.sharp,
+  //     duration: theme.transitions.duration.leavingScreen,
+  //   }),
+  // },
   menuButton: {
     marginRight: theme.spacing(2),
   },
@@ -105,7 +105,6 @@ class Header extends Component {
   }
 
   handleDrawerOpen() {
-    console.log("open drawer")
     this.setState({
       openDrawer: true
     });
@@ -125,7 +124,7 @@ class Header extends Component {
       <div className={classes.root} >
       <CssBaseline />
       <AppBar
-        position="static"
+        position="fixed"
       >
         <Toolbar>
           <IconButton edge="start" className={clsx(classes.menuButton, this.state.openDrawer && classes.hide)} color="inherit" aria-label="menu" onClick={this.handleDrawerOpen}>
@@ -186,6 +185,7 @@ class Header extends Component {
           </div>
         </Toolbar>
       </AppBar>
+      <Toolbar />
       <Drawer
         className={classes.drawer}
         variant="persistent"

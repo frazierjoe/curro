@@ -103,11 +103,14 @@ export const Login = props => {
     var passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     var emailValid = emailRegex.test(values.email)
     var passwordValid = passwordRegex.test(values.password)
+    console.log(emailValid)
+    console.log(passwordValid)
 
-    // TODO check if form is valid with regex
     setValues({ ...values, emailError: !emailValid, passwordError: !passwordValid, emailErrorMessage: emailErrorMessage, passwordErrorMessage: passwordErrorMessage });
 
-    // callback()
+    if(emailValid && passwordValid) {
+      callback()
+    } 
   }
 
   const loginUser = () => {
@@ -116,9 +119,10 @@ export const Login = props => {
       console.log(values.email)
       console.log(values.password)
       var errorMessage = auth.login(() => {
+        console.log("Goto feed")
         history.push('/feed')
       });
-      setValues({ ...values, errorMessage: errorMessage });
+      setValues({ ...values, emailError: false, passwordError: false, errorMessage: errorMessage });
     })  
   };
 
@@ -141,51 +145,47 @@ export const Login = props => {
               <Typography variant="h4">Login</Typography>
             </div>
             <form noValidate autoComplete="off">
-              <div>
-                <TextField 
-                  id="login-email" 
-                  className={classes.textField} 
-                  label="Email" 
-                  fullWidth
-                  required
-                  helperText={values.emailError ? values.emailErrorMessage : ''}
-                  onChange={handleChange('email')}
-                  error={values.emailError}
-                  variant="outlined" />
-              </div>
-              <div>
-                <FormControl 
-                  variant="outlined" 
-                  fullWidth 
-                  required 
-                  error={values.passwordError} 
-                  className={classes.textField} 
-                >
-                  <InputLabel htmlFor="login-password">Password</InputLabel>
-                  <OutlinedInput
-                    id="login-password"
-                    type={values.showPassword ? 'text' : 'password'}
-                    value={values.password}
-                    label="Password"
-                    variant="outlined"
-                    onChange={handleChange('password')}
-                    endAdornment={
-                      <InputAdornment position="end">
-                        <IconButton
-                          aria-label="toggle password visibility"
-                          onClick={handleClickShowPassword}
-                          onMouseDown={handleMouseDownPassword}
-                          edge="end"
-                        >
-                          {values.showPassword ? <Visibility /> : <VisibilityOff />}
-                        </IconButton>
-                      </InputAdornment>
-                    }
-                    labelWidth={70}
-                  />
-                  <FormHelperText id="login-password-error-message">{values.passwordError ? values.passwordErrorMessage : ''}</FormHelperText>
-                </FormControl>
-              </div>
+              <TextField 
+                id="login-email" 
+                className={classes.textField} 
+                label="Email" 
+                fullWidth
+                required
+                helperText={values.emailError ? values.emailErrorMessage : ''}
+                onChange={handleChange('email')}
+                error={values.emailError}
+                variant="outlined" />
+              <FormControl 
+                variant="outlined" 
+                fullWidth 
+                required 
+                error={values.passwordError} 
+                className={classes.textField} 
+              >
+                <InputLabel htmlFor="login-password">Password</InputLabel>
+                <OutlinedInput
+                  id="login-password"
+                  type={values.showPassword ? 'text' : 'password'}
+                  value={values.password}
+                  label="Password"
+                  variant="outlined"
+                  onChange={handleChange('password')}
+                  endAdornment={
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={handleClickShowPassword}
+                        onMouseDown={handleMouseDownPassword}
+                        edge="end"
+                      >
+                        {values.showPassword ? <Visibility /> : <VisibilityOff />}
+                      </IconButton>
+                    </InputAdornment>
+                  }
+                  labelWidth={70}
+                />
+                <FormHelperText id="login-password-error-message">{values.passwordError ? values.passwordErrorMessage : ''}</FormHelperText>
+              </FormControl>
               <div>
                   <Typography variant="subtitle1" className={classes.errorMessage}>{values.errorMessage}</Typography>
                 <Button variant="contained" className={classes.textField} color="primary" fullWidth size="large" onClick={loginUser}>Login</Button>

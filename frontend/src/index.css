@@ -13,9 +13,9 @@ code {
 }
 
 .footer {
-  position: fixed;
   left: 0;
   bottom: 0;
+  margin-top: 16px;
   width: 100%;
   text-align: center;
 }
