@@ -26,6 +26,8 @@ import ExploreIcon from '@material-ui/icons/Explore';
 import TodayIcon from '@material-ui/icons/Today';
 import AccountBoxIcon from '@material-ui/icons/AccountBox';
 import InfoIcon from '@material-ui/icons/Info';
+import Avatar from '@material-ui/core/Avatar';
+
 
 
 
@@ -44,6 +46,9 @@ const styles = theme => ({
   menuButton: {
     marginRight: theme.spacing(2),
   },
+  profileMenu: {
+    marginTop: '32px',
+  },
   hide: {
     display: 'none',
   },
@@ -57,12 +62,15 @@ const styles = theme => ({
     ...theme.mixins.toolbar,
     justifyContent: 'flex-end',
   },
-  title: {
+  spacer: {
     flexGrow: 1,
   },
   loginButton: {
     color: 'white',
-  }
+  },
+  homeButton: {
+    color: 'white',
+  },
 });
 
 class Header extends Component {
@@ -113,7 +121,6 @@ class Header extends Component {
   render() {
     const { history } = this.props;
     const { classes } = this.props;
-
     return (
       <div className={classes.root} >
       <CssBaseline />
@@ -124,9 +131,13 @@ class Header extends Component {
           <IconButton edge="start" className={clsx(classes.menuButton, this.state.openDrawer && classes.hide)} color="inherit" aria-label="menu" onClick={this.handleDrawerOpen}>
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" className={classes.title} onClick={() => history.push('/home')}>
-            Curro
-        </Typography>
+          <Button variant='text' className={classes.homeButton} onClick={() => history.push('/home')}>
+            <Avatar alt="Logo" src={process.env.PUBLIC_URL +'/logo192.png'} />
+            <Typography variant="h6" className={classes.title} >
+              Curro
+            </Typography>
+          </Button>
+          <div className={classes.spacer}></div>
           <div ref={this.menuButtonRef}>
             {!auth.isAuthenticated() ? <Button className={classes.loginButton} onClick={
               () => {
@@ -143,6 +154,7 @@ class Header extends Component {
             </IconButton>
                 <Menu
                   id="menu-appbar"
+                  className={classes.profileMenu}
                   anchorEl={this.menuButtonRef.current}
                   anchorOrigin={{
                     vertical: 'top',

@@ -4,8 +4,15 @@ class Auth {
   }
 
   login(cb) {
-    this.authenticated = true;
-    cb();
+    var loginSuccess = false
+    var errorMessage = "Invalid email or password"
+
+    if(loginSuccess) {
+      this.authenticated = true;
+      cb();
+    } else {
+      return errorMessage
+    }
   }
 
   logout(cb) {
