@@ -16,3 +16,15 @@ Curro is an activity sharing website where athletes can be a part of a community
 
 #### Start
 > yarn start
+
+### Backend Setup (Windows)
+#### Prerequisite
+- https://docs.mongodb.com/manual/tutorial/install-mongodb-on-windows/
+
+#### Setting Up
+1. Install mongoDB 
+2. yarn install
+3. yarn start
+
+#### Start
+> yarn start
