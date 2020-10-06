@@ -5,7 +5,8 @@ Curro is an activity sharing website where athletes can be a part of a community
 1. cd into backend
 2. yarn start
 
-- Backend Setup (macOS)
+##### Setup
+-  (macOS)
 * Prerequisite
   - Homebrew 
   - xCode commandline tools
@@ -17,7 +18,6 @@ Curro is an activity sharing website where athletes can be a part of a community
   3. yarn install
   4. yarn start
 
-- Backend Setup (Windows)
-1. Setting Up
-- https://docs.mongodb.com/manual/tutorial/install-mongodb-on-windows/
+* (Windows)
+  - Setting Up `https://docs.mongodb.com/manual/tutorial/install-mongodb-on-windows/`
 ---
