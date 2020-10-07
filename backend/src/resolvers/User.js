@@ -51,6 +51,7 @@ export default {
 
       try {
         const user = await User.findByIdAndUpdate(userId, body, { new: true })
+        //{ runValidators: true, context: 'query' }
 
         return user
       } catch (e) {

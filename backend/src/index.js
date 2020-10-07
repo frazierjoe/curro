@@ -6,9 +6,7 @@ import typeDefs from './typeDefs'
 import resolvers from './resolvers'
 import { APP_PORT, IN_PROD } from './config'
 
-/*
-  Self-invoking asynchronous function
-*/
+/* Self-invoking asynchronous function */
 (async () => {
   try {
     // MongoDB on Atlas
