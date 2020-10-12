@@ -12,7 +12,13 @@ import { ProtectedRoute } from './protected.route';
 import { Login } from './pages/Login';
 import { CreateAccount } from './pages/CreateAccount'
 import Header from './components/Header';
+import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
 
+
+const client = new ApolloClient({
+  uri: 'http://localhost:4000/graphql',
+  cache: new InMemoryCache()
+});
 
 const theme = createMuiTheme({
   palette: {
@@ -28,27 +34,29 @@ const theme = createMuiTheme({
 function App() {
 
   return (
-    <ThemeProvider theme={theme}>
-      <BrowserRouter>
-        <Header/>
-        <Switch>
-          <Route exact path='/' component={ Home }/>
-          <Route exact path='/home' component={ Home }/>
-          <Route exact path='/login' component={ Login }/>
-          <Route exact path='/create' component={ CreateAccount }/>
-          <Route exact path='/createAccount' component={ CreateAccount }/>
-          <ProtectedRoute exact path='/calendar' component={ Calendar }/>
-          <ProtectedRoute exact path='/feed' component={ Feed }/>
-          <ProtectedRoute exact path='/newsfeed' component={ Feed }/>
-          <ProtectedRoute exact path='/profile' component={ Profile }/>
-          <ProtectedRoute exact path='/setting' component={ Settings }/>
-          <ProtectedRoute exact path='/settings' component={ Settings }/>
-          <Route exact path='/error' component={ PageNotFound }/>
-          <Route exact path='/404' component={ PageNotFound }/>
-          <Route exact path='*' component={ PageNotFound }/>
-        </Switch>
-      </BrowserRouter>
-    </ThemeProvider>
+    <ApolloProvider client={client}>
+      <ThemeProvider theme={theme}>
+        <BrowserRouter>
+          <Header/>
+          <Switch>
+            <Route exact path='/' component={ Home }/>
+            <Route exact path='/home' component={ Home }/>
+            <Route exact path='/login' component={ Login }/>
+            <Route exact path='/create' component={ CreateAccount }/>
+            <Route exact path='/createAccount' component={ CreateAccount }/>
+            <ProtectedRoute exact path='/calendar' component={ Calendar }/>
+            <ProtectedRoute exact path='/feed' component={ Feed }/>
+            <ProtectedRoute exact path='/newsfeed' component={ Feed }/>
+            <ProtectedRoute exact path='/profile' component={ Profile }/>
+            <ProtectedRoute exact path='/setting' component={ Settings }/>
+            <ProtectedRoute exact path='/settings' component={ Settings }/>
+            <Route exact path='/error' component={ PageNotFound }/>
+            <Route exact path='/404' component={ PageNotFound }/>
+            <Route exact path='*' component={ PageNotFound }/>
+          </Switch>
+        </BrowserRouter>
+      </ThemeProvider>
+    </ApolloProvider>
   );
 }
 

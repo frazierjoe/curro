@@ -22,6 +22,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 
 
 export const Login = props => {
+  var _isMounted = true
 
   const location = props.location.state ? props.location.state.from.pathname.substring(1) : ''
 
@@ -94,15 +95,13 @@ export const Login = props => {
     console.log(values.password)
 
     var emailErrorMessage = 'Invalid Email'
-    var passwordErrorMessage = 'Invalid password'
+    var passwordErrorMessage = 'Password is required'
 
     // Standard for validating email addresses
     // https://stackoverflow.com/questions/201323/how-to-validate-an-email-address-using-a-regular-expression
     var emailRegex = /^(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:+)\])$/;
-    // password with 1 lower, 1 upper, 1 number, 1 special, and at least 8 long
-    var passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     var emailValid = emailRegex.test(values.email)
-    var passwordValid = passwordRegex.test(values.password)
+    var passwordValid = values.password.length > 0
     console.log(emailValid)
     console.log(passwordValid)
 
@@ -113,16 +112,23 @@ export const Login = props => {
     } 
   }
 
-  const loginUser = () => {
-    validateForm(() => {
+  const loginUser = async () => {
+    validateForm(async () => {
       console.log("Logging the user in, form valid")
-      console.log(values.email)
-      console.log(values.password)
-      var errorMessage = auth.login(() => {
+      var userInput = {
+        input: {
+          email: values.email,
+          password: values.password
+        }
+      }
+      var errorMessage = await auth.login(() => {
         console.log("Goto feed")
+        _isMounted = false
         history.push('/feed')
-      });
-      setValues({ ...values, emailError: false, passwordError: false, errorMessage: errorMessage });
+      }, userInput);
+      if(_isMounted){
+        setValues({ ...values, emailError: false, passwordError: false, errorMessage: errorMessage });
+      }
     })  
   };
 

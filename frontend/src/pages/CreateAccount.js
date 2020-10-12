@@ -2,8 +2,6 @@ import React from 'react';
 import { Footer } from '../components/Footer';
 import auth from '../auth'
 import Typography from '@material-ui/core/Typography';
-import Snackbar from '@material-ui/core/Snackbar';
-import MuiAlert from '@material-ui/lab/Alert';
 import Container from '@material-ui/core/Container';
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
@@ -24,21 +22,22 @@ import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/picker
 
 
 export const CreateAccount = props => {
+  var _isMounted = true
 
-  const location = props.location.state ? props.location.state.from.pathname.substring(1) : ''
+  // const location = props.location.state ? props.location.state.from.pathname.substring(1) : ''
 
-  const [open, setOpen] = React.useState(location !== '');
+  // const [open, setOpen] = React.useState(location !== '');
 
-  function Alert(props) {
-    return <MuiAlert elevation={6} variant="filled" {...props} />;
-  }
+  // function Alert(props) {
+  //   return <MuiAlert elevation={6} variant="filled" {...props} />;
+  // }
 
-  const handleClose = (reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-    setOpen(false);
-  };
+  // const handleClose = (reason) => {
+  //   if (reason === 'clickaway') {
+  //     return;
+  //   }
+  //   setOpen(false);
+  // };
 
   const [values, setValues] = React.useState({
     first: '',
@@ -63,7 +62,7 @@ export const CreateAccount = props => {
     confirmError: false,
     confirmErrorMessage: '',
     showConfirm: false,
-    errorMessage: '',
+    errorMessage: ''
   });
 
   const [selectedDate, setSelectedDate] = React.useState(new Date());
@@ -126,7 +125,7 @@ export const CreateAccount = props => {
   const { history } = props;
   const classes = useStyles();
 
-  const validateForm = (callback) => {
+  const validateForm = async (callback) => {
 
     var validAge = calculateAge(selectedDate) >= 13
   
@@ -162,19 +161,36 @@ export const CreateAccount = props => {
      });
 
     if(emailValid && passwordValid) {
-      callback()
+      await callback()
     } 
   }
 
-  const createUser = () => {
-    validateForm(() => {
+
+  const createUser = async () => {
+    validateForm(async () => {
       console.log("Create user, form is valid")
-      
-      var errorMessage = auth.createUser(() => {
+     
+      var birthdate = new Date(selectedDate)
+
+      var userInput = {
+        input: {
+          email: values.email,
+          first: values.first,
+          last: values.last,
+          username: values.username,
+          password: values.password,
+          birthdate: birthdate.toISOString()
+        }
+      }
+
+      var errorMessage = await auth.createUser(() => {
         console.log("Goto feed")
+        _isMounted = false
         history.push('/feed')
-      });
-      setValues({ ...values, emailError: false, passwordError: false, errorMessage: errorMessage });
+      }, userInput);
+      if(_isMounted) {
+        setValues({ ...values, emailError: false, passwordError: false, errorMessage: errorMessage });
+      }
     })  
   };
 
@@ -184,12 +200,6 @@ export const CreateAccount = props => {
 
   return (
     <div>
-      { props.location.state ?
-        <Snackbar open={open} autoHideDuration={6000} onClose={handleClose} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
-          <Alert onClose={handleClose} severity="warning">
-            Login to view {location} page
-        </Alert>
-        </Snackbar> : <></>}
       <Container maxWidth="sm">
         <Card className={classes.root}>
           <CardContent>
