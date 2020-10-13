@@ -1,6 +1,6 @@
 import mongoose, { Schema } from 'mongoose'
 import uniqueValidator from 'mongoose-unique-validator'
-import { hash } from 'bcryptjs'
+import { hash, compare } from 'bcryptjs'
 
 
 const { ObjectId } = Schema.Types
@@ -53,6 +53,10 @@ UserSchema.pre('save', async function (next) {
   }
   next()
 })
+
+UserSchema.methods.matchesPassword = function (password) {
+  return compare(password, this.password)
+}
 
 UserSchema.plugin(uniqueValidator)
 export default mongoose.model('User', UserSchema)

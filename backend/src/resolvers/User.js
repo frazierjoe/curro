@@ -1,9 +1,15 @@
 import mongoose from 'mongoose'
 import { UserInputError, ApolloError } from 'apollo-server-express'
 import { User, Post } from '../models'
+import * as Auth from '../auth'
 
 export default {
   Query: {
+    me: (root, args, { req }, info) => {
+      Auth.ensureSignedIn(req)
+
+      return User.findById(req.session.userId)
+    },
     userList: (root, args, context, info) => {
       // TODO: auth, projection, pagination
 
@@ -20,10 +26,29 @@ export default {
     }
   },
   Mutation: {
-    createUser: async (root, { input: args }, context, info) => {
+    signIn: async (root, { input: args }, { req }, info) => {
+      // const { userId } = req.session
+
+      // if (userId) {
+      //   return User.findById(userId)
+      // }
+      const user = await Auth.attemptSignIn(args.email, args.password)
+
+      req.session.userId = user.id
+
+      return user
+    },
+    signOut: (root, args, { req, res }, info) => {
+      Auth.ensureSignedIn(req)
+
+      return Auth.signOut(req, res)
+    },
+    createUser: async (root, { input: args }, { req }, info) => {
       const { email, first, last, username, password, birthdate } = args
       // TODO: not auth
       // TODO make sure email is not already taken, since its the unique value
+
+      //Auth.ensureSignedIn(req)
 
       // Perform validation
       const user = await User.create({
@@ -39,6 +64,8 @@ export default {
         followingList: [],
         private: false
       })
+
+      req.session.userId = user.id
 
       return user
     },
