@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { useQuery, gql } from '@apollo/client';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
@@ -63,9 +63,12 @@ export const ProfileCard = props => {
     },
   }));
   const formatDate = (createdAt) => {
-    console.log(createdAt)
-    
-    return "October 7, 2020"
+    var options = { year: 'numeric', month: 'long', day: 'numeric' };
+
+    var date = new Date(1970,0,1)
+    date.setMilliseconds(createdAt)
+ 
+    return date.toLocaleDateString("en-US", options)
   }
   const editProfile = () => {
     console.log("edit profile")
