@@ -14,7 +14,7 @@ const CREATE_USER_MUTATION = gql`
 
 class Auth {
   constructor() {
-    this.authenticated = false;
+    this.authenticated = true;
   }
 
   async login(cb, userInput) {

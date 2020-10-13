@@ -5,7 +5,7 @@ import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import { Home } from './pages/Home';
 import { Calendar } from './pages/Calendar';
 import { Feed } from './pages/Feed';
-import { Profile } from './pages/Profile';
+import { Profile } from './pages/Profile/Profile';
 import { Settings } from './pages/Settings';
 import { PageNotFound } from './pages/PageNotFound';
 import { ProtectedRoute } from './protected.route';
@@ -59,5 +59,4 @@ function App() {
     </ApolloProvider>
   );
 }
-
 export default App;
