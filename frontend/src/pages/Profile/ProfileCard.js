@@ -82,6 +82,7 @@ export const ProfileCard = props => {
     }
   });
 
+
   if (error) return (<div>
     <Typography variant="h4">ERROR: {error}</Typography>
   </div>);

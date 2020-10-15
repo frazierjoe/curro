@@ -3,7 +3,7 @@ import './App.css';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import { Home } from './pages/Home';
-import { Calendar } from './pages/Calendar';
+import { Calendar } from './pages/Calendar/Calendar';
 import { Feed } from './pages/Feed';
 import { Profile } from './pages/Profile/Profile';
 import { Settings } from './pages/Settings';
