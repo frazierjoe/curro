@@ -18,15 +18,17 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import NativeSelect from '@material-ui/core/NativeSelect';
+import Tooltip from '@material-ui/core/Tooltip';
 
 
 
-import { Button } from '@material-ui/core';
+import { Button, Hidden } from '@material-ui/core';
 
 
 const useStyles = makeStyles((theme) => ({
   appbar: {
-    backgroundColor: theme.palette.info,
+    backgroundColor: theme.palette.background.main,
+    color: '#4c4c4c',
     position: 'static',
   },
   title: {
@@ -41,48 +43,93 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
+
 export const ToolBar = () => {
 
-  const [view, setView] = React.useState(31);
+  const [view, setView] = React.useState("month");
 
   const handleViewChange = (event) => {
     setView(event.target.value);
+    console.log("View changed to " + event.target.value)
+    // setViewType(getViewSelected(event.target.value))
   };
 
+  const currentDate = new Date(Date.now()); 
+  var options = { year: 'numeric', month: 'long'};
+  const currentMonthYear = currentDate.toLocaleDateString("en-US", options)
+
+  const todayButton = () => {
+    console.log("Today Button Clicked")
+  }
+
+  const previousButton = () => {
+    console.log("Previous Button Clicked")
+  }
+
+  const nextButton = () => {
+    console.log("Next Button Clicked")
+  }
+
+  const settingsButton = () => {
+    console.log("Settings Button Clicked")
+
+  }
+  
   const classes = useStyles();
 
   return (
+    <AppBar className={classes.appbar}>
     <Toolbar>
-      <IconButton edge="start" color="inherit" >
-        <TodayIcon />
-      </IconButton>
-      <Typography variant="h5" className={classes.title}>
-        Calendar
-      </Typography>
-      <Button variant="outlined" size="small" className={classes.iconButton}>Today</Button>
-      <IconButton color="inherit">
-        <ChevronLeftIcon />
-      </IconButton>
-      <IconButton color="inherit" className={classes.iconButton}>
-        <ChevronRightIcon />
-      </IconButton>
+      <Hidden smUp>
+        <Tooltip title={currentDate.toDateString()} enterDelay={400} >
+          <IconButton color="inherit" onClick={todayButton}>
+            <TodayIcon />
+          </IconButton>
+        </Tooltip>
+      </Hidden>
+      <Hidden xsDown>
+        <TodayIcon className={classes.iconButton} />
+      </Hidden>
+      <Hidden xsDown>
+        <Typography variant="h5" className={classes.title} >
+          Calendar
+        </Typography>
+      </Hidden>
+      <Hidden xsDown>
+        <Tooltip title={currentDate.toDateString()} enterDelay={400} >
+          <Button variant="outlined" size="small" className={classes.iconButton} onClick={todayButton} >Today</Button>
+        </Tooltip>
+        <Tooltip title={"Previous " + view} enterDelay={400} >
+          <IconButton color="inherit" onClick={previousButton}>
+            <ChevronLeftIcon />
+          </IconButton>
+        </Tooltip>
+        <Tooltip title={"Next " + view} enterDelay={400} >
+          <IconButton color="inherit" className={classes.iconButton} onClick={nextButton}>
+            <ChevronRightIcon />
+          </IconButton>
+        </Tooltip>
+      </Hidden>
       <Typography variant="h5" color="textSecondary" className={classes.displayCurrent}>
-        October 2020
+        {currentMonthYear}
       </Typography>
-      <IconButton color="inherit" className={classes.iconButton}>
-        <SettingsIcon />
-      </IconButton>
+      <Tooltip title="Settings" enterDelay={400} >
+        <IconButton color="inherit" className={classes.iconButton} onClick={settingsButton}>
+          <SettingsIcon />
+        </IconButton>
+      </Tooltip>
       <FormControl>
         <NativeSelect
           value={view}
           name="age"
           onChange={handleViewChange}
         >
-          <option value={1}>Day</option>
-          <option value={7}>Week</option>
-          <option value={31}>Month</option>
+          <option value={"day"}>Day</option>
+          <option value={"week"}>Week</option>
+          <option value={"month"}>Month</option>
         </NativeSelect>
       </FormControl>
     </Toolbar>
+    </AppBar>
   );
 }

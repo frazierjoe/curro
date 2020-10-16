@@ -61,7 +61,7 @@ export const Calendar = () => {
   }
 
   return (
-    <div styles={{height: "100%", alignItems:"stretch"}}>
+    <div styles={{height: 670, alignItems:"stretch"}}>
       <ToolBar/>
       <CalendarView/>
       <NewActivityModal openModal={openModal} handleClose={() => setOpenModal(false)}/>

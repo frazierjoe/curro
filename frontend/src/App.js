@@ -1,7 +1,7 @@
 import React from 'react';
 import './App.css';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
-import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
+import { createMuiTheme, ThemeProvider, responsiveFontSizes } from '@material-ui/core/styles';
 import { Home } from './pages/Home';
 import { Calendar } from './pages/Calendar/Calendar';
 import { Feed } from './pages/Feed';
@@ -20,16 +20,20 @@ const client = new ApolloClient({
   cache: new InMemoryCache()
 });
 
-const theme = createMuiTheme({
+var theme = createMuiTheme({
   palette: {
     primary: {
       main: '#DC1E65'
     },
     secondary: {
       main: '#8B51FF'
+    },
+    background: {
+      main: '#fafafa'
     }
   },
 });
+theme = responsiveFontSizes(theme);
 
 function App() {
 

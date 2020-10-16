@@ -2,6 +2,7 @@ import React, { useState }  from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
+import { cacheSlot } from '@apollo/client/cache';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -13,16 +14,39 @@ const useStyles = makeStyles((theme) => ({
     textAlign: 'center',
     color: theme.palette.text.secondary,
     borderRadius: 0,
-    height: 192
+    height: 192,
+    marginBottom: 1,
   },
   weekday: {
     padding: 1,
     textAlign: 'Center',
     color: theme.palette.text.secondary,
     borderRadius: 0,
-  }
+    marginBottom: 1,
+  },
+  scrollView: {
+    [theme.breakpoints.down('sm')]: {
+      maxHeight: 'calc(100vh - 112px)', 
+      fallbacks: [
+          { maxHeight: '-moz-calc(100vh - 112px)' },
+          { maxHeight: '-webkit-calc(100vh - 112px)' },
+          { maxHeight: '-o-calc(100vh - 112px)' }
+      ],
+    },
+    [theme.breakpoints.up('md')]: {
+      maxHeight: 'calc(100vh - 128px)', 
+      fallbacks: [
+          { maxHeight: '-moz-calc(100vh - 128px)' },
+          { maxHeight: '-webkit-calc(100vh - 128px)' },
+          { maxHeight: '-o-calc(100vh - 128px)' }
+      ],
+    },
+    overflow: 'auto',
+  },
+  mainView: {
+    scrollbarWidth: 'none',
+  },
 }));
-
 
 export const CalendarView = () => {
 
@@ -85,8 +109,8 @@ export const CalendarView = () => {
   }
 
   return (
-    <div>
-      <Grid container direction="column" justify="center" alignItems="stretch">
+    <div className={classes.scrollView}>
+      <Grid container direction="column" justify="center">
         <Grid item xs={12}>
           <WeekDayLabel/>
         </Grid>

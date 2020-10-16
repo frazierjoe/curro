@@ -71,6 +71,10 @@ const styles = theme => ({
   homeButton: {
     color: 'white',
   },
+  small: {
+    width: theme.spacing(4),
+    height: theme.spacing(4),
+  },
 });
 
 class Header extends Component {
@@ -149,7 +153,8 @@ class Header extends Component {
               onClick={this.handleMenu}
               color="inherit"
             >
-              <AccountCircle />
+              {/* <AccountCircle /> */}
+              <Avatar alt="Profile Picture" src="https://avatars1.githubusercontent.com/u/39724942?s=460&u=3140403237128bbe7f1daba46e28bb09bec4b2c0&v=4" className={classes.small} />
             </IconButton>
                 <Menu
                   id="menu-appbar"
