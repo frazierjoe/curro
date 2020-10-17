@@ -18,6 +18,7 @@ import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
+import Link from '@material-ui/core/Link';
 
 
 
@@ -83,6 +84,10 @@ export const Login = props => {
     },
     errorMessage: {
       color: theme.palette.error.main,
+    },
+    forgotPassword: {
+      textAlign: 'center',
+      flexGrow: 1
     },
   }));
 
@@ -193,9 +198,21 @@ export const Login = props => {
                 <FormHelperText id="login-password-error-message">{values.passwordError ? values.passwordErrorMessage : ''}</FormHelperText>
               </FormControl>
               <div>
-                  <Typography variant="subtitle1" className={classes.errorMessage}>{values.errorMessage}</Typography>
+                <Typography variant="subtitle1" className={classes.errorMessage}>{values.errorMessage}</Typography>
                 <Button variant="contained" className={classes.textField} color="primary" fullWidth size="large" onClick={loginUser}>Login</Button>
                 <Button className={classes.textField} fullWidth size="medium" onClick={newUser}>Need an account</Button>
+                <div className={classes.forgotPassword}>
+                  <Link
+                    component="button"
+                    variant="body2"
+                    color="secondary"
+                    onClick={() => {
+                      console.info("I'm a button.");
+                    }}
+                  >
+                    Forgot Password?
+                  </Link>   
+                </div>            
               </div>
             </form>
           </CardContent>

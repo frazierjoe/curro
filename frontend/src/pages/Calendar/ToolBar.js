@@ -19,10 +19,8 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import NativeSelect from '@material-ui/core/NativeSelect';
 import Tooltip from '@material-ui/core/Tooltip';
-
-
-
 import { Button, Hidden } from '@material-ui/core';
+
 
 
 const useStyles = makeStyles((theme) => ({
@@ -30,6 +28,12 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.background.main,
     color: '#4c4c4c',
     position: 'static',
+  },
+  toolbar: {
+    [theme.breakpoints.down('sm')]: {
+      paddingLeft: 4, 
+      paddingRight: 4,
+    },
   },
   title: {
     marginRight: theme.spacing(2),
@@ -39,6 +43,9 @@ const useStyles = makeStyles((theme) => ({
   },
   iconButton: {
     marginRight: theme.spacing(2),
+    [theme.breakpoints.down('sm')]: {
+      margin: 0, 
+    },
   },
 }));
 
@@ -79,7 +86,7 @@ export const ToolBar = () => {
 
   return (
     <AppBar className={classes.appbar}>
-    <Toolbar>
+    <Toolbar className={classes.toolbar}>
       <Hidden smUp>
         <Tooltip title={currentDate.toDateString()} enterDelay={400} >
           <IconButton color="inherit" onClick={todayButton}>

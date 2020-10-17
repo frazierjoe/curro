@@ -25,6 +25,7 @@ import {
   KeyboardTimePicker,
   KeyboardDatePicker,
 } from '@material-ui/pickers';
+import Toolbar from '@material-ui/core/Toolbar';
 
 const useStyles = makeStyles((theme) => ({
   modal: {
@@ -32,10 +33,13 @@ const useStyles = makeStyles((theme) => ({
   },
   paper: {
     position: 'absolute',
-    width: 400,
+    maxWidth: 800,
     backgroundColor: theme.palette.background.paper,
     boxShadow: theme.shadows[4],
     padding: theme.spacing(2, 2, 2),
+    [theme.breakpoints.down('sm')]: {
+      height: '100%', 
+    },
   },
   container: {
     display: 'flex',
@@ -44,6 +48,10 @@ const useStyles = makeStyles((theme) => ({
   textField: {
     margin: '16px 0 0 0'
   },
+  spacer: {
+    flexGrow: 1,
+    textAlign: 'center',
+  }
 }));
 
 export const NewActivityModal = (props) => {
@@ -62,33 +70,31 @@ export const NewActivityModal = (props) => {
         style={{display:'flex', alignItems:'center', justifyContent:'center'}}
         open={props.openModal}
         onClose={props.handleClose}
-        aria-labelledby="simple-modal-title"
-        aria-describedby="simple-modal-description"
       >
       <div style={classes.modalStyle} className={classes.paper}>
-        <Typography variant="h4">Create New Post</Typography>
+        <Toolbar disableGutters>
+          <Button onClick={() => props.handleClose()} color="secondary" >Cancel</Button>
+          <Typography variant="h6" className={classes.spacer} >New Post</Typography>
+          <Button onClick={() => postActivity(props.handleClose)} color="primary">POST</Button>
+        </Toolbar>
         <form className={classes.root} noValidate autoComplete="off">
-          <TextField id="standard-basic" className={classes.textField} label="Title" fullWidth/>
-          <TextField id="standard-basic" className={classes.textField} label="Note" fullWidth/>
-          <TextField id="standard-basic" className={classes.textField} label="Standard" fullWidth/>
-          <TextField id="standard-basic" className={classes.textField} label="Standard" fullWidth/>
+          <TextField className={classes.textField} label="Title" fullWidth variant="outlined" />
           <MuiPickersUtilsProvider utils={DateFnsUtils}>
-          <KeyboardDatePicker
-            fullWidth
-            margin="normal"
-            id="date-picker-dialog"
-            label="Date picker dialog"
-            format="MM/dd/yyyy"
-            value={selectedDate}
-            onChange={handleDateChange}
-            KeyboardButtonProps={{
-              'aria-label': 'change date',
-            }}
-          />
+            <KeyboardDatePicker
+              fullWidth
+              margin="normal"
+              id="date-picker-dialog"
+              label="Date picker dialog"
+              format="MM/dd/yyyy"
+              value={selectedDate}
+              onChange={handleDateChange}
+              KeyboardButtonProps={{
+                'aria-label': 'change date',
+              }}
+            />
           </MuiPickersUtilsProvider>
+          <TextField className={classes.textField} label="Note" fullWidth multiline rows={7} variant="outlined" />
         </form>
-        <p>Hello World!</p>
-        <Button onClick={() => postActivity(props.handleClose)} color="primary">POST</Button>
       </div>
       
       </Modal>

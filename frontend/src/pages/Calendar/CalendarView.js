@@ -3,6 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import { cacheSlot } from '@apollo/client/cache';
+import { useSwipeable, Swipeable } from 'react-swipeable'
 
 
 const useStyles = makeStyles((theme) => ({
@@ -23,6 +24,13 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.text.secondary,
     borderRadius: 0,
     marginBottom: 1,
+  },
+  weekdayHeader: {
+    position: "fixed",
+    height: "24px",
+  },
+  headerSpacer: {
+    height: "24px"
   },
   scrollView: {
     [theme.breakpoints.down('sm')]: {
@@ -48,7 +56,22 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+
 export const CalendarView = () => {
+
+  const next = () => {
+    console.log("Next month/week/day")
+  }
+  const previous = () => {
+    console.log("Previous month/week/day")
+  }
+
+  const handlers = useSwipeable({
+    onSwipedLeft: () => next(),
+    onSwipedRight: () => previous(),
+    preventDefaultTouchmoveEvent: true,
+    trackMouse: true
+  });
 
   const classes = useStyles();
 
@@ -82,7 +105,7 @@ export const CalendarView = () => {
 
   function WeekDayLabel() {
     return (
-      <Grid container direction="row" justify="center" alignItems="stretch" >
+      <Grid container direction="row" justify="center" alignItems="stretch" className={classes.weekdayHeader}>
         <Grid item xs>
           <Paper className={classes.weekday} >MON</Paper>
         </Grid>
@@ -109,11 +132,12 @@ export const CalendarView = () => {
   }
 
   return (
-    <div className={classes.scrollView}>
+    <div  {...handlers} className={classes.scrollView}>
       <Grid container direction="column" justify="center">
         <Grid item xs={12}>
           <WeekDayLabel/>
         </Grid>
+        <span className={classes.headerSpacer}></span>
         <Grid item xs={12}>
           <WeekView week={0}/>
         </Grid>
