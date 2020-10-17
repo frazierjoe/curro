@@ -1,52 +1,35 @@
-import React, { useState }  from 'react';
+import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import { cacheSlot } from '@apollo/client/cache';
 import { useSwipeable, Swipeable } from 'react-swipeable'
+import { responsePathAsArray } from 'graphql';
+import Month from './Month';
 
 
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
   },
-  Paper: {
-    padding: theme.spacing(1),
-    textAlign: 'center',
-    color: theme.palette.text.secondary,
-    borderRadius: 0,
-    height: 192,
-    marginBottom: 1,
-  },
-  weekday: {
-    padding: 1,
-    textAlign: 'Center',
-    color: theme.palette.text.secondary,
-    borderRadius: 0,
-    marginBottom: 1,
-  },
-  weekdayHeader: {
-    position: "fixed",
-    height: "24px",
-  },
   headerSpacer: {
     height: "24px"
   },
   scrollView: {
     [theme.breakpoints.down('sm')]: {
-      maxHeight: 'calc(100vh - 112px)', 
+      maxHeight: 'calc(100vh - 112px)',
       fallbacks: [
-          { maxHeight: '-moz-calc(100vh - 112px)' },
-          { maxHeight: '-webkit-calc(100vh - 112px)' },
-          { maxHeight: '-o-calc(100vh - 112px)' }
+        { maxHeight: '-moz-calc(100vh - 112px)' },
+        { maxHeight: '-webkit-calc(100vh - 112px)' },
+        { maxHeight: '-o-calc(100vh - 112px)' }
       ],
     },
     [theme.breakpoints.up('md')]: {
-      maxHeight: 'calc(100vh - 128px)', 
+      maxHeight: 'calc(100vh - 128px)',
       fallbacks: [
-          { maxHeight: '-moz-calc(100vh - 128px)' },
-          { maxHeight: '-webkit-calc(100vh - 128px)' },
-          { maxHeight: '-o-calc(100vh - 128px)' }
+        { maxHeight: '-moz-calc(100vh - 128px)' },
+        { maxHeight: '-webkit-calc(100vh - 128px)' },
+        { maxHeight: '-o-calc(100vh - 128px)' }
       ],
     },
     overflow: 'auto',
@@ -54,16 +37,36 @@ const useStyles = makeStyles((theme) => ({
   mainView: {
     scrollbarWidth: 'none',
   },
+  tableStyling: {
+    borderCollapse: "collapse",
+    border: "1px solid black",
+    width: "100%",
+    height: "80vh"
+  },
+  tableHeader: {
+    color: theme.palette.text.primary,
+  }
 }));
 
 
-export const CalendarView = () => {
+export const CalendarView = ({ date, setDate }) => {
 
   const next = () => {
-    console.log("Next month/week/day")
+    console.log("Swiped next month/week/day")
+    setDate(prevDate => {
+      let copy = new Date(prevDate);
+      copy.setMonth(copy.getMonth() + 1);
+      return copy;
+    });
   }
   const previous = () => {
-    console.log("Previous month/week/day")
+    console.log("Swiped previous month/week/day");
+    setDate(prevDate => {
+      let copy = new Date(prevDate);
+      copy.setMonth(copy.getMonth() - 1);
+      return copy;
+    });
+
   }
 
   const handlers = useSwipeable({
@@ -75,81 +78,22 @@ export const CalendarView = () => {
 
   const classes = useStyles();
 
-  function WeekView(props) {
-    return (
-      <Grid container direction="row" justify="center" alignItems="stretch" >
-        <Grid item xs>
-          <Paper className={classes.Paper}>{1+(props.week*7)}</Paper>
-        </Grid>
-        <Grid item xs>
-          <Paper className={classes.Paper}>{2+(props.week*7)}</Paper>
-        </Grid>
-        <Grid item xs>
-          <Paper className={classes.Paper}>{3+(props.week*7)}</Paper>
-        </Grid>
-        <Grid item xs>
-          <Paper className={classes.Paper}>{4+(props.week*7)}</Paper>
-        </Grid>
-        <Grid item xs>
-          <Paper className={classes.Paper}>{5+(props.week*7)}</Paper>
-        </Grid>
-        <Grid item xs>
-          <Paper className={classes.Paper}>{6+(props.week*7)}</Paper>
-        </Grid>
-        <Grid item xs>
-          <Paper className={classes.Paper}>{7+(props.week*7)}</Paper>
-        </Grid>
-      </Grid>
-    );
-  }
-
-  function WeekDayLabel() {
-    return (
-      <Grid container direction="row" justify="center" alignItems="stretch" className={classes.weekdayHeader}>
-        <Grid item xs>
-          <Paper className={classes.weekday} >MON</Paper>
-        </Grid>
-        <Grid item xs>
-          <Paper className={classes.weekday} >TUE</Paper>
-        </Grid>
-        <Grid item xs>
-          <Paper className={classes.weekday} >WED</Paper>
-        </Grid>
-        <Grid item xs>
-          <Paper className={classes.weekday} >THU</Paper>
-        </Grid>
-        <Grid item xs>
-          <Paper className={classes.weekday} >FRI</Paper>
-        </Grid>
-        <Grid item xs>
-          <Paper className={classes.weekday} >SAT</Paper>
-        </Grid>
-        <Grid item xs>
-          <Paper className={classes.weekday} >SUN</Paper>
-        </Grid>
-      </Grid>
-    );
-  }
-
   return (
     <div  {...handlers} className={classes.scrollView}>
-      <Grid container direction="column" justify="center">
-        <Grid item xs={12}>
-          <WeekDayLabel/>
-        </Grid>
-        <span className={classes.headerSpacer}></span>
-        <Grid item xs={12}>
-          <WeekView week={0}/>
-        </Grid>
-        <Grid item xs={12}>
-          <WeekView week={1}/>
-        </Grid>
-        <Grid item xs={12}>
-          <WeekView week={2}/>
-        </Grid>
-        <Grid item xs={12}>
-          <WeekView week={3}/>
-        </Grid>
-      </Grid>
+      <table className={classes.tableStyling}>
+        <thead className={classes.tableHeader}>
+          <tr>
+            <th>SUN</th>
+            <th>MON</th>
+            <th>TUE</th>
+            <th>WED</th>
+            <th>THU</th>
+            <th>FRI</th>
+            <th>SAT</th>
+          </tr>
+        </thead>
+        {/* The Month component generates TBody */}
+        <Month date={date} />
+      </table>
     </div>);
 }

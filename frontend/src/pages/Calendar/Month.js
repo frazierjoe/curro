@@ -18,7 +18,7 @@ const Month = ({date}) => {
     }
     
     let weeks = sundays.map(sunday => {
-        return <Week sunday={sunday} key={"-week" + sunday.toISOString()}/>
+        return <Week currentMonth={date.getMonth()} sunday={sunday} key={"-week" + sunday.toISOString()}/>
     })
 
     return (

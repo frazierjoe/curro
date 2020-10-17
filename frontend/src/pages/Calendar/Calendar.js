@@ -27,48 +27,25 @@ const useStyles = makeStyles((theme) => ({
 
 
 export const Calendar = () => {
+  const [openModal, setOpenModal] = useState(false);
 
-  const [openModal, setOpenModal] = useState(false)
+  // Calendar State
+  const [date, setDate] = useState(new Date());     
+  const [view, setView] = React.useState("month");
 
   const classes = useStyles();
 
-  function FormRow() {
-    return (
-      <React.Fragment>
-        <Grid item xs={1}>
-          <Paper className={classes.paper}>item</Paper>
-        </Grid>
-        <Grid item xs={1}>
-          <Paper className={classes.paper}>item</Paper>
-        </Grid>
-        <Grid item xs={1}>
-          <Paper className={classes.paper}>item</Paper>
-        </Grid>
-        <Grid item xs={1}>
-          <Paper className={classes.paper}>item</Paper>
-        </Grid>
-        <Grid item xs={1}>
-          <Paper className={classes.paper}>item</Paper>
-        </Grid>
-        <Grid item xs={1}>
-          <Paper className={classes.paper}>item</Paper>
-        </Grid>
-        <Grid item xs={1}>
-          <Paper className={classes.paper}>item</Paper>
-        </Grid>
-      </React.Fragment>
-    );
-  }
-
   return (
     <div styles={{height: 670, alignItems:"stretch"}}>
-      <ToolBar/>
-      <CalendarView/>
+      <ToolBar date={date} setDate={setDate} view={view} setView={setView}/>
+      <CalendarView date={date} setDate={setDate}/>
       <NewActivityModal openModal={openModal} handleClose={() => setOpenModal(false)}/>
       <span className={classes.addFab}>
         <Fab color="secondary" aria-label="add" onClick={() => setOpenModal(true)}>
             <AddIcon />
         </Fab>
       </span>
+      {/* <CalendarWrapper/> */}
+      
     </div>);
 }

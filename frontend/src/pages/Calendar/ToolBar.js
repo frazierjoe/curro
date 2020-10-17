@@ -1,4 +1,4 @@
-import React, { useState }  from 'react';
+import React, { useState } from 'react';
 import { NewActivityModal } from '../../components/NewActivityModal';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
@@ -31,7 +31,7 @@ const useStyles = makeStyles((theme) => ({
   },
   toolbar: {
     [theme.breakpoints.down('sm')]: {
-      paddingLeft: 4, 
+      paddingLeft: 4,
       paddingRight: 4,
     },
   },
@@ -44,99 +44,106 @@ const useStyles = makeStyles((theme) => ({
   iconButton: {
     marginRight: theme.spacing(2),
     [theme.breakpoints.down('sm')]: {
-      margin: 0, 
+      margin: 0,
     },
   },
 }));
 
 
 
-export const ToolBar = () => {
-
-  const [view, setView] = React.useState("month");
-
+export const ToolBar = ({ date, setDate, view, setView }) => {
   const handleViewChange = (event) => {
     setView(event.target.value);
     console.log("View changed to " + event.target.value)
     // setViewType(getViewSelected(event.target.value))
   };
 
-  const currentDate = new Date(Date.now()); 
-  var options = { year: 'numeric', month: 'long'};
-  const currentMonthYear = currentDate.toLocaleDateString("en-US", options)
+  var options = { year: 'numeric', month: 'long' };
+  const currentMonthYear = date.toLocaleDateString("en-US", options)
 
   const todayButton = () => {
     console.log("Today Button Clicked")
+    setDate(new Date());
   }
 
   const previousButton = () => {
     console.log("Previous Button Clicked")
+    setDate(prevDate => {
+      let copy = new Date(prevDate);
+      copy.setMonth(copy.getMonth() - 1);
+      return copy;
+    });
   }
 
   const nextButton = () => {
     console.log("Next Button Clicked")
+    setDate(prevDate => {
+      let copy = new Date(prevDate);
+      copy.setMonth(copy.getMonth() + 1);
+      return copy;
+    });
   }
 
   const settingsButton = () => {
     console.log("Settings Button Clicked")
 
   }
-  
+
   const classes = useStyles();
 
   return (
     <AppBar className={classes.appbar}>
-    <Toolbar className={classes.toolbar}>
-      <Hidden smUp>
-        <Tooltip title={currentDate.toDateString()} enterDelay={400} >
-          <IconButton color="inherit" onClick={todayButton}>
-            <TodayIcon />
-          </IconButton>
-        </Tooltip>
-      </Hidden>
-      <Hidden xsDown>
-        <TodayIcon className={classes.iconButton} />
-      </Hidden>
-      <Hidden xsDown>
-        <Typography variant="h5" className={classes.title} >
-          Calendar
+      <Toolbar className={classes.toolbar}>
+        <Hidden smUp>
+          <Tooltip title={date.toDateString()} enterDelay={400} >
+            <IconButton color="inherit" onClick={todayButton}>
+              <TodayIcon />
+            </IconButton>
+          </Tooltip>
+        </Hidden>
+        <Hidden xsDown>
+          <TodayIcon className={classes.iconButton} />
+        </Hidden>
+        <Hidden xsDown>
+          <Typography variant="h5" className={classes.title} >
+            Calendar
         </Typography>
-      </Hidden>
-      <Hidden xsDown>
-        <Tooltip title={currentDate.toDateString()} enterDelay={400} >
-          <Button variant="outlined" size="small" className={classes.iconButton} onClick={todayButton} >Today</Button>
-        </Tooltip>
-        <Tooltip title={"Previous " + view} enterDelay={400} >
-          <IconButton color="inherit" onClick={previousButton}>
-            <ChevronLeftIcon />
+        </Hidden>
+        <Hidden xsDown>
+          <Tooltip title={date.toDateString()} enterDelay={400} >
+            <Button variant="outlined" size="small" className={classes.iconButton} onClick={todayButton} >Today</Button>
+          </Tooltip>
+          <Tooltip title={"Previous " + view} enterDelay={400} >
+            <IconButton color="inherit" onClick={previousButton}>
+              <ChevronLeftIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title={"Next " + view} enterDelay={400} >
+            <IconButton color="inherit" className={classes.iconButton} onClick={nextButton}>
+              <ChevronRightIcon />
+            </IconButton>
+          </Tooltip>
+        </Hidden>
+        <Typography variant="h5" color="textSecondary" className={classes.displayCurrent}>
+          {currentMonthYear}
+        </Typography>
+        <Tooltip title="Settings" enterDelay={400} >
+          <IconButton color="inherit" className={classes.iconButton} onClick={settingsButton}>
+            <SettingsIcon />
           </IconButton>
         </Tooltip>
-        <Tooltip title={"Next " + view} enterDelay={400} >
-          <IconButton color="inherit" className={classes.iconButton} onClick={nextButton}>
-            <ChevronRightIcon />
-          </IconButton>
-        </Tooltip>
-      </Hidden>
-      <Typography variant="h5" color="textSecondary" className={classes.displayCurrent}>
-        {currentMonthYear}
-      </Typography>
-      <Tooltip title="Settings" enterDelay={400} >
-        <IconButton color="inherit" className={classes.iconButton} onClick={settingsButton}>
-          <SettingsIcon />
-        </IconButton>
-      </Tooltip>
-      <FormControl>
-        <NativeSelect
-          value={view}
-          name="age"
-          onChange={handleViewChange}
-        >
-          <option value={"day"}>Day</option>
-          <option value={"week"}>Week</option>
-          <option value={"month"}>Month</option>
-        </NativeSelect>
-      </FormControl>
-    </Toolbar>
+        <FormControl>
+          <NativeSelect
+            value={view}
+            name="age"
+            onChange={handleViewChange}
+          >
+            <option value={"day"}>Day</option>
+            <option value={"week"}>Week</option>
+            <option value={"month"}>Month</option>
+          </NativeSelect>
+        </FormControl>
+      </Toolbar>
     </AppBar>
   );
 }
