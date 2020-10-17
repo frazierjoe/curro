@@ -37,12 +37,12 @@ const styles = theme => ({
   root: {
     display: 'flex',
   },
-  appBar: {
-    transition: theme.transitions.create(['margin', 'width'], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen,
-    }),
-  },
+  // appBar: {
+  //   transition: theme.transitions.create(['margin', 'width'], {
+  //     easing: theme.transitions.easing.sharp,
+  //     duration: theme.transitions.duration.leavingScreen,
+  //   }),
+  // },
   menuButton: {
     marginRight: theme.spacing(2),
   },
@@ -70,6 +70,10 @@ const styles = theme => ({
   },
   homeButton: {
     color: 'white',
+  },
+  small: {
+    width: theme.spacing(4),
+    height: theme.spacing(4),
   },
 });
 
@@ -105,7 +109,6 @@ class Header extends Component {
   }
 
   handleDrawerOpen() {
-    console.log("open drawer")
     this.setState({
       openDrawer: true
     });
@@ -125,7 +128,7 @@ class Header extends Component {
       <div className={classes.root} >
       <CssBaseline />
       <AppBar
-        position="static"
+        position="fixed"
       >
         <Toolbar>
           <IconButton edge="start" className={clsx(classes.menuButton, this.state.openDrawer && classes.hide)} color="inherit" aria-label="menu" onClick={this.handleDrawerOpen}>
@@ -150,7 +153,8 @@ class Header extends Component {
               onClick={this.handleMenu}
               color="inherit"
             >
-              <AccountCircle />
+              {/* <AccountCircle /> */}
+              <Avatar alt="Profile Picture" src="https://avatars1.githubusercontent.com/u/39724942?s=460&u=3140403237128bbe7f1daba46e28bb09bec4b2c0&v=4" className={classes.small} />
             </IconButton>
                 <Menu
                   id="menu-appbar"
@@ -186,6 +190,7 @@ class Header extends Component {
           </div>
         </Toolbar>
       </AppBar>
+      <Toolbar />
       <Drawer
         className={classes.drawer}
         variant="persistent"
