@@ -1,10 +1,10 @@
 import React from 'react';
-import Typography from '@material-ui/core/Typography';
+// import Typography from '@material-ui/core/Typography';
 
 
 export const Footer = () => {
   return (
   <div className="footer">
-    <Typography variant="h6">Footer</Typography>
+    {/* <Typography variant="subtitle2">Curro was created for a CSE437 final project</Typography> */}
   </div>);
 }
