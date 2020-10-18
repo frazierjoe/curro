@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { ActivityTile } from './Activity/ActivityTile';
+import { ActivityDetail } from './Activity/ActivityDetail';
+import { AllowedActivity } from './Activity/AllowedActivity';
 import { AddActivityButton } from './Activity/AddActivityButton';
 import { makeStyles } from '@material-ui/core/styles';
 import { SelectActivity } from './Activity/SelectActivity';
@@ -88,11 +90,32 @@ export const NewActivityModal = (props) => {
   const [selectedDate, setSelectedDate] = React.useState(new Date());
   const [activityData, setActivityData] = React.useState([]);
   const [openSelectActivityModal, setOpenSelectActivityModal] = useState(false)
+  const [openActivityDetailModal, setOpenActivityDetailModal] = useState(false)
+  const [editActivityTypeIndex, setEditActivityTypeIndex] = useState(0)
+  const [editActivityId, setEditActivityId] = useState(0)
+
 
 
   const handleDateChange = (date) => {
     setSelectedDate(date);
   };
+  const clearState = () => {
+    setActivityData([])
+    setSelectedDate(new Date())
+  }
+  const cancelPost = () => {
+    props.handleClose()
+    clearState()
+  }
+  const postActivity = (callback) => {
+    callback()
+    console.log("make API call here")
+    clearState()
+
+    // TODO print contents of form
+    // TODO validate form should have a date and title
+    // TODO Make api call <----
+}
 
   // const activityData = [
   //   {
@@ -132,7 +155,6 @@ export const NewActivityModal = (props) => {
   //     }
   //   },
   // ]
-  
 
   return (
     <div>
@@ -144,7 +166,7 @@ export const NewActivityModal = (props) => {
       >
       <div style={classes.modalStyle} className={classes.paper}>
         <Toolbar disableGutters>
-          <Button onClick={() => props.handleClose()} >Cancel</Button>
+          <Button onClick={cancelPost} >Cancel</Button>
           <Typography variant="h6" className={classes.spacer} >New Post</Typography>
           <Button onClick={() => postActivity(props.handleClose)} color="primary">POST</Button>
         </Toolbar>
@@ -165,10 +187,18 @@ export const NewActivityModal = (props) => {
             />
           </MuiPickersUtilsProvider>
           <div className={classes.activityGrid}>
+            {
+              console.log(props.activityData)
+            }
             <GridList className={classes.gridList} cols={2.5} >
               {activityData.map((activity) => (
                 <GridListTile key={activity.id} style={{boxShadow: 'none'}}>
-                    <ActivityTile activity={activity}/>
+                    <ActivityTile 
+                      activity={activity} 
+                      setOpenActivityDetailModal={setOpenActivityDetailModal}
+                      setEditActivityTypeIndex={setEditActivityTypeIndex}
+                      setEditActivityId={setEditActivityId}
+                    />
                 </GridListTile>
               ))}
               <GridListTile key="add-activity-button">
@@ -182,15 +212,21 @@ export const NewActivityModal = (props) => {
       </div>
       
       </Modal>
-      <SelectActivity openModal={openSelectActivityModal} handleClose={() => setOpenSelectActivityModal(false)}/>
+      <SelectActivity 
+        openModal={openSelectActivityModal} 
+        handleClose={() => setOpenSelectActivityModal(false)} 
+        setActivityData={setActivityData}
+        activityData={activityData} 
+      />
+      <ActivityDetail 
+        activityData={activityData}
+        setActivityData={setActivityData}
+        activity={AllowedActivity[editActivityTypeIndex]} 
+        openModal={openActivityDetailModal} 
+        handleClose={() => setOpenActivityDetailModal(false)}
+        editActivity={true}
+        editActivityId={editActivityId}
+      />
     </div>
   );
-}
-
-function postActivity(callback) {
-    callback()
-    console.log("make API call here")
-    // TODO print contents of form
-    // TODO validate form should have a date and title
-    // TODO Make api call <----
 }

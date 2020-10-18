@@ -31,6 +31,7 @@ import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
 import GridListTileBar from '@material-ui/core/GridListTileBar';
 import StarBorderIcon from '@material-ui/icons/StarBorder';
+import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 
 const useStyles = makeStyles((theme) => ({
   modal: {
@@ -62,18 +63,67 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
     textAlign: 'center',
   },
+  inputField: {
+    marginBottom: 16,
+  },
 
 }));
 
 export const ActivityDetail = (props) => {
   const classes = useStyles();
-  console.log(props.activity)
+  const deleteActivity = () => {
+
+    // remove activity from activities
+    var activityDataCopy = [...props.activityData]
+    console.log(props.editActivityId)
+    var index = activityDataCopy.findIndex(activity => activity.id === props.editActivityId)
+    // var index = activityDataCopy.indexOf(todo)
+    if (index !== -1) {
+      activityDataCopy.splice(index, 1)
+      props.setActivityData(activityDataCopy)
+    }
+    // close the activity detail modal
+    props.handleClose()
+  }
   const saveActivity = () => {
-    console.log("SAVE")
+   
+    // generate a unique ID for the new activity
+    var date = new Date();
+    var id = date.getTime();
+
+    // add new activity to the activities 
+    props.setActivityData(
+      [
+        ...props.activityData,
+        {
+        id: id,
+        activityId: props.activity.id,
+        type: props.activity.type,
+        duration: "00:34:23.1",
+        distance: {
+          value: 9.25,
+          unit: "MI"
+        },
+        equipment: {
+          type: "BIKE",
+          name: "Red Rocket",
+        },
+        additionalInfo: {
+          averageHeartRate: 62,
+          elevationGain: 130,
+          calories: 850
+        }
+      }]
+    )
+    
+    // close the select activity modal
     props.handleCloseSelect()
+    // close the activity detail modal
     props.handleClose()
 
   };
+
+  console.log(props.activity)
 
   return (
     <div>
@@ -86,13 +136,62 @@ export const ActivityDetail = (props) => {
       >
       <div style={classes.modalStyle} className={classes.paper}>
         <Toolbar disableGutters>
-          <IconButton onClick={props.handleClose} >
-            <ArrowBackIosIcon/>
-          </IconButton>
+          {
+            props.editActivity ?  
+            <Tooltip title="Delete" placement="right" enterDelay={400}>
+              <IconButton onClick={deleteActivity}>
+                <DeleteForeverIcon/>
+              </IconButton>
+            </Tooltip> :
+            <Tooltip title="Back" placement="right" enterDelay={400}>
+              <IconButton onClick={props.handleClose} >
+                <ArrowBackIosIcon/>
+              </IconButton>
+            </Tooltip>
+          }
           <Typography variant="h6" className={classes.spacer} >{props.activity.type + " Details"}</Typography>
           <Button onClick={saveActivity} color="secondary">Save</Button>
         </Toolbar>
-        
+        { props.activity.durationAllowed ? 
+          <TextField 
+            type="time" 
+            variant="outlined"
+            className={classes.inputField}
+            fullWidth
+          />
+          : <></>
+        }
+        { props.activity.distanceAllowed ? 
+          <TextField 
+            label="Distance" 
+            type="number" 
+            inputProps={{
+              min: 0.000,
+              step: 0.001,
+            }}
+            variant="outlined"
+            className={classes.inputField}
+            fullWidth
+          />
+          : <></>
+        }
+        { props.activity.equipmentAllowed ? 
+          <TextField label="Equipment" 
+            fullWidth
+            variant="outlined"
+            className={classes.inputField}
+          />
+          : <></>
+        }
+        { props.activity.additionalInfoAllowed ? 
+          <TextField 
+            label="Additional Information" 
+            variant="outlined"
+            className={classes.inputField}
+            fullWidth
+          />
+          : <></>
+        }
       </div>
       
       </Modal>

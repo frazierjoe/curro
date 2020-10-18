@@ -22,8 +22,11 @@ export const ActivityTile = props => {
    
   }));
   
-  const editActivity = (id) => {
-    console.log("edit activity " + id)
+  const editActivity = (activity) => {
+    console.log("edit activity " + activity)
+    props.setOpenActivityDetailModal(true)
+    props.setEditActivityTypeIndex(activity.activityId)
+    props.setEditActivityId(activity.id)
   }
   const classes = useStyles();
 
@@ -36,7 +39,7 @@ export const ActivityTile = props => {
         style={{paddingBottom: '0px'}}
         action={
           <Tooltip title="Edit Activity" placement="top" enterDelay={400} >
-            <IconButton onClick={() => editActivity(props.activity.id)}>
+            <IconButton onClick={() => editActivity(props.activity)}>
               <EditIcon />
             </IconButton>
           </Tooltip>

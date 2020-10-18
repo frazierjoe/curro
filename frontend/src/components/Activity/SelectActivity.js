@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { ActivityDetail } from './ActivityDetail';
+import { AllowedActivity } from './AllowedActivity';
 import { makeStyles } from '@material-ui/core/styles';
-import { AllowedActivity } from './AllowedActivity'
 import Modal from '@material-ui/core/Modal';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
@@ -92,10 +92,14 @@ export const SelectActivity = (props) => {
       
       </Modal>
       <ActivityDetail 
+        activityData={props.activityData}
+        setActivityData={props.setActivityData}
         activity={selectedActivity} 
         openModal={openActivityDetailModal} 
         handleClose={() => setOpenActivityDetailModal(false)}
-        handleCloseSelect={props.handleClose}/>
+        handleCloseSelect={props.handleClose}
+        editActivity={false}
+      />
     </div>
   );
 }
