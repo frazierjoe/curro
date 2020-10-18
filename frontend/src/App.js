@@ -29,7 +29,7 @@ var theme = createMuiTheme({
       main: '#8B51FF'
     },
     background: {
-      main: '#fafafa'
+      main: '#fafafa',
     }
   },
 });
@@ -49,6 +49,7 @@ function App() {
             <Route exact path='/create' component={ CreateAccount }/>
             <Route exact path='/createAccount' component={ CreateAccount }/>
             <ProtectedRoute exact path='/calendar' component={ Calendar }/>
+            <ProtectedRoute exact path='/cal' component={ Calendar }/>
             <ProtectedRoute exact path='/feed' component={ Feed }/>
             <ProtectedRoute exact path='/newsfeed' component={ Feed }/>
             <ProtectedRoute exact path='/profile' component={ Profile }/>
