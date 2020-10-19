@@ -67,6 +67,7 @@ export default {
 
       try {
         const team = await Team.findByIdAndUpdate(teamId, body, { new: true })
+        //{ runValidators: true, context: 'query' }
 
         return team
       } catch (e) {
