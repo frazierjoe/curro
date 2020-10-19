@@ -11,15 +11,15 @@ import { APP_PORT, IN_PROD, SESS_NAME,
          SESS_SECRET, SESS_LIFETIME, 
          REDIS_HOST, REDIS_PORT, REDIS_PASSWORD 
         } from './config'
+        
 
-/* Self-invoking asynchronous function */
 (async () => {
   try {
     // MongoDB on Atlas
     // const uri = `mongodb+srv://${DB_USERNAME}:${DB_PASSWORD}@${DB_HOST}/${DB_NAME}?retryWrites=true&w=majority`
 
     // Local MongoDB
-    const uri = 'mongodb://localhost:27017/testDB'
+    const uri = 'mongodb+srv://admin:Dingus123@dev.3367y.mongodb.net/dev?retryWrites=true&w=majority'
     const options = {
       useNewUrlParser: true,
       useUnifiedTopology: true,
