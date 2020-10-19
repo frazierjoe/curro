@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import { ActivityDetail } from './ActivityDetail';
+import React from 'react';
 import { AllowedActivity } from './AllowedActivity';
 import { makeStyles } from '@material-ui/core/styles';
 import Modal from '@material-ui/core/Modal';
@@ -48,9 +47,6 @@ const useStyles = makeStyles((theme) => ({
 
 export const SelectActivity = (props) => {
   const classes = useStyles();
-  const [openActivityDetailModal, setOpenActivityDetailModal] = useState(false)
-  const [selectedActivity, setSelectedActivity] = useState(AllowedActivity[0])
-
 
   function ActivityOption(props) {
     return (
@@ -63,8 +59,9 @@ export const SelectActivity = (props) => {
   }
 
   const selectActivity = (activity) => {
-    setSelectedActivity(activity)
-    setOpenActivityDetailModal(true)
+    props.setEditActivity(false)
+    props.setSelectedActivity(activity)
+    props.setOpenActivityDetailModal(true)
   };
 
   return (
@@ -91,15 +88,6 @@ export const SelectActivity = (props) => {
       </div>
       
       </Modal>
-      <ActivityDetail 
-        activityData={props.activityData}
-        setActivityData={props.setActivityData}
-        activity={selectedActivity} 
-        openModal={openActivityDetailModal} 
-        handleClose={() => setOpenActivityDetailModal(false)}
-        handleCloseSelect={props.handleClose}
-        editActivity={false}
-      />
     </div>
   );
 }

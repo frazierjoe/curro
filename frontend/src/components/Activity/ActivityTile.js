@@ -23,6 +23,7 @@ export const ActivityTile = props => {
   }));
   
   const editActivity = (activity) => {
+    props.setEditActivity(true)
     console.log("edit activity " + activity)
     props.setOpenActivityDetailModal(true)
     props.setEditActivityTypeIndex(activity.activityId)

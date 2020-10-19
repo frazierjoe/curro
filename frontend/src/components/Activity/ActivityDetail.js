@@ -26,7 +26,9 @@ import {
   KeyboardTimePicker,
   KeyboardDatePicker,
 } from '@material-ui/pickers';
+import MenuItem from '@material-ui/core/MenuItem';
 import Toolbar from '@material-ui/core/Toolbar';
+import Select from '@material-ui/core/Select';
 import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
 import GridListTileBar from '@material-ui/core/GridListTileBar';
@@ -66,64 +68,77 @@ const useStyles = makeStyles((theme) => ({
   inputField: {
     marginBottom: 16,
   },
+  distanceField: {
+    flexGrow: 1,
+  },
 
 }));
 
 export const ActivityDetail = (props) => {
   const classes = useStyles();
-  const deleteActivity = () => {
+  var activityIndex = props.activityData.findIndex(activity => activity.id === props.editActivityId)
 
+  const deleteActivity = () => {
     // remove activity from activities
     var activityDataCopy = [...props.activityData]
-    console.log(props.editActivityId)
-    var index = activityDataCopy.findIndex(activity => activity.id === props.editActivityId)
-    // var index = activityDataCopy.indexOf(todo)
-    if (index !== -1) {
-      activityDataCopy.splice(index, 1)
+    if (activityIndex !== -1) {
+      activityDataCopy.splice(activityIndex, 1)
       props.setActivityData(activityDataCopy)
     }
-    // close the activity detail modal
-    props.handleClose()
-  }
-  const saveActivity = () => {
-   
-    // generate a unique ID for the new activity
-    var date = new Date();
-    var id = date.getTime();
 
-    // add new activity to the activities 
-    props.setActivityData(
-      [
-        ...props.activityData,
-        {
-        id: id,
-        activityId: props.activity.id,
-        type: props.activity.type,
-        duration: "00:34:23.1",
-        distance: {
-          value: 9.25,
-          unit: "MI"
-        },
-        equipment: {
-          type: "BIKE",
-          name: "Red Rocket",
-        },
-        additionalInfo: {
-          averageHeartRate: 62,
-          elevationGain: 130,
-          calories: 850
-        }
-      }]
-    )
-    
-    // close the select activity modal
-    props.handleCloseSelect()
     // close the activity detail modal
     props.handleClose()
+
+    // reset the edit activity default values
+    props.setEditActivityDefaultValues()
+  }
+
+  const saveActivity = () => {
+    if(props.editActivity) {
+      console.log("TODO: update activity in array")
+
+
+    } else {
+      // generate a unique ID for the new activity
+      var date = new Date();
+      var id = date.getTime();
+
+      // add new activity to the activities 
+      props.setActivityData(
+        [
+          ...props.activityData,
+          {
+          id: id,
+          activityId: props.activity.id,
+          type: props.activity.type,
+          duration: "00:34:23.1",
+          distance: {
+            value: props.editActivityValues.distanceValue,
+            unit: "MI"
+          },
+          equipment: {
+            type: "BIKE",
+            name: "Red Rocket",
+          },
+          additionalInfo: {
+            averageHeartRate: 62,
+            elevationGain: 130,
+            calories: 850
+          }
+        }]
+      )
+
+      // close the select activity modal
+      props.handleCloseSelect()
+    }
+    
+    // close the activity detail modal
+    props.handleClose()
+
+    // reset the edit activity default values
+    props.setEditActivityDefaultValues()
 
   };
-
-  console.log(props.activity)
 
   return (
     <div>
@@ -162,34 +177,100 @@ export const ActivityDetail = (props) => {
           : <></>
         }
         { props.activity.distanceAllowed ? 
-          <TextField 
-            label="Distance" 
-            type="number" 
-            inputProps={{
-              min: 0.000,
-              step: 0.001,
-            }}
-            variant="outlined"
-            className={classes.inputField}
-            fullWidth
-          />
+          <div>
+            <div className={classes.distanceField}>
+              <TextField 
+                label="Distance" 
+                type="number" 
+                inputProps={{
+                  min: 0.000,
+                  step: 0.001,
+                }}
+                variant="outlined"
+                className={classes.inputField}
+                value={props.editActivityValues.distanceValue}
+                onChange={props.handleEditActivityChange('distanceValue')}
+                fullWidth
+              />
+            </div>
+            <FormControl variant="outlined" className={classes.inputField}>
+              <InputLabel id="distance-unit-select">Unit</InputLabel>
+              <Select
+                labelId="distance-unit-select"
+                id="distance-unit-select-id"
+                value={props.editActivityValues.distanceUnit}
+                onChange={props.handleEditActivityChange('distanceUnit')}
+                label="Distance"
+              >
+                <MenuItem value={"mi"}>mi</MenuItem>
+                <MenuItem value={"km"}>km</MenuItem>
+                <MenuItem value={"m"}>m</MenuItem>
+                <MenuItem value={"yds"}>yds</MenuItem>
+              </Select>
+            </FormControl>
+          </div>
           : <></>
         }
         { props.activity.equipmentAllowed ? 
-          <TextField label="Equipment" 
-            fullWidth
-            variant="outlined"
-            className={classes.inputField}
-          />
+          <FormControl variant="outlined" fullWidth className={classes.inputField}>
+            <InputLabel id="equipment-select">Equipment</InputLabel>
+            <Select
+              labelId="equipment-select"
+              id="equipment-select-id"
+              value={props.editActivityValues.equipmentId}
+              onChange={props.handleEditActivityChange('equipmentId')}
+              label="Equipment"
+            >
+              <MenuItem value=""><em>None</em></MenuItem>
+              <MenuItem value={"nike_id"}>NiKe PeGz</MenuItem>
+              <MenuItem value={"hoka_id"}>HoKa Clouds</MenuItem>
+            </Select>
+        </FormControl>
           : <></>
         }
         { props.activity.additionalInfoAllowed ? 
-          <TextField 
-            label="Additional Information" 
-            variant="outlined"
-            className={classes.inputField}
-            fullWidth
-          />
+          <div>
+            <Typography variant="h6" className={classes.inputField} >Additional Information</Typography>
+            <TextField 
+              label="Heart Rate" 
+              type="number" 
+              inputProps={{
+                min: 0,
+                step: 1,
+              }}
+              variant="outlined"
+              className={classes.inputField}
+              value={props.editActivityValues.heartRate}
+              onChange={props.handleEditActivityChange('heartRate')}
+              fullWidth
+            />
+            <TextField 
+              label="Elevation Gain (ft)" 
+              type="number" 
+              inputProps={{
+                min: 0,
+                step: 5,
+              }}
+              variant="outlined"
+              className={classes.inputField}
+              value={props.editActivityValues.elevationGain}
+              onChange={props.handleEditActivityChange('elevationGain')}
+              fullWidth
+            />
+            <TextField 
+              label="Calories" 
+              type="number" 
+              inputProps={{
+                min: 0,
+                step: 10,
+              }}
+              variant="outlined"
+              className={classes.inputField}
+              value={props.editActivityValues.calories}
+              onChange={props.handleEditActivityChange('calories')}
+              fullWidth
+            />
+          </div>
           : <></>
         }
       </div>

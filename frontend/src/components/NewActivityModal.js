@@ -44,7 +44,7 @@ const useStyles = makeStyles((theme) => ({
     height: '90%',
     backgroundColor: theme.palette.background.paper,
     boxShadow: theme.shadows[4],
-    padding: '0 8px 8px 8px',
+    padding: '0 16px 16px 16px',
     margin: 0,
     overflow: 'hidden',
     [theme.breakpoints.down('sm')]: {
@@ -78,7 +78,6 @@ const useStyles = makeStyles((theme) => ({
       width: '100vw',
       marginLeft: '-8px',
     },
-    // display: 'flex',
     flexWrap: 'wrap',
     overflow: 'hidden',
     backgroundColor: theme.palette.background.paper,
@@ -93,8 +92,34 @@ export const NewActivityModal = (props) => {
   const [openActivityDetailModal, setOpenActivityDetailModal] = useState(false)
   const [editActivityTypeIndex, setEditActivityTypeIndex] = useState(0)
   const [editActivityId, setEditActivityId] = useState(0)
+  const [selectedActivity, setSelectedActivity] = useState(AllowedActivity[0])
+  const [editActivity, setEditActivity] = useState(false)
 
+  const [editActivityValues, setEditActivityValues] = React.useState({
+    distanceValue: '',
+    distanceUnit: 'mi',
+    duration: '',
+    equipmentId: '',
+    heartRate: '',
+    elevationGain: '',
+    calories: '',
+  });
 
+  const handleEditActivityChange = (prop) => (event) => {
+    setEditActivityValues({ ...editActivityValues, [prop]: event.target.value });
+  };
+
+  const setEditActivityDefaultValues = () => {
+    setEditActivityValues({
+      distanceValue: '',
+      distanceUnit: 'mi',
+      duration: '',
+      equipmentId: '',
+      heartRate: '',
+      elevationGain: '',
+      calories: '',
+    })
+  }
 
   const handleDateChange = (date) => {
     setSelectedDate(date);
@@ -111,50 +136,10 @@ export const NewActivityModal = (props) => {
     callback()
     console.log("make API call here")
     clearState()
-
     // TODO print contents of form
     // TODO validate form should have a date and title
     // TODO Make api call <----
 }
-
-  // const activityData = [
-  //   {
-  //     id: 1,
-  //     type: "RUN",
-  //     duration: "00:54:23.1",
-  //     distance: {
-  //       value: 7.31,
-  //       unit: "MI"
-  //     },
-  //     equipment: {
-  //       type: "SHOE",
-  //       name: "NiKe PeGz",
-  //     },
-  //     additionalInfo: {
-  //       averageHeartRate: 56,
-  //       elevationGain: 240,
-  //       calories: 1100
-  //     }
-  //   },
-  //   {
-  //     id: 2,
-  //     type: "BIKE",
-  //     duration: "00:34:23.1",
-  //     distance: {
-  //       value: 9.25,
-  //       unit: "MI"
-  //     },
-  //     equipment: {
-  //       type: "BIKE",
-  //       name: "Red Rocket",
-  //     },
-  //     additionalInfo: {
-  //       averageHeartRate: 62,
-  //       elevationGain: 130,
-  //       calories: 850
-  //     }
-  //   },
-  // ]
 
   return (
     <div>
@@ -187,9 +172,6 @@ export const NewActivityModal = (props) => {
             />
           </MuiPickersUtilsProvider>
           <div className={classes.activityGrid}>
-            {
-              console.log(props.activityData)
-            }
             <GridList className={classes.gridList} cols={2.5} >
               {activityData.map((activity) => (
                 <GridListTile key={activity.id} style={{boxShadow: 'none'}}>
@@ -198,6 +180,7 @@ export const NewActivityModal = (props) => {
                       setOpenActivityDetailModal={setOpenActivityDetailModal}
                       setEditActivityTypeIndex={setEditActivityTypeIndex}
                       setEditActivityId={setEditActivityId}
+                      setEditActivity={setEditActivity}
                     />
                 </GridListTile>
               ))}
@@ -217,15 +200,22 @@ export const NewActivityModal = (props) => {
         handleClose={() => setOpenSelectActivityModal(false)} 
         setActivityData={setActivityData}
         activityData={activityData} 
+        setSelectedActivity={setSelectedActivity}
+        setOpenActivityDetailModal={setOpenActivityDetailModal}
+        setEditActivity={setEditActivity}
       />
       <ActivityDetail 
         activityData={activityData}
         setActivityData={setActivityData}
-        activity={AllowedActivity[editActivityTypeIndex]} 
+        activity={selectedActivity} 
         openModal={openActivityDetailModal} 
         handleClose={() => setOpenActivityDetailModal(false)}
-        editActivity={true}
+        editActivity={editActivity}
         editActivityId={editActivityId}
+        handleCloseSelect={() => setOpenSelectActivityModal(false)}
+        handleEditActivityChange={handleEditActivityChange}
+        editActivityValues={editActivityValues}
+        setEditActivityDefaultValues={setEditActivityDefaultValues}
       />
     </div>
   );

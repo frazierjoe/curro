@@ -15,10 +15,6 @@ export const AddActivityButton = props => {
       width: '100%',
       height: '100%',
       boxShadow: 'none',
-      // backgroundColor: theme.palette.background.secondary,
-    },
-    cardHeader: {
-      // paddingBottom: '0px', 
     },
     cardContent:{
       textAlign: 'center',
