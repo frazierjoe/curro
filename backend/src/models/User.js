@@ -1,12 +1,23 @@
 import mongoose, { Schema } from 'mongoose'
+import uniqueValidator from 'mongoose-unique-validator'
+import { hash, compare } from 'bcryptjs'
+
 
 const { ObjectId } = Schema.Types
 
 const UserSchema = Schema({
-  email: String,
+  email: {
+    type: String,
+    unique: true,
+    uniqueCaseInsensitive: true
+  },
   first: String,
   last: String,
-  username: String,
+  username: { 
+    type: String, 
+    unique: true,
+    uniqueCaseInsensitive: true
+  },
   password: String,
   profilePictureURL: String,
   birthdate: String,
@@ -32,8 +43,20 @@ const UserSchema = Schema({
   timestamps: true
 })
 
-UserSchema.pre('save', async function () {
-  // Pre-save function
+UserSchema.pre('save', async function (next) {
+  if(this.isModified('password')) {
+    try {
+      this.password = await hash(this.password, 10)
+    } catch (err) {
+      next(err)
+    }
+  }
+  next()
 })
 
+UserSchema.methods.matchesPassword = function (password) {
+  return compare(password, this.password)
+}
+
+UserSchema.plugin(uniqueValidator)
 export default mongoose.model('User', UserSchema)

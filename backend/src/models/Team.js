@@ -1,9 +1,14 @@
 import mongoose, { Schema } from 'mongoose'
+import uniqueValidator from 'mongoose-unique-validator'
 
 const { ObjectId } = Schema.Types
 
 const TeamSchema = Schema({
-  name: String,
+  name: {
+    type: String, 
+    unique: true,
+    uniqueCaseInsensitive: true
+  },
   description: String,
   owner: {
     type: ObjectId,
@@ -25,4 +30,5 @@ TeamSchema.pre('save', async function () {
   // Pre-save function
 })
 
+TeamSchema.plugin(uniqueValidator)
 export default mongoose.model('Team', TeamSchema)

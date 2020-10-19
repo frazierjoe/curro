@@ -2,7 +2,7 @@ import { gql } from 'apollo-server-express'
 
 export default gql`
   extend type Query {
-    # me: User
+    me: User
     user(id: ID!): User
     userList: [User!]!
   }
@@ -40,8 +40,15 @@ export default gql`
     followerId: ID!
   }
 
+  input SignInInput {
+    email: String
+    password: String
+  }
+
   extend type Mutation {
-    createUser(input: CreateUserInput!): User!
+    createUser(input: CreateUserInput!): User
+    signIn(input: SignInInput!): User
+    signOut: Boolean
     updateUser(input: UpdateUserInput!): User!
     followUser(input: FollowUserInput): SuccessMessage!
     unfollowUser(input: FollowUserInput): SuccessMessage!
