@@ -3,7 +3,7 @@ import Week from './Week';
 
 const weeksToDisplay = 6;
 
-const Month = ({date}) => {
+const Month = ({date, setView}) => {
     // based off of the passed month, generate 6 weeks worth of days
     // from the sunday of the first week of a month.
     let firstSunday = new Date(date.getFullYear(), date.getMonth());
@@ -18,7 +18,11 @@ const Month = ({date}) => {
     }
     
     let weeks = sundays.map(sunday => {
-        return <Week currentMonth={date.getMonth()} sunday={sunday} key={"-week" + sunday.toISOString()}/>
+        return <Week 
+                    currentMonth={date.getMonth()} 
+                    sunday={sunday}
+                    setView={setView}
+                    key={"-week" + sunday.toISOString()}/>
     })
 
     return (

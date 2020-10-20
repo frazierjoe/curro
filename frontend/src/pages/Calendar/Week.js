@@ -2,7 +2,7 @@ import React from 'react';
 import Day from './Day';
 
 const daysInWeek = 7;
-const Week = ({sunday, currentMonth}) => {
+const Week = ({sunday, currentMonth, setView}) => {
     // Generate all 7 days using the passed sunday
     let days = [];
     for (let i = 0; i < daysInWeek; i++) {
@@ -13,7 +13,10 @@ const Week = ({sunday, currentMonth}) => {
     }
     
     days = days.map(dayDate => {
-        return <Day currentMonth={currentMonth} dayDate={dayDate} key={"-day" + dayDate.toISOString()}/>
+        return <Day currentMonth={currentMonth}
+                    dayDate={dayDate}
+                    setView={setView}
+                    key={"-day" + dayDate.toISOString()}/>
     });
 
     return (

@@ -49,8 +49,11 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-export const CalendarView = ({ date, setDate }) => {
+export const CalendarView = ({ date, setDate, setView }) => {
+  // Styles
+  const classes = useStyles();
 
+  // Event Handlers
   const next = () => {
     console.log("Swiped next month/week/day")
     setDate(prevDate => {
@@ -76,7 +79,7 @@ export const CalendarView = ({ date, setDate }) => {
     trackMouse: true
   });
 
-  const classes = useStyles();
+  
 
   return (
     <div  {...handlers} className={classes.scrollView}>
@@ -93,7 +96,7 @@ export const CalendarView = ({ date, setDate }) => {
           </tr>
         </thead>
         {/* The Month component generates TBody */}
-        <Month date={date} />
+        <Month date={date} setView={setView}/>
       </table>
     </div>);
 }
