@@ -35,6 +35,7 @@ export const Calendar = () => {
     const [date, setDate] = useState(new Date());
     const [view, setView] = React.useState("month");
     const [openModal, setOpenModal] = useState(false);
+    const [firstDayOfWeek, setFirstDayOfWeek] = useState("Sunday");
 
     // Event Handlers ********
     const viewSwitchKeyPressListener = (e) => {
@@ -60,10 +61,10 @@ export const Calendar = () => {
     let currentViewComponent = null;
     switch (view) {
         case "month":
-            currentViewComponent = <CalendarView date={date} setDate={setDate} setView={setView} />;
+            currentViewComponent = <CalendarView date={date} setDate={setDate} setView={setView} firstDayOfWeek={firstDayOfWeek}/>;
             break;
         case "week":
-            currentViewComponent = <WeeklyView date={date}/>;
+            currentViewComponent = <WeeklyView date={date} firstDayOfWeek={firstDayOfWeek}/>;
             break;
         case "day":
             currentViewComponent = <DayView date={date} />;
@@ -76,7 +77,7 @@ export const Calendar = () => {
 
     return (
         <div styles={{ height: 670, alignItems: "stretch" }}>
-            <ToolBar date={date} setDate={setDate} view={view} setView={setView} />
+            <ToolBar date={date} setDate={setDate} view={view} setView={setView} setFirstDayOfWeek={setFirstDayOfWeek}/>
             {currentViewComponent}
             <NewActivityModal openModal={openModal} handleClose={() => setOpenModal(false)} />
             <span className={classes.addFab}>

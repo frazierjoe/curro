@@ -9,94 +9,124 @@ import Month from './Month';
 
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    flexGrow: 1,
-  },
-  headerSpacer: {
-    height: "24px"
-  },
-  scrollView: {
-    [theme.breakpoints.down('sm')]: {
-      maxHeight: 'calc(100vh - 112px)',
-      fallbacks: [
-        { maxHeight: '-moz-calc(100vh - 112px)' },
-        { maxHeight: '-webkit-calc(100vh - 112px)' },
-        { maxHeight: '-o-calc(100vh - 112px)' }
-      ],
+    root: {
+        flexGrow: 1,
     },
-    [theme.breakpoints.up('md')]: {
-      maxHeight: 'calc(100vh - 128px)',
-      fallbacks: [
-        { maxHeight: '-moz-calc(100vh - 128px)' },
-        { maxHeight: '-webkit-calc(100vh - 128px)' },
-        { maxHeight: '-o-calc(100vh - 128px)' }
-      ],
+    headerSpacer: {
+        height: "24px"
     },
-    overflow: 'auto',
-  },
-  mainView: {
-    scrollbarWidth: 'none',
-  },
-  tableStyling: {
-    borderCollapse: "collapse",
-    border: "1px solid black",
-    width: "100%",
-    height: "80vh"
-  },
-  tableHeader: {
-    color: theme.palette.text.primary,
-  }
+    scrollView: {
+        [theme.breakpoints.down('sm')]: {
+            maxHeight: 'calc(100vh - 112px)',
+            fallbacks: [
+                { maxHeight: '-moz-calc(100vh - 112px)' },
+                { maxHeight: '-webkit-calc(100vh - 112px)' },
+                { maxHeight: '-o-calc(100vh - 112px)' }
+            ],
+        },
+        [theme.breakpoints.up('md')]: {
+            maxHeight: 'calc(100vh - 128px)',
+            fallbacks: [
+                { maxHeight: '-moz-calc(100vh - 128px)' },
+                { maxHeight: '-webkit-calc(100vh - 128px)' },
+                { maxHeight: '-o-calc(100vh - 128px)' }
+            ],
+        },
+        overflow: 'auto',
+    },
+    mainView: {
+        scrollbarWidth: 'none',
+    },
+    tableStyling: {
+        borderCollapse: "collapse",
+        border: "1px solid black",
+        width: "100%",
+        height: "80vh"
+    },
+    tableHeader: {
+        color: theme.palette.text.primary,
+    }
 }));
 
 
-export const CalendarView = ({ date, setDate, setView }) => {
-  // Styles
-  const classes = useStyles();
+export const CalendarView = ({ date, setDate, setView, firstDayOfWeek }) => {
+    // Styles
+    const classes = useStyles();
 
-  // Event Handlers
-  const next = () => {
-    console.log("Swiped next month/week/day")
-    setDate(prevDate => {
-      let copy = new Date(prevDate);
-      copy.setMonth(copy.getMonth() + 1);
-      return copy;
+    // Event Handlers
+    const next = () => {
+        console.log("Swiped next month/week/day")
+        setDate(prevDate => {
+            let copy = new Date(prevDate);
+            copy.setMonth(copy.getMonth() + 1);
+            return copy;
+        });
+    }
+
+    const previous = () => {
+        console.log("Swiped previous month/week/day");
+        setDate(prevDate => {
+            let copy = new Date(prevDate);
+            copy.setMonth(copy.getMonth() - 1);
+            return copy;
+        });
+
+    }
+
+    const swipeHandlers = useSwipeable({
+        onSwipedLeft: () => next(),
+        onSwipedRight: () => previous(),
+        preventDefaultTouchmoveEvent: true,
+        trackMouse: true
     });
-  }
-  const previous = () => {
-    console.log("Swiped previous month/week/day");
-    setDate(prevDate => {
-      let copy = new Date(prevDate);
-      copy.setMonth(copy.getMonth() - 1);
-      return copy;
-    });
 
-  }
 
-  const handlers = useSwipeable({
-    onSwipedLeft: () => next(),
-    onSwipedRight: () => previous(),
-    preventDefaultTouchmoveEvent: true,
-    trackMouse: true
-  });
+    // -------------- Display Logic
+    // Change Calendar Table headers depending on chosen firstDayOfWeek
+    let tableHeaders = null;
+    switch (firstDayOfWeek) {
+        case "Sunday":
+            tableHeaders = (
+                <>
+                    <th>SUN</th>
+                    <th>MON</th>
+                    <th>TUE</th>
+                    <th>WED</th>
+                    <th>THU</th>
+                    <th>FRI</th>
+                    <th>SAT</th>
+                </>
+            )
+            break;
+        case "Monday":
+            tableHeaders = (
+                <>
+                    <th>MON</th>
+                    <th>TUE</th>
+                    <th>WED</th>
+                    <th>THU</th>
+                    <th>FRI</th>
+                    <th>SAT</th>
+                    <th>SUN</th>
+                </>
+            )
+            break;
 
-  
+        default:
+            alert("Sanity Check: Non valid firstDayOfWeek specified");
+            break;
+    }
 
-  return (
-    <div  {...handlers} className={classes.scrollView}>
-      <table className={classes.tableStyling}>
-        <thead className={classes.tableHeader}>
-          <tr>
-            <th>SUN</th>
-            <th>MON</th>
-            <th>TUE</th>
-            <th>WED</th>
-            <th>THU</th>
-            <th>FRI</th>
-            <th>SAT</th>
-          </tr>
-        </thead>
-        {/* The Month component generates TBody */}
-        <Month date={date} setView={setView}/>
-      </table>
-    </div>);
+    return (
+        <div  {...swipeHandlers} className={classes.scrollView}>
+            <table className={classes.tableStyling}>
+                <thead className={classes.tableHeader}>
+                    <tr>
+                        {tableHeaders}
+                    </tr>
+                </thead>
+                {/* The Month component generates TBody */}
+                <Month date={date} setView={setView} firstDayOfWeek={firstDayOfWeek}/>
+            </table>
+        </div>);
 }

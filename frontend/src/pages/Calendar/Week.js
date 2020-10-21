@@ -16,7 +16,8 @@ const Week = ({sunday, currentMonth, setView}) => {
         return <Day currentMonth={currentMonth}
                     dayDate={dayDate}
                     setView={setView}
-                    key={"-day" + dayDate.toISOString()}/>
+                    key={"-day" + dayDate.toISOString()}
+                />
     });
 
     return (

@@ -12,7 +12,6 @@ import IconButton from '@material-ui/core/IconButton';
 import TodayIcon from '@material-ui/icons/Today';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-import SettingsIcon from '@material-ui/icons/Settings';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
@@ -20,6 +19,7 @@ import Select from '@material-ui/core/Select';
 import NativeSelect from '@material-ui/core/NativeSelect';
 import Tooltip from '@material-ui/core/Tooltip';
 import { Button, Hidden } from '@material-ui/core';
+import CalendarSettings from './CalendarSettings';
 
 
 
@@ -51,7 +51,7 @@ const useStyles = makeStyles((theme) => ({
 
 
 
-export const ToolBar = ({ date, setDate, view, setView }) => {
+export const ToolBar = ({ date, setDate, view, setView, setFirstDayOfWeek }) => {
     const classes = useStyles();
 
     // Event Handlers **********
@@ -128,11 +128,6 @@ export const ToolBar = ({ date, setDate, view, setView }) => {
         }
     }
 
-    const settingsButton = () => {
-        console.log("Settings Button Clicked")
-    }
-
-
 
     // Display Logic ********
     let options = null;
@@ -190,11 +185,8 @@ export const ToolBar = ({ date, setDate, view, setView }) => {
                 <Typography variant="h5" color="textSecondary" className={classes.displayCurrent}>
                     {toolbarTitle}
                 </Typography>
-                <Tooltip title="Settings" enterDelay={400} >
-                    <IconButton color="inherit" className={classes.iconButton} onClick={settingsButton}>
-                        <SettingsIcon />
-                    </IconButton>
-                </Tooltip>
+                {/* Component File */}
+                <CalendarSettings setFirstDayOfWeek={setFirstDayOfWeek}/>
                 <FormControl>
                     <NativeSelect
                         value={view}
