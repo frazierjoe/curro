@@ -115,7 +115,15 @@ export const CreateAccount = props => {
       marginTop: theme.spacing(3),
     },
     textField: {
-      margin: '16px 0 0 0'
+      margin: '16px 0 0 0',
+      '& label.Mui-focused': {
+        color: theme.palette.secondary.main,
+      },
+      '& .MuiOutlinedInput-root': {
+        '&.Mui-focused fieldset': {
+          borderColor: theme.palette.secondary.main,
+        },
+      },
     },
     errorMessage: {
       color: theme.palette.error.main,
@@ -260,6 +268,7 @@ export const CreateAccount = props => {
                   label="Birthdate"
                   value={selectedDate}
                   onChange={handleDateChange}
+                  className={classes.textField}
                   KeyboardButtonProps={{
                     'aria-label': 'change date',
                   }}

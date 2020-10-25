@@ -22,6 +22,11 @@ const useQuery = async (client, query, variables) => {
     return result
   } catch (error) {
     console.log('Query failed', error)
+    return {
+      "data": {
+        "errors": error
+      }
+    }
   }
 }
 
@@ -35,6 +40,11 @@ const useMutation = async (client, mutation, variables) => {
     return result
   } catch (error) {
     console.log('Mutation failed', error)
+    return {
+      "data": {
+        "errors": error
+      }
+    }
   }
 }
 

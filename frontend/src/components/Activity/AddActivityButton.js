@@ -31,9 +31,6 @@ export const AddActivityButton = props => {
    
   }));
   
-  const addActivity = () => {
-    console.log("add activity")
-  }
   const classes = useStyles();
 
   return (
