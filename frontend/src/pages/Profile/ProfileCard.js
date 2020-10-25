@@ -63,13 +63,12 @@ export const ProfileCard = props => {
   }
   const classes = useStyles();
 
-  const { error, data } = useQuery(QUERY_USER, {
+  const { loading, error, data } = useQuery(QUERY_USER, {
     variables: {
-      input: "5f4eeb9d5d985547bf9d391b"
+      input: "5f8d1b4e66ebae0038491572"
     }
   });
 
-  var loading = true;
   if (error) return (<div>
     <Typography variant="h4">ERROR: {error}</Typography>
   </div>);
