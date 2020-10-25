@@ -7,23 +7,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import { SelectActivity } from './Activity/SelectActivity';
 import Modal from '@material-ui/core/Modal';
 import Typography from '@material-ui/core/Typography';
-import Snackbar from '@material-ui/core/Snackbar';
-import MuiAlert from '@material-ui/lab/Alert';
-import Container from '@material-ui/core/Container';
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
-import IconButton from '@material-ui/core/IconButton';
-import OutlinedInput from '@material-ui/core/OutlinedInput';
-import InputAdornment from '@material-ui/core/InputAdornment';
 import TextField from '@material-ui/core/TextField';
-import FormHelperText from '@material-ui/core/FormHelperText';
-import Visibility from '@material-ui/icons/Visibility';
-import VisibilityOff from '@material-ui/icons/VisibilityOff';
-import FormControl from '@material-ui/core/FormControl';
-import InputLabel from '@material-ui/core/InputLabel';
-import Tooltip from '@material-ui/core/Tooltip';
-import Grid from '@material-ui/core/Grid';
 import DateFnsUtils from '@date-io/date-fns';
 import {
   MuiPickersUtilsProvider,
@@ -32,7 +17,6 @@ import {
 import Toolbar from '@material-ui/core/Toolbar';
 import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
-import GridListTileBar from '@material-ui/core/GridListTileBar';
 
 const useStyles = makeStyles((theme) => ({
   modal: {
@@ -46,12 +30,12 @@ const useStyles = makeStyles((theme) => ({
     boxShadow: theme.shadows[4],
     padding: '0 16px 16px 16px',
     margin: 0,
-    overflow: 'hidden',
+    overflow: 'scroll',
+    overflowX: 'hidden',
     [theme.breakpoints.down('sm')]: {
       height: '100%', 
       width: '100%',
       overflow: 'scroll',
-      overflowX: 'hidden',
     },
   },
   container: {
@@ -60,6 +44,14 @@ const useStyles = makeStyles((theme) => ({
   },
   textField: {
     margin: '16px 0 0 0',
+    '& label.Mui-focused': {
+      color: theme.palette.secondary.main,
+    },
+    '& .MuiOutlinedInput-root': {
+      '&.Mui-focused fieldset': {
+        borderColor: theme.palette.secondary.main,
+      },
+    },
   },
   spacer: {
     flexGrow: 1,
@@ -67,8 +59,6 @@ const useStyles = makeStyles((theme) => ({
   },
   gridList: {      
     flexWrap: 'nowrap',
-    // // Promote the list into his own layer on Chrome. This cost memory but helps keeping high FPS.
-    // transform: 'translateZ(0)',
   },
   activityGrid: {
     padding: 0,
@@ -90,38 +80,62 @@ export const NewActivityModal = (props) => {
   const [activityData, setActivityData] = React.useState([]);
   const [openSelectActivityModal, setOpenSelectActivityModal] = useState(false)
   const [openActivityDetailModal, setOpenActivityDetailModal] = useState(false)
-  const [editActivityTypeIndex, setEditActivityTypeIndex] = useState(0)
   const [editActivityId, setEditActivityId] = useState(0)
   const [selectedActivity, setSelectedActivity] = useState(AllowedActivity[0])
   const [editActivity, setEditActivity] = useState(false)
 
-  const [editActivityValues, setEditActivityValues] = React.useState({
+  const [post, setPost] = React.useState({
+    title: '',
+    note: '',
+    titleError: false,
+    dateError: false,
+    titleErrorMessage: '',
+    dateErrorMessage: '',
+    errorMessage: ''
+  });
+
+  const handlePostChange = (prop) => (event) => {
+
+    if(prop=='title'){
+      console.log(event.target.value)
+      console.log(event.target.value.length)
+
+      if(post.titleError && event.target.value.length > 0){
+        console.log('title found')
+        setPost({...post, titleError: false, [prop]: String(event.target.value)})
+        return
+      } 
+    } 
+    setPost({ ...post, [prop]: String(event.target.value) });
+    
+  };
+
+  const defaultActivityValues = {
     distanceValue: '',
     distanceUnit: 'mi',
-    duration: '',
+    duration: '00:00:00',
     equipmentId: '',
     heartRate: '',
     elevationGain: '',
     calories: '',
-  });
+  }
+
+  const [editActivityValues, setEditActivityValues] = React.useState(defaultActivityValues);
 
   const handleEditActivityChange = (prop) => (event) => {
     setEditActivityValues({ ...editActivityValues, [prop]: event.target.value });
   };
 
   const setEditActivityDefaultValues = () => {
-    setEditActivityValues({
-      distanceValue: '',
-      distanceUnit: 'mi',
-      duration: '',
-      equipmentId: '',
-      heartRate: '',
-      elevationGain: '',
-      calories: '',
-    })
+    setEditActivityValues(defaultActivityValues)
   }
 
   const handleDateChange = (date) => {
+    if(date !== null){
+      setPost({ ...post, 
+        dateError: false,
+      });
+    }
     setSelectedDate(date);
   };
   const clearState = () => {
@@ -132,13 +146,33 @@ export const NewActivityModal = (props) => {
     props.handleClose()
     clearState()
   }
-  const postActivity = (callback) => {
-    callback()
-    console.log("make API call here")
-    clearState()
-    // TODO print contents of form
-    // TODO validate form should have a date and title
-    // TODO Make api call <----
+
+  const validatePost = (callback) => {
+    console.log("Checking Form")
+    console.log(post.title)
+    console.log(post.note)
+    console.log(selectedDate)
+
+    const postTitleValid = post.title.length > 0
+    const selectedDateValid = selectedDate !== null
+
+    var titleErrorMessage = 'Title is required'
+    var dateErrorMessage = 'Date is required'
+
+    setPost({ ...post, 
+      titleError: !postTitleValid, titleErrorMessage: titleErrorMessage,
+      dateError: !selectedDateValid, titleErrorMessage: dateErrorMessage
+    });
+
+    if(postTitleValid && selectedDateValid) {
+      callback()
+      props.handleClose()
+    } 
+  }
+  const postActivity = () => {
+    validatePost(() => {
+      console.log("make API call here")
+    })
 }
 
   return (
@@ -153,19 +187,33 @@ export const NewActivityModal = (props) => {
         <Toolbar disableGutters>
           <Button onClick={cancelPost} >Cancel</Button>
           <Typography variant="h6" className={classes.spacer} >New Post</Typography>
-          <Button onClick={() => postActivity(props.handleClose)} color="primary">POST</Button>
+          <Button onClick={postActivity} color="primary">POST</Button>
         </Toolbar>
         <form noValidate autoComplete="off">
-          <TextField className={classes.textField} label="Title" fullWidth variant="outlined" required/>
+          <TextField 
+            className={classes.textField} 
+            value={post.title} 
+            onChange={handlePostChange('title')} 
+            helperText={post.titleError ? post.titleErrorMessage : ''}
+            error={post.titleError}
+            label="Title" 
+            fullWidth 
+            variant="outlined" 
+            required
+          />
           <MuiPickersUtilsProvider utils={DateFnsUtils}>
             <KeyboardDatePicker
               fullWidth
+              required
+              className={classes.textField}
               margin="normal"
               id="date-picker-dialog"
               label="Activity Date"
               format="MM/dd/yyyy"
               value={selectedDate}
               onChange={handleDateChange}
+              helperText={post.dateError ? post.dateErrorMessage : ''}
+              error={post.dateError}
               KeyboardButtonProps={{
                 'aria-label': 'change date',
               }}
@@ -178,9 +226,10 @@ export const NewActivityModal = (props) => {
                     <ActivityTile 
                       activity={activity} 
                       setOpenActivityDetailModal={setOpenActivityDetailModal}
-                      setEditActivityTypeIndex={setEditActivityTypeIndex}
                       setEditActivityId={setEditActivityId}
                       setEditActivity={setEditActivity}
+                      setEditActivityValues={setEditActivityValues}
+                      setSelectedActivity={setSelectedActivity}
                     />
                 </GridListTile>
               ))}
@@ -189,7 +238,7 @@ export const NewActivityModal = (props) => {
               </GridListTile>
             </GridList>
           </div>
-          <TextField className={classes.textField} label="Note" fullWidth multiline rows={7} variant="outlined" />
+          <TextField className={classes.textField} label="Note" value={post.note} onChange={handlePostChange('note')} fullWidth multiline rows={7} variant="outlined" />
           {/* TODO add TAG list, look into select -> Multiple Select Chip */}
         </form>
       </div>

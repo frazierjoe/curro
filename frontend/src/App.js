@@ -32,6 +32,18 @@ var theme = createMuiTheme({
       main: '#fafafa',
     }
   },
+  overrides: {
+    MuiInput: {
+      underline: {  
+        '&:after': {
+          borderBottom: '2px solid #8B51FF',
+        },
+        '&$focused:after': {
+          borderBottomColor: '#8B51FF',
+        },
+      },
+    }
+  }
 });
 theme = responsiveFontSizes(theme);
 

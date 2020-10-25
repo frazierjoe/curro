@@ -80,7 +80,15 @@ export const Login = props => {
       marginTop: theme.spacing(3),
     },
     textField: {
-      margin: '16px 0 0 0'
+      margin: '16px 0 0 0',
+      '& label.Mui-focused': {
+        color: theme.palette.secondary.main,
+      },
+      '& .MuiOutlinedInput-root': {
+        '&.Mui-focused fieldset': {
+          borderColor: theme.palette.secondary.main,
+        },
+      },
     },
     errorMessage: {
       color: theme.palette.error.main,
@@ -107,9 +115,7 @@ export const Login = props => {
     var emailRegex = /^(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:+)\])$/;
     var emailValid = emailRegex.test(values.email)
     var passwordValid = values.password.length > 0
-    console.log(emailValid)
-    console.log(passwordValid)
-
+  
     setValues({ ...values, emailError: !emailValid, passwordError: !passwordValid, emailErrorMessage: emailErrorMessage, passwordErrorMessage: passwordErrorMessage });
 
     if(emailValid && passwordValid) {

@@ -1,38 +1,19 @@
-import React, { useState } from 'react';
+import React from 'react';
+import TimeHelper from '../../utils/TimeHelper'
 import { makeStyles } from '@material-ui/core/styles';
 import Modal from '@material-ui/core/Modal';
 import Typography from '@material-ui/core/Typography';
-import Snackbar from '@material-ui/core/Snackbar';
-import MuiAlert from '@material-ui/lab/Alert';
-import Container from '@material-ui/core/Container';
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
-import OutlinedInput from '@material-ui/core/OutlinedInput';
-import InputAdornment from '@material-ui/core/InputAdornment';
 import TextField from '@material-ui/core/TextField';
-import FormHelperText from '@material-ui/core/FormHelperText';
-import Visibility from '@material-ui/icons/Visibility';
-import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import Tooltip from '@material-ui/core/Tooltip';
 import Grid from '@material-ui/core/Grid';
-import DateFnsUtils from '@date-io/date-fns';
-import {
-  MuiPickersUtilsProvider,
-  KeyboardTimePicker,
-  KeyboardDatePicker,
-} from '@material-ui/pickers';
 import MenuItem from '@material-ui/core/MenuItem';
 import Toolbar from '@material-ui/core/Toolbar';
 import Select from '@material-ui/core/Select';
-import GridList from '@material-ui/core/GridList';
-import GridListTile from '@material-ui/core/GridListTile';
-import GridListTileBar from '@material-ui/core/GridListTileBar';
-import StarBorderIcon from '@material-ui/icons/StarBorder';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 
 const useStyles = makeStyles((theme) => ({
@@ -71,6 +52,10 @@ const useStyles = makeStyles((theme) => ({
   distanceField: {
     flexGrow: 1,
   },
+  timeDisplay: {
+    textAlign: 'center',
+    lineHeight: '56px'
+  }
 
 }));
 
@@ -95,8 +80,27 @@ export const ActivityDetail = (props) => {
 
   const saveActivity = () => {
     if(props.editActivity) {
-      console.log("TODO: update activity in array")
-
+      // make a copy of the activities array
+      var activitiesCopy = [...props.activityData]
+      // update the element
+      activitiesCopy[activityIndex] = {
+        ...props.activityData[activityIndex],
+        duration: props.editActivityValues.duration,
+        distance: {
+          value: props.editActivityValues.distanceValue,
+          unit: props.editActivityValues.distanceUnit
+        },
+        equipment: {
+          id: props.editActivityValues.equipmentId,
+        },
+        additionalInfo: {
+          averageHeartRate: props.editActivityValues.heartRate,
+          elevationGain: props.editActivityValues.elevationGain,
+          calories: props.editActivityValues.calories
+        },
+      }
+      //update the state
+      props.setActivityData(activitiesCopy)
 
     } else {
       // generate a unique ID for the new activity
@@ -111,19 +115,18 @@ export const ActivityDetail = (props) => {
           id: id,
           activityId: props.activity.id,
           type: props.activity.type,
-          duration: "00:34:23.1",
+          duration: props.editActivityValues.duration,
           distance: {
             value: props.editActivityValues.distanceValue,
-            unit: "MI"
+            unit: props.editActivityValues.distanceUnit
           },
           equipment: {
-            type: "BIKE",
-            name: "Red Rocket",
+            id: props.editActivityValues.equipmentId,
           },
           additionalInfo: {
-            averageHeartRate: 62,
-            elevationGain: 130,
-            calories: 850
+            averageHeartRate: props.editActivityValues.heartRate,
+            elevationGain: props.editActivityValues.elevationGain,
+            calories: props.editActivityValues.calories
           }
         }]
       )
@@ -168,58 +171,74 @@ export const ActivityDetail = (props) => {
           <Button onClick={saveActivity} color="secondary">Save</Button>
         </Toolbar>
         { props.activity.durationAllowed ? 
-          <TextField 
-            type="time" 
-            variant="outlined"
-            className={classes.inputField}
-            fullWidth
-          />
+          <div className={classes.distanceField}>
+            <Grid container spacing={1}>
+              <Grid item xs>
+              <TextField 
+                label="HH:MM:SS.s" 
+                variant="outlined"
+                value={props.editActivityValues.duration}
+                onChange={props.handleEditActivityChange('duration')}
+                className={classes.inputField}
+                fullWidth
+              />
+              </Grid>
+              <Grid item xs>
+                <Typography variant="body1" className={classes.timeDisplay} >{TimeHelper.formatTimeDisplay(props.editActivityValues.duration)}</Typography>
+              </Grid>
+            </Grid>
+          </div>
           : <></>
         }
         { props.activity.distanceAllowed ? 
-          <div>
-            <div className={classes.distanceField}>
-              <TextField 
-                label="Distance" 
-                type="number" 
-                inputProps={{
-                  min: 0.000,
-                  step: 0.001,
-                }}
-                variant="outlined"
-                className={classes.inputField}
-                value={props.editActivityValues.distanceValue}
-                onChange={props.handleEditActivityChange('distanceValue')}
-                fullWidth
-              />
-            </div>
-            <FormControl variant="outlined" className={classes.inputField}>
-              <InputLabel id="distance-unit-select">Unit</InputLabel>
-              <Select
-                labelId="distance-unit-select"
-                id="distance-unit-select-id"
-                value={props.editActivityValues.distanceUnit}
-                onChange={props.handleEditActivityChange('distanceUnit')}
-                label="Distance"
-              >
-                <MenuItem value={"mi"}>mi</MenuItem>
-                <MenuItem value={"km"}>km</MenuItem>
-                <MenuItem value={"m"}>m</MenuItem>
-                <MenuItem value={"yds"}>yds</MenuItem>
-              </Select>
-            </FormControl>
+          <div className={classes.distanceField}>
+            <Grid container spacing={1}>
+              <Grid item xs>
+                <TextField 
+                  label="Distance" 
+                  type="number" 
+                  inputProps={{
+                    min: 0.000,
+                    step: 0.001,
+                  }}
+                  variant="outlined"
+                  className={classes.inputField}
+                  value={props.editActivityValues.distanceValue}
+                  onChange={props.handleEditActivityChange('distanceValue')}
+                  fullWidth
+                />
+              </Grid>
+              <Grid item xs>
+                <FormControl variant="outlined" className={classes.inputField} fullWidth>
+                  <InputLabel id="distance-unit-select">Unit</InputLabel>
+                  <Select
+                    labelId="distance-unit-select"
+                    id="distance-unit-select-id"
+                    value={props.editActivityValues.distanceUnit}
+                    onChange={props.handleEditActivityChange('distanceUnit')}
+                    label="Distance"
+                  >
+                    <MenuItem value={"mi"}>mi</MenuItem>
+                    <MenuItem value={"km"}>km</MenuItem>
+                    <MenuItem value={"m"}>m</MenuItem>
+                    <MenuItem value={"yds"}>yds</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+            </Grid>
           </div>
           : <></>
         }
         { props.activity.equipmentAllowed ? 
           <FormControl variant="outlined" fullWidth className={classes.inputField}>
-            <InputLabel id="equipment-select">Equipment</InputLabel>
+            {/* TODO Change equipment to be shoes or bikes depending on activity */}
+            <InputLabel id="equipment-select">{props.activity.equipmentAllowed}</InputLabel>
             <Select
               labelId="equipment-select"
               id="equipment-select-id"
               value={props.editActivityValues.equipmentId}
               onChange={props.handleEditActivityChange('equipmentId')}
-              label="Equipment"
+              label={props.activity.equipmentAllowed}
             >
               <MenuItem value=""><em>None</em></MenuItem>
               <MenuItem value={"nike_id"}>NiKe PeGz</MenuItem>

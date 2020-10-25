@@ -7,7 +7,6 @@ import MenuIcon from '@material-ui/icons/Menu';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
-import AccountCircle from '@material-ui/icons/AccountCircle';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import { withStyles } from '@material-ui/core/styles';
@@ -37,12 +36,6 @@ const styles = theme => ({
   root: {
     display: 'flex',
   },
-  // appBar: {
-  //   transition: theme.transitions.create(['margin', 'width'], {
-  //     easing: theme.transitions.easing.sharp,
-  //     duration: theme.transitions.duration.leavingScreen,
-  //   }),
-  // },
   menuButton: {
     marginRight: theme.spacing(2),
   },
@@ -120,6 +113,16 @@ class Header extends Component {
     });
   }
 
+  logoutUser = async (history) => {
+    await auth.logout(() => {
+      console.log("logout")
+      console.log(auth)
+      this.handleMenuClose()
+      history.push('/');
+    })
+  };
+
+
 
   render() {
     const { history } = this.props;
@@ -153,8 +156,7 @@ class Header extends Component {
               onClick={this.handleMenu}
               color="inherit"
             >
-              {/* <AccountCircle /> */}
-              <Avatar alt="Profile Picture" src="https://avatars1.githubusercontent.com/u/39724942?s=460&u=3140403237128bbe7f1daba46e28bb09bec4b2c0&v=4" className={classes.small} />
+            <Avatar alt="Profile Picture" src="https://avatars1.githubusercontent.com/u/39724942?s=460&u=3140403237128bbe7f1daba46e28bb09bec4b2c0&v=4" className={classes.small} />
             </IconButton>
                 <Menu
                   id="menu-appbar"
@@ -177,14 +179,7 @@ class Header extends Component {
                     history.push('/profile');
                   }
                   }>Profile</MenuItem>
-                  <MenuItem onClick={() => {
-                    auth.logout(() => {
-                      console.log("logout")
-                      console.log(auth)
-                      this.handleMenuClose()
-                      history.push('/');
-                    })
-                  }}>Logout</MenuItem>
+                  <MenuItem onClick={() => this.logoutUser(history)}>Logout</MenuItem>
                 </Menu>
               </div>}
           </div>
