@@ -1,4 +1,6 @@
 import React from 'react';
+import TimeHelper from '../../utils/TimeHelper'
+import DistanceHelper from '../../utils/DistanceHelper'
 import { AllowedActivity } from './AllowedActivity';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
@@ -18,7 +20,7 @@ export const ActivityTile = props => {
       backgroundColor: theme.palette.background.main,
     },
     cardContent:{
-
+      marginBottom: "-16px"
     },
    
   }));
@@ -28,8 +30,8 @@ export const ActivityTile = props => {
     props.setEditActivityId(activity.id)
     props.setEditActivityValues({
       distanceValue: activity.distance.value,
-      distanceUnit: activity.distance.unit,
-      duration: activity.duration,
+      distanceUnit: activity.distance.unit.toLowerCase(),
+      duration: TimeHelper.formatTimeString(activity.duration),
       equipmentId: activity.equipment.id,
       heartRate: activity.additionalInfo.averageHeartRate,
       elevationGain: activity.additionalInfo.elevationGain,
@@ -47,17 +49,29 @@ export const ActivityTile = props => {
         title={props.activity.type}
         style={{paddingBottom: '0px'}}
         action={
+          props.edit === true ?
           <Tooltip title="Edit Activity" placement="top" enterDelay={400} >
             <IconButton onClick={() => editActivity(props.activity)}>
               <EditIcon />
             </IconButton>
-          </Tooltip>
+          </Tooltip> 
+          : <></>
         }
       />
       <CardContent className={classes.cardContent}>
-        <Typography variant="body1" component="p">{props.activity.duration}</Typography>
-        <Typography variant="body1" component="p">{props.activity.distance.value + ' ' + props.activity.distance.unit.toLowerCase()}</Typography>
-        <Typography variant="body1" component="p">7:51 min/mi</Typography>
+        <Typography variant="body1" component="p">{TimeHelper.formatTimeMs(props.activity.duration)}</Typography>
+        {
+          props.activity.distance.value > 0 ? 
+          <div>
+            <Typography variant="body1" component="p">{props.activity.distance.value + ' ' + props.activity.distance.unit.toLowerCase()}</Typography>
+            {
+              props.activity.duration > 0 ? 
+            <Typography variant="body1" component="p">{DistanceHelper.calculateAveragePace(props.activity.distance, props.activity.duration, props.activity.type)}</Typography>
+              : <></>
+            }
+          </div>
+          : <></>
+        }
       </CardContent>
     </Card>
     );

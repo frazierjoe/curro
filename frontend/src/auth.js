@@ -26,7 +26,6 @@ const SIGNOUT_MUTATION = gql`
 class Auth {
   constructor() {
     this.authenticated = true;
-    this.userId = ""
     this.client = null
   }
 
@@ -46,7 +45,6 @@ class Auth {
       return userResponse.data.errors.message
     } else {
       const user = userResponse.data.signIn
-      this.userId = user.id
       this.authenticated = true;
       cb();
     }
@@ -60,8 +58,7 @@ class Auth {
     if(userResponse.errors) {
       return userResponse.data.errors.message
     } else {
-      const user = userResponse.data.createUser
-      this.userId = user.id
+      console.log(userResponse)
       this.authenticated = true;
       cb();
     }
@@ -69,7 +66,6 @@ class Auth {
 
   async logout(cb) {
     this.authenticated = false;
-    this.userId = ""
     let client = await this.getAuthClient()
     const userResponse = await useMutation(client, SIGNOUT_MUTATION)
     if(userResponse.errors) {

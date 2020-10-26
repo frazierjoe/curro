@@ -53,7 +53,7 @@ export const AllowedActivity = [
     durationAllowed: true,
     distanceAllowed: false,
     equipmentAllowed: false,
-    additionalInfoAllowed: true
+    additionalInfoAllowed: false
   },
   {
     id: 7,
