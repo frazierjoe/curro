@@ -11,39 +11,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 const WeeklyView = ({date, firstDayOfWeek}) => {
     const classes = useStyles();
-    let weekHeaders = null;
-    switch (firstDayOfWeek) {
-        case "Sunday":
-            weekHeaders = (
-                <>
-                    <div>SUN</div>
-                    <div>MON</div>
-                    <div>TUE</div>
-                    <div>WED</div>
-                    <div>THU</div>
-                    <div>FRI</div>
-                    <div>SAT</div>
-                </>
-            )
-            break;
-        case "Monday":
-            weekHeaders = (
-                <>
-                    <div>MON</div>
-                    <div>TUE</div>
-                    <div>WED</div>
-                    <div>THU</div>
-                    <div>FRI</div>
-                    <div>SAT</div>
-                    <div>SUN</div>
-                </>
-            )
-            break;
-
-        default:
-            alert("Sanity Check: Non valid firstDayOfWeek specified");
-            break;
-    }
 
     // Get the first day of the month and get the first Sunday of that week.
     let dayOne = new Date(date);
@@ -70,7 +37,6 @@ const WeeklyView = ({date, firstDayOfWeek}) => {
 
     return (
         <div className={classes.gridParent}>
-            {weekHeaders}
             {weekColumns}
         </div>
     );

@@ -146,6 +146,7 @@ export const ToolBar = ({ date, setDate, view, setView, setFirstDayOfWeek }) => 
             alert("Sanity Check: Unrecognized view in ToolBar.js");
             break;
     }
+    // How to get local zone?
     const toolbarTitle = date.toLocaleDateString("en-US", options);
 
 
