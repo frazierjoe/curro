@@ -10,7 +10,8 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    width: "100%"
+    width: "100%",
+    overflowX: "hidden",
   },
   
 }));
@@ -42,7 +43,8 @@ export const Feed = () => {
       }
     ],
     likeList: [],
-    commentList: []
+    commentList: [],
+    createdAt: "1603683112465",
   }
 
 

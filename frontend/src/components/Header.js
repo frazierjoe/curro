@@ -35,6 +35,7 @@ const drawerWidth = 240;
 const styles = theme => ({
   root: {
     display: 'flex',
+    overflow: 'hidden',
   },
   menuButton: {
     marginRight: theme.spacing(2),

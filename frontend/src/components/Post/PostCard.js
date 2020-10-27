@@ -1,5 +1,7 @@
 import React, {useState} from 'react';
 import { ActivityTile } from '../Activity/ActivityTile';
+import { Comment } from './Comment';
+import { AddComment } from './AddComment';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Skeleton from '@material-ui/lab/Skeleton';
@@ -26,11 +28,14 @@ export const PostCard = props => {
 
   const useStyles = makeStyles((theme) => ({
     card: {
-      width: "60vw",
       margin: theme.spacing(2),
+      width: "60vw",
+      [theme.breakpoints.down('sm')]: {
+        width: '100vw',
+      },
     },
     cardContent: {
-      paddingTop: '0px'
+      paddingTop: '0px',
     },
     profilePicture: {
       width: '48px',
@@ -43,10 +48,17 @@ export const PostCard = props => {
       padding: 0,
       margin: '16px 0 16px 0',
       width: '100%',
-      height: 148,
       flexWrap: 'wrap',
       overflow: 'hidden',
       backgroundColor: theme.palette.background.paper,
+    },
+    cardActions: {
+      padding: "16px",
+      paddingBottom: 0,
+    },
+    commentSection: {
+      padding: "16px",
+      paddingTop: 0,
     },
   }));
 
@@ -128,18 +140,23 @@ export const PostCard = props => {
             </div>
             )}
         </CardContent>
-        <CardActions>
+        <CardActions className={classes.cardActions}>
           <FormGroup row>
 
             <FormControlLabel
               control={<Checkbox icon={<FavoriteBorder />} checkedIcon={<Favorite />} name="like"  checked={likePost} onChange={handleLike}/>}
               label={postLikeCount + " Like" + (postLikeCount === 1 ? '' : 's')}
             />
-          {/* <Typography variant="body2" textColor="secondary">{formatDate(props.post.postDate)}</Typography> */}
           </FormGroup>
           {/* TODO add comments */}
 
         </CardActions>
+        <div className={classes.commentSection}>
+          <Comment/>
+          <Typography variant="body2" textColor="secondary">{formatDate(props.post.createdAt)}</Typography>
+          <AddComment/>
+        </div>
+        
       </Card>
     </div>);
 }

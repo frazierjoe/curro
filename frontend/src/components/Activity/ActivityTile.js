@@ -17,10 +17,15 @@ export const ActivityTile = props => {
     card: {
       width: '100%',
       height: '100%',
+      marginBottom: 0,
       backgroundColor: theme.palette.background.main,
+      "&:last-child": {
+        paddingBottom: 0
+      }
     },
     cardContent:{
-      marginBottom: "-16px"
+      marginBottom: 0,
+      paddingBottom: 0
     },
    
   }));
