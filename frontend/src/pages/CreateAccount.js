@@ -168,7 +168,7 @@ export const CreateAccount = props => {
       confirmError: !confirmValid, confirmErrorMessage: confirmErrorMessage, 
      });
 
-    if(emailValid && passwordValid) {
+    if(emailValid && passwordValid && confirmValid && birthdateValid && usernameValid && firstValid && lastValid) {
       await callback()
     } 
   }

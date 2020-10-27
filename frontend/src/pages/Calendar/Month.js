@@ -4,39 +4,40 @@ import Week from './Week';
 const weeksToDisplay = 6;
 
 const Month = ({ date, setView, firstDayOfWeek }) => {
-    // Based off of the passed month, generate 6 weeks worth of days
-    // from the sunday of the first week of a month.
-    let dayOne = new Date(date.getFullYear(), date.getMonth());
-    let firstSunday = new Date(dayOne);
-    firstSunday.setDate(-1 * dayOne.getDay() + 1);
+    const generateWeekComponents = () => {
+        // Get the first day of the month and get the first Sunday of that week.
+        let dayOne = new Date(date.getFullYear(), date.getMonth());
+        let firstSunday = new Date(dayOne);
+        firstSunday.setDate(-1 * dayOne.getDay() + 1);
 
-    // Generate $weeksToDisplay number of sundays to create weeks
-    let sundays = [];
-    for (let i = 0; i < (weeksToDisplay); i++) {
-        let item = new Date(firstSunday);
+        // Generate the first days of 6 weeks. It will be either all Sundays/Mondays
+        let firstDays = [];
+        for (let i = 0; i < (weeksToDisplay); i++) {
+            let item = new Date(firstSunday);
 
-        // If they want mondays first, always increment by 1
-        if (firstDayOfWeek === "Monday"){
-            // Edge case: if the first day of a month is sunday, I want to go back a week.  
-            if (dayOne.getDay() === 0){
-                item.setDate(item.getDate() - 7);
+            if (firstDayOfWeek === "Monday") {
+                // Edge case: if the first day of a month is sunday, I want to go back a week.  
+                if (dayOne.getDay() === 0) {
+                    item.setDate(item.getDate() - 7);
+                }
+                item.setDate(item.getDate() + 1);
             }
-            item.setDate(item.getDate() + 1);
+
+            firstDays.push(item);
+            firstSunday.setDate(firstSunday.getDate() + 7);
         }
 
-        sundays.push(item);
-        firstSunday.setDate(firstSunday.getDate() + 7);
-        
+        let weeks = firstDays.map(sunday => {
+            return <Week
+                currentMonth={date.getMonth()}
+                sunday={sunday}
+                setView={setView}
+                key={"-week" + sunday.toISOString()}
+            />
+        });
+        return weeks;
     }
-
-    let weeks = sundays.map(sunday => {
-        return <Week
-            currentMonth={date.getMonth()}
-            sunday={sunday}
-            setView={setView}
-            key={"-week" + sunday.toISOString()}
-        />
-    })
+    let weeks = generateWeekComponents();
 
     return (
         <tbody>

@@ -77,11 +77,11 @@ export const ProfileCard = props => {
 
   const { loading, error, data } = useQuery(QUERY_USER, {
     variables: {
-      input: "5f94e1e6e63d84215c77bd26"
+
+      input: "5f8d1b4e66ebae0038491572"
     }
   });
 
-  // var loading = true;
   if (error) return (<div>
     <Typography variant="h4">ERROR: {error}</Typography>
   </div>);
