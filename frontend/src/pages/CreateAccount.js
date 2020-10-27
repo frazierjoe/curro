@@ -242,7 +242,7 @@ export const CreateAccount = props => {
                 fullWidth
                 required
                 helperText={values.usernameError ? values.usernameErrorMessage : ''}
-                onChange={handleChange('last')}
+                onChange={handleChange('username')}
                 error={values.usernameError}
                 variant="outlined" />
               <TextField 

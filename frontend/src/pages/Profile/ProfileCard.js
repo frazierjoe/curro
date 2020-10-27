@@ -10,8 +10,11 @@ import CardHeader from '@material-ui/core/CardHeader';
 import Avatar from '@material-ui/core/Avatar';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import Box from '@material-ui/core/Box';
+import { EditProfileModal } from "../../components/EditProfileModal"
 
 export const ProfileCard = props => {
+
+  
   // TODO change this to ME_QUERY
   const QUERY_USER = gql`
     query getUser($input: ID!) {
@@ -57,19 +60,28 @@ export const ProfileCard = props => {
  
     return date.toLocaleDateString("en-US", options)
   }
+  const [openModal, setOpenModal] = React.useState(false);
+  
+  const handleOpen = () => {
+    setOpenModal(true);
+  };
+
+  const handleClose = () => {
+    setOpenModal(false);
+  };
   const editProfile = () => {
     console.log("edit profile")
     console.log("edit preferences")
   }
   const classes = useStyles();
 
-  const { error, data } = useQuery(QUERY_USER, {
+  const { loading, error, data } = useQuery(QUERY_USER, {
     variables: {
-      input: "5f4eeb9d5d985547bf9d391b"
+      input: "5f94e1e6e63d84215c77bd26"
     }
   });
 
-  var loading = true;
+  // var loading = true;
   if (error) return (<div>
     <Typography variant="h4">ERROR: {error}</Typography>
   </div>);
@@ -80,9 +92,10 @@ export const ProfileCard = props => {
         <CardHeader
           action={
             loading ? <></> : (
-              <IconButton aria-label="edit" onClick={editProfile}>
+              <IconButton aria-label="edit" onClick={handleOpen}>
                 <MoreVertIcon />
               </IconButton>
+              
             )
           }
           title={
@@ -132,5 +145,6 @@ export const ProfileCard = props => {
             )}
         </CardContent>
       </Card>
+      <EditProfileModal openModal={openModal} handleClose={() => setOpenModal(false)}/>
     </div>);
 }
