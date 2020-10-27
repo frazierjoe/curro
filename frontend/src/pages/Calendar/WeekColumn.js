@@ -27,7 +27,7 @@ const WeekColumn = ({date}) => {
                 <Divider></Divider>
                 <CardHeader
                     title="I just went on a sick run dude"
-                    subheader={date.toLocaleDateString(undefined, {year: 'short', month: 'long', day: 'numeric' })}
+                    subheader={date.toLocaleDateString(undefined, {year: 'numeric', month: 'numeric', day: 'numeric' })}
                 />
                 <CardContent>
                     Ran 3 miles, puked, ran 3 miles, puked, ran 3 miles, puked. Ran 3 miles, puked, ran 3 miles, puked, ran 3 miles, puked.Ran 3 miles, puked, ran 3 miles, puked, ran 3 miles, puked.Ran 3 miles, puked, ran 3 miles, puked, ran 3 miles, puked.Ran 3 miles, puked, ran 3 miles, puked, ran 3 miles, puked.Ran 3 miles, puked, ran 3 miles, puked, ran 3 miles, puked.Ran 3 miles, puked, ran 3 miles, puked, ran 3 miles, puked.Ran 3 miles, puked, ran 3 miles, puked, ran 3 miles, puked.Ran 3 miles, puked, ran 3 miles, puked, ran 3 miles, puked.Ran 3 miles, puked, ran 3 miles, puked, ran 3 miles, puked.
