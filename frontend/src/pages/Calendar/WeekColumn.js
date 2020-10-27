@@ -2,22 +2,18 @@ import { makeStyles, Card, CardContent, CardHeader, CardActions } from '@materia
 import IconButton from '@material-ui/core/IconButton';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import ShareIcon from '@material-ui/icons/Share';
-import React from 'react';
 import ActivityContent from './ActivityContent';
+import React from 'react';
 
 
 const useStyles = makeStyles((theme) => ({
-    card: {
-        maxWidth: "400px",
-        margin: "2em",
-    },
 
 }));
-
-const DayView = ({ date }) => {
+const WeekColumn = ({date}) => {
     const classes = useStyles();
+
     return (
-        <div style={{display: "flex", justifyContent: "center"}}>
+        <div>
             <Card className={classes.card}>
                 <CardHeader
                     title="I just went on a sick run dude"
@@ -28,7 +24,7 @@ const DayView = ({ date }) => {
                     Ran 3 miles, puked, ran 3 miles, puked, ran 3 miles, pukedRan 3 miles, puked, ran 3 miles, puked, ran 3 miles, pukedRan 3 miles, puked, ran 3 miles, puked, ran 3 miles, puked
                     Ran 3 miles, puked, ran 3 miles, puked, ran 3 miles, pukedRan 3 miles, puked, ran 3 miles, puked, ran 3 miles, puked
                 </CardContent>
-                <ActivityContent/>
+                <ActivityContent />
                 <CardActions disableSpacing>
                     <IconButton aria-label="add to favorites">
                         <FavoriteIcon />
@@ -42,4 +38,4 @@ const DayView = ({ date }) => {
     );
 }
 
-export default DayView;
+export default WeekColumn;

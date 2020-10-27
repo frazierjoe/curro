@@ -1,75 +1,99 @@
-import { Tooltip, IconButton, Menu, MenuItem, Button, makeStyles } from '@material-ui/core';
-import SettingsIcon from '@material-ui/icons/Settings';
 import React from 'react';
+import Button from '@material-ui/core/Button';
+import ClickAwayListener from '@material-ui/core/ClickAwayListener';
+import Grow from '@material-ui/core/Grow';
+import Paper from '@material-ui/core/Paper';
+import Popper from '@material-ui/core/Popper';
+import MenuItem from '@material-ui/core/MenuItem';
+import MenuList from '@material-ui/core/MenuList';
+import { makeStyles } from '@material-ui/core/styles';
+import { Tooltip, IconButton} from '@material-ui/core';
+import SettingsIcon from '@material-ui/icons/Settings';
 
 const useStyles = makeStyles((theme) => ({
-    iconButton: {
+    root: {
+        display: 'flex',
+    },
+    paper: {
         marginRight: theme.spacing(2),
-        [theme.breakpoints.down('sm')]: {
-            margin: 0,
-        },
     },
 }));
 
-const CalendarSettings = ({setFirstDayOfWeek}) => {
+export default function CalendarSettings({setFirstDayOfWeek}) {
     const classes = useStyles();
+    const [open, setOpen] = React.useState(false);
+    const anchorRef = React.useRef(null);
 
-    // Menu State
-    const [anchorEl, setAnchorEl] = React.useState(null);
-
-    const handleClick = (event) => {
-        console.log("Settings Button Clicked");
-        setAnchorEl(event.currentTarget);
+    const handleToggle = () => {
+        setOpen((prevOpen) => !prevOpen);
     };
 
-    const handleClose = () => {
-        setAnchorEl(null);
+    const handleClose = (event) => {
+        if (anchorRef.current && anchorRef.current.contains(event.target)) {
+            return;
+        }
+
+        setOpen(false);
     };
 
-    const sundayFirst = () => {
+    function handleListKeyDown(event) {
+        if (event.key === 'Tab') {
+            event.preventDefault();
+            setOpen(false);
+        }
+    }
+
+    const sundayFirst = (e) => {
         setFirstDayOfWeek("Sunday");
-        handleClose();
+        handleClose(e);
     }
 
-    const mondayFirst = () => {
+    const mondayFirst = (e) => {
         setFirstDayOfWeek("Monday");
-        handleClose();
+        handleClose(e);
     }
+
+    // return focus to the button when we transitioned from !open -> open
+    const prevOpen = React.useRef(open);
+    React.useEffect(() => {
+        if (prevOpen.current === true && open === false) {
+            anchorRef.current.focus();
+        }
+
+        prevOpen.current = open;
+    }, [open]);
 
     return (
-        <>
+        <div className={classes.root}>
             <Tooltip title="Settings" enterDelay={400} >
                 <IconButton
-                    color="inherit"
+                    ref={anchorRef}
                     className={classes.iconButton}
-                    aria-controls="simple-menu"
+                    aria-controls={open ? 'menu-list-grow' : undefined}
                     aria-haspopup="true"
-                    onClick={handleClick}
-                >
+                    onClick={handleToggle}
+                    >
                     <SettingsIcon />
                 </IconButton>
             </Tooltip>
+            <Popper open={open} anchorEl={anchorRef.current} role={undefined} transition disablePortal>
+                {({ TransitionProps, placement }) => (
+                    <Grow
+                        {...TransitionProps}
+                        style={{ transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom' }}
+                    >
+                        <Paper>
+                            <ClickAwayListener onClickAway={handleClose}>
+                                <MenuList autoFocusItem={open} id="menu-list-grow" onKeyDown={handleListKeyDown}>
+                                    <MenuItem onClick={sundayFirst}>Sundays First</MenuItem>
+                                    <MenuItem onClick={mondayFirst}>Mondays First</MenuItem>                 
+                                </MenuList>
+                            </ClickAwayListener>
+                        </Paper>
+                    </Grow>
+                )}
+            </Popper>
 
-            <Menu
-                id="simple-menu"
-                anchorEl={anchorEl}
-                keepMounted
-                open={Boolean(anchorEl)}
-                onClose={handleClose}
-                anchorOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                }}
-                transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                }}
-            >
-                <MenuItem onClick={sundayFirst}>Sundays First</MenuItem>
-                <MenuItem onClick={mondayFirst}>Mondays First</MenuItem>
-            </Menu>
-        </>
+        </div>
     );
 }
-
-export default CalendarSettings;
