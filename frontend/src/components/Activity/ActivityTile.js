@@ -1,4 +1,5 @@
 import React from 'react';
+import { AllowedActivity } from './AllowedActivity';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
@@ -24,14 +25,21 @@ export const ActivityTile = props => {
   
   const editActivity = (activity) => {
     props.setEditActivity(true)
-    console.log("edit activity " + activity)
-    props.setOpenActivityDetailModal(true)
-    props.setEditActivityTypeIndex(activity.activityId)
     props.setEditActivityId(activity.id)
+    props.setEditActivityValues({
+      distanceValue: activity.distance.value,
+      distanceUnit: activity.distance.unit,
+      duration: activity.duration,
+      equipmentId: activity.equipment.id,
+      heartRate: activity.additionalInfo.averageHeartRate,
+      elevationGain: activity.additionalInfo.elevationGain,
+      calories: activity.additionalInfo.calories,
+    })
+    props.setSelectedActivity(AllowedActivity[activity.activityId])
+    props.setOpenActivityDetailModal(true)
   }
   const classes = useStyles();
 
-  console.log(props.activity.id)
 
   return (
     <Card className={classes.card} >

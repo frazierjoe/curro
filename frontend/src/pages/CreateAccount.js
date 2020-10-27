@@ -115,7 +115,15 @@ export const CreateAccount = props => {
       marginTop: theme.spacing(3),
     },
     textField: {
-      margin: '16px 0 0 0'
+      margin: '16px 0 0 0',
+      '& label.Mui-focused': {
+        color: theme.palette.secondary.main,
+      },
+      '& .MuiOutlinedInput-root': {
+        '&.Mui-focused fieldset': {
+          borderColor: theme.palette.secondary.main,
+        },
+      },
     },
     errorMessage: {
       color: theme.palette.error.main,
@@ -160,7 +168,7 @@ export const CreateAccount = props => {
       confirmError: !confirmValid, confirmErrorMessage: confirmErrorMessage, 
      });
 
-    if(emailValid && passwordValid) {
+    if(emailValid && passwordValid && confirmValid && birthdateValid && usernameValid && firstValid && lastValid) {
       await callback()
     } 
   }
@@ -234,7 +242,7 @@ export const CreateAccount = props => {
                 fullWidth
                 required
                 helperText={values.usernameError ? values.usernameErrorMessage : ''}
-                onChange={handleChange('last')}
+                onChange={handleChange('username')}
                 error={values.usernameError}
                 variant="outlined" />
               <TextField 
@@ -260,6 +268,7 @@ export const CreateAccount = props => {
                   label="Birthdate"
                   value={selectedDate}
                   onChange={handleDateChange}
+                  className={classes.textField}
                   KeyboardButtonProps={{
                     'aria-label': 'change date',
                   }}

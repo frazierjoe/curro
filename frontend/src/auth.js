@@ -1,8 +1,13 @@
 import { gql } from '@apollo/client';
 import { getClient, useMutation } from './server'
 
-let client
-
+const SIGNIN_USER_MUTATION = gql`
+  mutation signIn($input: SignInInput!){
+    signIn(input: $input){
+      id
+    }
+  }
+`;
 
 const CREATE_USER_MUTATION = gql`
   mutation createUser($input: CreateUserInput!){
@@ -12,53 +17,72 @@ const CREATE_USER_MUTATION = gql`
   }
 `;
 
+const SIGNOUT_MUTATION = gql`
+  mutation {
+    signOut
+  }
+`;
+
 class Auth {
   constructor() {
     this.authenticated = true;
+    this.userId = ""
+    this.client = null
+  }
+
+  async getAuthClient(){
+    if(this.client === null){
+      this.client = await getClient()
+    }
+    return this.client
   }
 
   async login(cb, userInput) {
+     let client = await this.getAuthClient()
 
-    client = await getClient()
-    console.log(userInput)
-    // TODO hook up api call
-    var loginSuccess = true
-    var errorMessage = "Invalid email or password"
+    const userResponse = await useMutation(client, SIGNIN_USER_MUTATION, userInput)
 
-    if(loginSuccess) {
+    if(userResponse.data.errors) {    
+      return userResponse.data.errors.message
+    } else {
+      const user = userResponse.data.signIn
+      this.userId = user.id
       this.authenticated = true;
       cb();
-    } else {
-      return errorMessage
     }
   }
 
   async createUser(cb, userInput) {
-    client = await getClient()
+    let client = await this.getAuthClient()
 
-    var createUserSuccess = true
-    var errorMessage = "Unable to create account for user"    
-
-    console.log(client)
     const userResponse = await useMutation(client, CREATE_USER_MUTATION, userInput)
-    console.log(userResponse)
-    // const testUser = userResponse.data.createUser
- 
-    if(createUserSuccess) {
+
+    if(userResponse.errors) {
+      return userResponse.data.errors.message
+    } else {
+      const user = userResponse.data.createUser
+      this.userId = user.id
       this.authenticated = true;
       cb();
-    } else {
-      return errorMessage
     }
   }
 
-  logout(cb) {
+  async logout(cb) {
     this.authenticated = false;
+    this.userId = ""
+    let client = await this.getAuthClient()
+    const userResponse = await useMutation(client, SIGNOUT_MUTATION)
+    if(userResponse.errors) {
+      console.log(userResponse.data.errors.message)
+    } 
     cb();
   }
 
   isAuthenticated() {
     return this.authenticated;
+  }
+  getUserId() {
+    return this.userId
   }
 }
 

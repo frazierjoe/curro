@@ -3,23 +3,10 @@ import { useQuery, gql } from '@apollo/client';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Skeleton from '@material-ui/lab/Skeleton';
-import Snackbar from '@material-ui/core/Snackbar';
-import MuiAlert from '@material-ui/lab/Alert';
-import Container from '@material-ui/core/Container';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
-import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
-import OutlinedInput from '@material-ui/core/OutlinedInput';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import TextField from '@material-ui/core/TextField';
-import FormHelperText from '@material-ui/core/FormHelperText';
-import Visibility from '@material-ui/icons/Visibility';
-import VisibilityOff from '@material-ui/icons/VisibilityOff';
-import FormControl from '@material-ui/core/FormControl';
-import InputLabel from '@material-ui/core/InputLabel';
 import CardHeader from '@material-ui/core/CardHeader';
-import CardMedia from '@material-ui/core/CardMedia';
 import Avatar from '@material-ui/core/Avatar';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import Box from '@material-ui/core/Box';
@@ -76,13 +63,12 @@ export const ProfileCard = props => {
   }
   const classes = useStyles();
 
-  const { error, data } = useQuery(QUERY_USER, {
+  const { loading, error, data } = useQuery(QUERY_USER, {
     variables: {
-      input: "5f4eeb9d5d985547bf9d391b"
+      input: "5f8d1b4e66ebae0038491572"
     }
   });
 
-  var loading = true;
   if (error) return (<div>
     <Typography variant="h4">ERROR: {error}</Typography>
   </div>);

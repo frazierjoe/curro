@@ -4,7 +4,7 @@ export const AllowedActivity = [
     type: "Run",
     durationAllowed: true,
     distanceAllowed: true,
-    equipmentAllowed: "SHOE",
+    equipmentAllowed: "Shoes",
     additionalInfoAllowed: true
   },
   {
@@ -12,7 +12,7 @@ export const AllowedActivity = [
     type: "Bike",
     durationAllowed: true,
     distanceAllowed: true,
-    equipmentAllowed: "BIKE",
+    equipmentAllowed: "Bikes",
     additionalInfoAllowed: true
   },
   {
