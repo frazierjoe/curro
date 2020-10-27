@@ -35,7 +35,6 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.down('sm')]: {
       height: '100%', 
       width: '100%',
-      overflow: 'scroll',
     },
   },
   container: {
@@ -62,12 +61,8 @@ const useStyles = makeStyles((theme) => ({
   },
   activityGrid: {
     padding: 0,
-    margin: 0,
+    margin: '16px 0 0 0',
     width: '100%',
-    [theme.breakpoints.down('sm')]: {
-      width: '100vw',
-      marginLeft: '-8px',
-    },
     flexWrap: 'wrap',
     overflow: 'hidden',
     backgroundColor: theme.palette.background.paper,
@@ -96,12 +91,9 @@ export const NewActivityModal = (props) => {
 
   const handlePostChange = (prop) => (event) => {
 
-    if(prop=='title'){
-      console.log(event.target.value)
-      console.log(event.target.value.length)
+    if(prop ==='title'){
 
       if(post.titleError && event.target.value.length > 0){
-        console.log('title found')
         setPost({...post, titleError: false, [prop]: String(event.target.value)})
         return
       } 
@@ -113,7 +105,8 @@ export const NewActivityModal = (props) => {
   const defaultActivityValues = {
     distanceValue: '',
     distanceUnit: 'mi',
-    duration: '00:00:00',
+    duration: '',
+    durationMs: 0,
     equipmentId: '',
     heartRate: '',
     elevationGain: '',
@@ -123,7 +116,12 @@ export const NewActivityModal = (props) => {
   const [editActivityValues, setEditActivityValues] = React.useState(defaultActivityValues);
 
   const handleEditActivityChange = (prop) => (event) => {
+    if(prop === 'duration'){
+      var onlyNumbersRegex = /[^\.\d\:]/g
+      event.target.value = event.target.value.replace(onlyNumbersRegex, '')
+    }
     setEditActivityValues({ ...editActivityValues, [prop]: event.target.value });
+    
   };
 
   const setEditActivityDefaultValues = () => {
@@ -165,6 +163,10 @@ export const NewActivityModal = (props) => {
     });
 
     if(postTitleValid && selectedDateValid) {
+      // TODO make api call
+      // TODO make api call to create activities and get activity id list
+      // TODO make api call to make post
+      console.log("Make api post")
       callback()
       props.handleClose()
     } 
@@ -225,6 +227,7 @@ export const NewActivityModal = (props) => {
                 <GridListTile key={activity.id} style={{boxShadow: 'none'}}>
                     <ActivityTile 
                       activity={activity} 
+                      edit={true}
                       setOpenActivityDetailModal={setOpenActivityDetailModal}
                       setEditActivityId={setEditActivityId}
                       setEditActivity={setEditActivity}

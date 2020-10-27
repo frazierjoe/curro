@@ -24,21 +24,6 @@ import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/picker
 export const CreateAccount = props => {
   var _isMounted = true
 
-  // const location = props.location.state ? props.location.state.from.pathname.substring(1) : ''
-
-  // const [open, setOpen] = React.useState(location !== '');
-
-  // function Alert(props) {
-  //   return <MuiAlert elevation={6} variant="filled" {...props} />;
-  // }
-
-  // const handleClose = (reason) => {
-  //   if (reason === 'clickaway') {
-  //     return;
-  //   }
-  //   setOpen(false);
-  // };
-
   const [values, setValues] = React.useState({
     first: '',
     firstError: false,
@@ -179,15 +164,17 @@ export const CreateAccount = props => {
       console.log("Create user, form is valid")
      
       var birthdate = new Date(selectedDate)
+      console.log(birthdate.toISOString())
+      console.log(birthdate.toISOString().toString())
 
       var userInput = {
         input: {
-          email: values.email,
-          first: values.first,
-          last: values.last,
-          username: values.username,
-          password: values.password,
-          birthdate: birthdate.toISOString()
+          email: String(values.email),
+          first: String(values.first),
+          last: String(values.last),
+          username: String(values.username),
+          password: String(values.password),
+          birthdate: birthdate.toISOString().toString()
         }
       }
 
@@ -305,6 +292,7 @@ export const CreateAccount = props => {
                 />
                 <FormHelperText id="create-confirm-error-message">{values.passwordError ? values.passwordErrorMessage : ''}</FormHelperText>
               </FormControl>
+              <Typography variant="body2" textColor="secondary">Password must have 1 lowercase, 1 uppercase, 1 number, 1 special, and be at least 8 long</Typography>
               <FormControl 
                 variant="outlined" 
                 fullWidth 
