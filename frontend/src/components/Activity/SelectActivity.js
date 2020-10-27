@@ -20,11 +20,11 @@ const useStyles = makeStyles((theme) => ({
     boxShadow: theme.shadows[4],
     padding: '0 8px 8px 8px',
     margin: 0,
-    overflow: 'hidden',
+    overflow: 'scroll',
+    overflowX: 'hidden',
     [theme.breakpoints.down('sm')]: {
       height: '100%', 
       width: '100%',
-      overflow: 'scroll',
     },
   },
   container: {

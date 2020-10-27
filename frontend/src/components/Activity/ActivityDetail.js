@@ -28,11 +28,11 @@ const useStyles = makeStyles((theme) => ({
     boxShadow: theme.shadows[4],
     padding: '0 8px 8px 8px',
     margin: 0,
-    overflow: 'hidden',
+    overflow: 'scroll',
+    overflowX: 'hidden',
     [theme.breakpoints.down('sm')]: {
       height: '100%', 
       width: '100%',
-      overflow: 'scroll',
     },
   },
   container: {
@@ -85,19 +85,20 @@ export const ActivityDetail = (props) => {
       // update the element
       activitiesCopy[activityIndex] = {
         ...props.activityData[activityIndex],
-        duration: props.editActivityValues.duration,
+        duration: TimeHelper.getTotalMs(props.editActivityValues.duration),
         distance: {
-          value: props.editActivityValues.distanceValue,
-          unit: props.editActivityValues.distanceUnit
+          value: props.editActivityValues.distanceValue === '' ? 0 : parseFloat(props.editActivityValues.distanceValue)
+            .toFixed((props.editActivityValues.distanceUnit === 'yds' | props.editActivityValues.distanceUnit === 'm') ? 0 : 2),
+          unit: props.editActivityValues.distanceUnit.toUpperCase()
         },
         equipment: {
           id: props.editActivityValues.equipmentId,
         },
         additionalInfo: {
-          averageHeartRate: props.editActivityValues.heartRate,
-          elevationGain: props.editActivityValues.elevationGain,
-          calories: props.editActivityValues.calories
-        },
+          averageHeartRate: props.editActivityValues.heartRate === '' ? 0 : parseInt(props.editActivityValues.heartRate),
+          elevationGain: props.editActivityValues.elevationGain === '' ? 0 : parseInt(props.editActivityValues.elevationGain),
+          calories: props.editActivityValues.calories === '' ? 0 : parseInt(props.editActivityValues.calories)
+        }
       }
       //update the state
       props.setActivityData(activitiesCopy)
@@ -114,19 +115,20 @@ export const ActivityDetail = (props) => {
           {
           id: id,
           activityId: props.activity.id,
-          type: props.activity.type,
-          duration: props.editActivityValues.duration,
+          type: props.activity.type.toUpperCase(),
+          duration: TimeHelper.getTotalMs(props.editActivityValues.duration),
           distance: {
-            value: props.editActivityValues.distanceValue,
-            unit: props.editActivityValues.distanceUnit
+            value: props.editActivityValues.distanceValue === '' ? 0 : parseFloat(props.editActivityValues.distanceValue)
+              .toFixed((props.editActivityValues.distanceUnit === 'yds' | props.editActivityValues.distanceUnit === 'm') ? 0 : 2),
+            unit: props.editActivityValues.distanceUnit.toUpperCase()
           },
           equipment: {
             id: props.editActivityValues.equipmentId,
           },
           additionalInfo: {
-            averageHeartRate: props.editActivityValues.heartRate,
-            elevationGain: props.editActivityValues.elevationGain,
-            calories: props.editActivityValues.calories
+            averageHeartRate: props.editActivityValues.heartRate === '' ? 0 : parseInt(props.editActivityValues.heartRate),
+            elevationGain: props.editActivityValues.elevationGain === '' ? 0 : parseInt(props.editActivityValues.elevationGain),
+            calories: props.editActivityValues.calories === '' ? 0 : parseInt(props.editActivityValues.calories)
           }
         }]
       )
@@ -142,6 +144,13 @@ export const ActivityDetail = (props) => {
     props.setEditActivityDefaultValues()
 
   };
+
+  const goBack = () => {
+    // reset the edit activity default values
+    props.setEditActivityDefaultValues()
+    //close the details modal
+    props.handleClose()
+  }
 
   return (
     <div>
@@ -162,7 +171,7 @@ export const ActivityDetail = (props) => {
               </IconButton>
             </Tooltip> :
             <Tooltip title="Back" placement="right" enterDelay={400}>
-              <IconButton onClick={props.handleClose} >
+              <IconButton onClick={goBack} >
                 <ArrowBackIosIcon/>
               </IconButton>
             </Tooltip>
