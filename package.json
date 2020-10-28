@@ -2,7 +2,6 @@
   "engines": {
     "node": "12.18.2"
   },
-  "homepage": "http://bradh43.github.io/curro",
   "name": "frontend",
   "version": "0.1.0",
   "private": true,
