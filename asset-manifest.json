@@ -1,0 +1,22 @@
+{
+  "files": {
+    "main.css": "/curro/static/css/main.458a1203.chunk.css",
+    "main.js": "/curro/static/js/main.cf9258ce.chunk.js",
+    "main.js.map": "/curro/static/js/main.cf9258ce.chunk.js.map",
+    "runtime-main.js": "/curro/static/js/runtime-main.3b77693f.js",
+    "runtime-main.js.map": "/curro/static/js/runtime-main.3b77693f.js.map",
+    "static/js/2.9aae11b6.chunk.js": "/curro/static/js/2.9aae11b6.chunk.js",
+    "static/js/2.9aae11b6.chunk.js.map": "/curro/static/js/2.9aae11b6.chunk.js.map",
+    "index.html": "/curro/index.html",
+    "precache-manifest.23d7fee06f0fcbf1fcb45b6234aa67af.js": "/curro/precache-manifest.23d7fee06f0fcbf1fcb45b6234aa67af.js",
+    "service-worker.js": "/curro/service-worker.js",
+    "static/css/main.458a1203.chunk.css.map": "/curro/static/css/main.458a1203.chunk.css.map",
+    "static/js/2.9aae11b6.chunk.js.LICENSE.txt": "/curro/static/js/2.9aae11b6.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.3b77693f.js",
+    "static/js/2.9aae11b6.chunk.js",
+    "static/css/main.458a1203.chunk.css",
+    "static/js/main.cf9258ce.chunk.js"
+  ]
+}
