@@ -153,7 +153,7 @@ export const PostCard = props => {
         </CardActions>
         <div className={classes.commentSection}>
           <Comment/>
-          <Typography variant="body2" textColor="secondary">{formatDate(props.post.createdAt)}</Typography>
+          <Typography variant="body2" color="textSecondary">{formatDate(props.post.createdAt)}</Typography>
           <AddComment/>
         </div>
         

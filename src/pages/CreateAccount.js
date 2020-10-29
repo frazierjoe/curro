@@ -1,6 +1,7 @@
-import React from 'react';
+import React, {useContext} from 'react';
+import { AuthContext } from '../auth';
+import { useMutation, gql } from '@apollo/client';
 import { Footer } from '../components/Footer';
-import auth from '../auth'
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
 import { makeStyles } from '@material-ui/core/styles';
@@ -14,6 +15,7 @@ import TextField from '@material-ui/core/TextField';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import DateFnsUtils from '@date-io/date-fns';
@@ -77,6 +79,32 @@ export const CreateAccount = props => {
     event.preventDefault();
   };
 
+  const context = useContext(AuthContext)
+
+  const CREATE_USER_MUTATION = gql`
+    mutation createUser($input: CreateUserInput!){
+      createUser(input: $input){
+        user {
+          id
+        }
+        token
+      }
+    }
+  `;
+
+const [createUserMutation, {loading, error, data }] = useMutation(CREATE_USER_MUTATION, {
+  update(_, {data: {createUser: userData}}) {
+    _isMounted = false
+    context.login(userData)
+    history.push('/feed')
+  },
+  onError(error) {
+    if(_isMounted){
+      setValues({ ...values, emailError: false, passwordError: false, errorMessage: error.message });
+    }
+  }
+})
+
   const calculateAge = (date) => {
     var birthdate = new Date(date)
     var difference = Date.now() - birthdate.getTime()
@@ -125,7 +153,7 @@ export const CreateAccount = props => {
     var firstErrorMessage = 'First Name is required'
     var lastErrorMessage = 'Last Name is required'
     var usernameErrorMessage = 'Username is required'
-    var birthdateErrorMessage = validAge ? 'Must be at least 13 years old to join' : 'Birthdate is required'
+    var birthdateErrorMessage = validAge ? 'Birthdate is required' : 'Must be at least 13 years old to join'
     var emailErrorMessage = 'Invalid Email'
     var passwordErrorMessage = 'Password must have at least 1 lowercase, 1 uppercase, 1 number, 1 special, and at least 8 long'
     var confirmErrorMessage = 'Passwords must match'
@@ -148,7 +176,7 @@ export const CreateAccount = props => {
       lastError: !lastValid, lastErrorMessage: lastErrorMessage, 
       emailError: !emailValid, emailErrorMessage: emailErrorMessage, 
       usernameError: !usernameValid, usernameErrorMessage: usernameErrorMessage, 
-      birthdateError: !birthdateValid, birthdateErrorMessage: birthdateErrorMessage, 
+      birthdateError: !birthdateValid, birthdateErrorMessage: !birthdateValid ? birthdateErrorMessage : '', 
       passwordError: !passwordValid, passwordErrorMessage: passwordErrorMessage,
       confirmError: !confirmValid, confirmErrorMessage: confirmErrorMessage, 
      });
@@ -159,8 +187,8 @@ export const CreateAccount = props => {
   }
 
 
-  const createUser = async () => {
-    validateForm(async () => {
+  const createUser = () => {
+    validateForm(() => {
       console.log("Create user, form is valid")
      
       var birthdate = new Date(selectedDate)
@@ -177,15 +205,7 @@ export const CreateAccount = props => {
           birthdate: birthdate.toISOString().toString()
         }
       }
-
-      var errorMessage = await auth.createUser(() => {
-        console.log("Goto feed")
-        _isMounted = false
-        history.push('/feed')
-      }, userInput);
-      if(_isMounted) {
-        setValues({ ...values, emailError: false, passwordError: false, errorMessage: errorMessage });
-      }
+      createUserMutation({variables: userInput})
     })  
   };
 
@@ -288,11 +308,11 @@ export const CreateAccount = props => {
                       </IconButton>
                     </InputAdornment>
                   }
-                  labelWidth={70}
+                  labelwidth={70}
                 />
                 <FormHelperText id="create-confirm-error-message">{values.passwordError ? values.passwordErrorMessage : ''}</FormHelperText>
               </FormControl>
-              <Typography variant="body2" textColor="secondary">Password must have 1 lowercase, 1 uppercase, 1 number, 1 special, and be at least 8 long</Typography>
+              <Typography variant="body2" color="textSecondary">Password must have 1 lowercase, 1 uppercase, 1 number, 1 special, and be at least 8 long</Typography>
               <FormControl 
                 variant="outlined" 
                 fullWidth 
@@ -320,13 +340,15 @@ export const CreateAccount = props => {
                       </IconButton>
                     </InputAdornment>
                   }
-                  labelWidth={70}
+                  labelwidth={70}
                 />
                 <FormHelperText id="create-confirm-error-message">{values.confirmError ? values.confirmErrorMessage : ''}</FormHelperText>
               </FormControl>
               <div>
                 <Typography variant="subtitle1" className={classes.errorMessage}>{values.errorMessage}</Typography>
-                <Button variant="contained" className={classes.textField} color="primary" fullWidth size="large" onClick={createUser}>Create Account</Button>
+                <Button variant="contained" className={classes.textField} color="primary" fullWidth size="large" onClick={createUser} disabled={loading}>
+                  {loading ? <CircularProgress color="inherit" size={26}/> : <>Create Account</> } 
+                </Button>
                 <Button className={classes.textField} fullWidth size="medium" onClick={existingUser}>Already have an account? Login</Button>
               </div>
             </form>

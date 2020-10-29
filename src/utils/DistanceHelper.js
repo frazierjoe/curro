@@ -63,8 +63,8 @@ const DistanceHelper = {
         sec = sec < 10 ? "0"+sec : sec
         return min + ":" + sec + "/100yds"
       default:
-        var totalMiles = this.convertDistanceToUnit(covertDistance, "MI")
-        duration = duration/totalMiles
+        var totalRunMiles = this.convertDistanceToUnit(covertDistance, "MI")
+        duration = duration/totalRunMiles
         var min = Math.floor(duration/60000)
         var sec = Math.floor((duration%60000)/1000)
         sec = sec < 10 ? "0"+sec : sec

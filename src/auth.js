@@ -1,86 +1,64 @@
-import { gql } from '@apollo/client';
-import { getClient, useMutation } from './server'
+import React, { useReducer, createContext } from 'react'
+import jwtDecode from 'jwt-decode'
 
-const SIGNIN_USER_MUTATION = gql`
-  mutation signIn($input: SignInInput!){
-    signIn(input: $input){
-      id
-    }
-  }
-`;
+const initialState = {
+  user: null
+}
 
-const CREATE_USER_MUTATION = gql`
-  mutation createUser($input: CreateUserInput!){
-    createUser(input: $input){
-      id
-    }
-  }
-`;
-
-const SIGNOUT_MUTATION = gql`
-  mutation {
-    signOut
-  }
-`;
-
-class Auth {
-  constructor() {
-    this.authenticated = true;
-    this.client = null
-  }
-
-  async getAuthClient(){
-    if(this.client === null){
-      this.client = await getClient()
-    }
-    return this.client
-  }
-
-  async login(cb, userInput) {
-     let client = await this.getAuthClient()
-
-    const userResponse = await useMutation(client, SIGNIN_USER_MUTATION, userInput)
-
-    if(userResponse.data.errors) {    
-      return userResponse.data.errors.message
-    } else {
-      const user = userResponse.data.signIn
-      this.authenticated = true;
-      cb();
-    }
-  }
-
-  async createUser(cb, userInput) {
-    let client = await this.getAuthClient()
-
-    const userResponse = await useMutation(client, CREATE_USER_MUTATION, userInput)
-
-    if(userResponse.errors) {
-      return userResponse.data.errors.message
-    } else {
-      console.log(userResponse)
-      this.authenticated = true;
-      cb();
-    }
-  }
-
-  async logout(cb) {
-    this.authenticated = false;
-    let client = await this.getAuthClient()
-    const userResponse = await useMutation(client, SIGNOUT_MUTATION)
-    if(userResponse.errors) {
-      console.log(userResponse.data.errors.message)
-    } 
-    cb();
-  }
-
-  isAuthenticated() {
-    return this.authenticated;
-  }
-  getUserId() {
-    return this.userId
+if(localStorage.getItem("token")){
+  const decodedToken = jwtDecode(localStorage.getItem("token"))
+  if(decodedToken.exp * 1000 < Date.now()){
+    localStorage.removeItem("token")
+  } else {
+    initialState.user = decodedToken
   }
 }
 
-// Export exactly 1 instance to follow Singelton pattern
-export default new Auth();
+const AuthContext = createContext({
+  user: null,
+  login: (userData) => {},
+  logout: () => {}
+})
+
+function authReducer(state, action){
+  switch(action.type){
+    case 'LOGIN':
+      return {
+        ...state,
+        user: action.payload
+      }
+    case 'LOGOUT':
+      return {
+        ...state,
+        user: null
+      }
+    default:
+      return state;
+  }
+}
+const AuthProvider = props => {
+
+  const [state, dispatch] = useReducer(authReducer, initialState)
+
+  function login(userData){
+    localStorage.setItem("token", userData.token)
+    dispatch({
+      type: 'LOGIN',
+      payload: userData
+    })
+  }
+
+  function logout(){
+    localStorage.removeItem('token')
+    dispatch({type: 'LOGOUT'})
+  }
+
+  return (
+    <AuthContext.Provider
+      value={{user: state.user, login, logout}}
+      {...props}
+    />
+  )
+  
+}
+export { AuthContext, AuthProvider }

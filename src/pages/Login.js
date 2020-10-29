@@ -1,6 +1,7 @@
-import React from 'react';
+import React, {useContext} from 'react';
+import { AuthContext } from '../auth';
+import { useMutation, gql } from '@apollo/client';
 import { Footer } from '../components/Footer';
-import auth from '../auth'
 import Typography from '@material-ui/core/Typography';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
@@ -19,10 +20,11 @@ import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import Link from '@material-ui/core/Link';
-
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 
 export const Login = props => {
+
   var _isMounted = true
 
   const location = props.location.state ? props.location.state.from.pathname.substring(1) : ''
@@ -62,6 +64,31 @@ export const Login = props => {
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
   };
+
+  const context = useContext(AuthContext)
+
+  const SIGNIN_USER_MUTATION = gql`
+  mutation signIn($input: SignInInput!){
+    signIn(input: $input){
+      user {
+        id
+      }
+      token
+    }
+  }
+`;
+const [signinUserMutation, {loading, error, data }] = useMutation(SIGNIN_USER_MUTATION, {
+  update(_, {data: {signIn: userData}}) {
+    _isMounted = false
+    context.login(userData)
+    history.push('/feed')
+  },
+  onError(error) {
+    if(_isMounted){
+      setValues({ ...values, emailError: false, passwordError: false, errorMessage: error.message });
+    }
+  }
+})
 
   const useStyles = makeStyles((theme) => ({
     root: {
@@ -103,9 +130,6 @@ export const Login = props => {
   const classes = useStyles();
 
   const validateForm = (callback) => {
-    console.log("Checking Form")
-    console.log(values.email)
-    console.log(values.password)
 
     var emailErrorMessage = 'Invalid Email'
     var passwordErrorMessage = 'Password is required'
@@ -123,24 +147,16 @@ export const Login = props => {
     } 
   }
 
-  const loginUser = async () => {
-    validateForm(async () => {
-      console.log("Logging the user in, form valid")
-      var userInput = {
+  const loginUser = () => {
+    validateForm(() => {
+      const userInput = {
         input: {
           email: values.email,
           password: values.password
         }
       }
-      var errorMessage = await auth.login(() => {
-        console.log("Goto feed")
-        _isMounted = false
-        history.push('/feed')
-      }, userInput);
-      if(_isMounted){
-        setValues({ ...values, emailError: false, passwordError: false, errorMessage: errorMessage });
-      }
-    })  
+      signinUserMutation({ variables: userInput })
+    })
   };
 
   const newUser = () => {
@@ -199,13 +215,15 @@ export const Login = props => {
                       </IconButton>
                     </InputAdornment>
                   }
-                  labelWidth={70}
+                  labelwidth={70}
                 />
                 <FormHelperText id="login-password-error-message">{values.passwordError ? values.passwordErrorMessage : ''}</FormHelperText>
               </FormControl>
               <div>
                 <Typography variant="subtitle1" className={classes.errorMessage}>{values.errorMessage}</Typography>
-                <Button variant="contained" className={classes.textField} color="primary" fullWidth size="large" onClick={loginUser}>Login</Button>
+                <Button variant="contained" className={classes.textField} color="primary" fullWidth size="large" onClick={loginUser} disabled={loading}>
+                  {loading ? <CircularProgress color="inherit" size={26}/> : <>Login</> } 
+                </Button>
                 <Button className={classes.textField} fullWidth size="medium" onClick={newUser}>Need an account</Button>
                 <div className={classes.forgotPassword}>
                   <Link
@@ -213,7 +231,7 @@ export const Login = props => {
                     variant="body2"
                     color="secondary"
                     onClick={() => {
-                      console.info("I'm a button.");
+                      console.info("Forgot password");
                     }}
                   >
                     Forgot Password?
@@ -225,6 +243,7 @@ export const Login = props => {
         </Card>
 
       </Container>
+      
       
       <Footer />
     </div>);

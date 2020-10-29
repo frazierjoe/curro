@@ -1,7 +1,7 @@
 import React from 'react';
 import { useQuery, gql } from '@apollo/client';
-import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
+import Typography from '@material-ui/core/Typography';
 import Skeleton from '@material-ui/lab/Skeleton';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
@@ -14,11 +14,9 @@ import { EditProfileModal } from "../../components/EditProfileModal"
 
 export const ProfileCard = props => {
 
-  
-  // TODO change this to ME_QUERY
-  const QUERY_USER = gql`
-    query getUser($input: ID!) {
-      user(id: $input){
+  const QUERY_ME = gql`
+    query {
+      me {
         id
         email
         first
@@ -75,15 +73,10 @@ export const ProfileCard = props => {
   }
   const classes = useStyles();
 
-  const { loading, error, data } = useQuery(QUERY_USER, {
-    variables: {
-
-      input: "5f8d1b4e66ebae0038491572"
-    }
-  });
+  const { loading, error, data } = useQuery(QUERY_ME);
 
   if (error) return (<div>
-    <Typography variant="h4">ERROR: {error}</Typography>
+    <Typography variant="h5" style={{ margin: '16px' }}>ERROR: {error.message}</Typography>
   </div>);
 
   return (
@@ -102,10 +95,10 @@ export const ProfileCard = props => {
             loading ? (
               <Skeleton animation="wave" width="80%" />
             ) : (
-                data.user.first + ' ' + data.user.last
+                data.me.first + ' ' + data.me.last
               )
           }
-          subheader={loading ? <Skeleton animation="wave" width="40%" /> : data.user.username}
+          subheader={loading ? <Skeleton animation="wave" width="40%" /> : data.me.username}
         />
 
         <CardContent className={classes.cardContent}>
@@ -127,18 +120,18 @@ export const ProfileCard = props => {
                     <Avatar
                       alt="User Profile"
                       className={classes.largeAvatar}
-                      src={data.user.profilePictureURL}
+                      src={data.me.profilePictureURL}
                     />
                   </Box>
                 </Box>
                 <Typography variant="body1" component="p">
                   {
-                    data.user.bio
+                    data.me.bio
                   }
                 </Typography>
                 <Typography variant="body2" color="textSecondary" component="p" style={{ marginTop: '16px' }}>
                   {
-                    "Member since " + formatDate(data.user.createdAt)
+                    "Member since " + formatDate(data.me.createdAt)
                   }
                 </Typography>
               </div>

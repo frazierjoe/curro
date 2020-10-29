@@ -82,7 +82,7 @@ export const AddComment = props => {
             </IconButton>
           </InputAdornment>
         }
-        labelWidth={70}
+        labelwidth={70}
       />
     </FormControl>
 

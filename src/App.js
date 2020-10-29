@@ -1,5 +1,6 @@
 import React from 'react';
 import './App.css';
+import { AuthProvider } from './auth';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { createMuiTheme, ThemeProvider, responsiveFontSizes } from '@material-ui/core/styles';
 import { Home } from './pages/Home';
@@ -12,11 +13,27 @@ import { ProtectedRoute } from './protected.route';
 import { Login } from './pages/Login';
 import { CreateAccount } from './pages/CreateAccount'
 import Header from './components/Header';
-import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
+import { ApolloClient, createHttpLink, InMemoryCache, ApolloProvider } from '@apollo/client';
+import { setContext } from '@apollo/client/link/context';
 
+const httpLink = createHttpLink({
+  uri: 'http://localhost:4000/graphql',
+});
+
+const authLink = setContext((_, { headers }) => {
+  // get the authentication token from local storage if it exists
+  const token = localStorage.getItem('token');
+  // return the headers to the context so httpLink can read them
+  return {
+    headers: {
+      ...headers,
+      authorization: token ?  token : "",
+    }
+  }
+});
 
 const client = new ApolloClient({
-  uri: 'http://localhost:4000/graphql',
+  link: authLink.concat(httpLink),
   cache: new InMemoryCache()
 });
 
@@ -50,30 +67,32 @@ theme = responsiveFontSizes(theme);
 function App() {
 
   return (
-    <ApolloProvider client={client}>
-      <ThemeProvider theme={theme}>
-        <BrowserRouter>
-          <Header/>
-          <Switch>
-            <Route exact path='/' component={ Home }/>
-            <Route exact path='/home' component={ Home }/>
-            <Route exact path='/login' component={ Login }/>
-            <Route exact path='/create' component={ CreateAccount }/>
-            <Route exact path='/createAccount' component={ CreateAccount }/>
-            <ProtectedRoute exact path='/calendar' component={ Calendar }/>
-            <ProtectedRoute exact path='/cal' component={ Calendar }/>
-            <ProtectedRoute exact path='/feed' component={ Feed }/>
-            <ProtectedRoute exact path='/newsfeed' component={ Feed }/>
-            <ProtectedRoute exact path='/profile' component={ Profile }/>
-            <ProtectedRoute exact path='/setting' component={ Settings }/>
-            <ProtectedRoute exact path='/settings' component={ Settings }/>
-            <Route exact path='/error' component={ PageNotFound }/>
-            <Route exact path='/404' component={ PageNotFound }/>
-            <Route exact path='*' component={ PageNotFound }/>
-          </Switch>
-        </BrowserRouter>
-      </ThemeProvider>
-    </ApolloProvider>
+    <AuthProvider>
+      <ApolloProvider client={client}>
+        <ThemeProvider theme={theme}>
+          <BrowserRouter>
+            <Header/>
+            <Switch>
+              <Route exact path='/' component={ Home }/>
+              <Route exact path='/home' component={ Home }/>
+              <Route exact path='/login' component={ Login }/>
+              <Route exact path='/create' component={ CreateAccount }/>
+              <Route exact path='/createAccount' component={ CreateAccount }/>
+              <ProtectedRoute exact path='/calendar' component={ Calendar }/>
+              <ProtectedRoute exact path='/cal' component={ Calendar }/>
+              <ProtectedRoute exact path='/feed' component={ Feed }/>
+              <ProtectedRoute exact path='/newsfeed' component={ Feed }/>
+              <ProtectedRoute exact path='/profile' component={ Profile }/>
+              <ProtectedRoute exact path='/setting' component={ Settings }/>
+              <ProtectedRoute exact path='/settings' component={ Settings }/>
+              <Route exact path='/error' component={ PageNotFound }/>
+              <Route exact path='/404' component={ PageNotFound }/>
+              <Route exact path='*' component={ PageNotFound }/>
+            </Switch>
+          </BrowserRouter>
+        </ThemeProvider>
+      </ApolloProvider>
+    </AuthProvider>
   );
 }
 export default App;
