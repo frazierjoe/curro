@@ -81,6 +81,7 @@ const [signinUserMutation, {loading, error, data }] = useMutation(SIGNIN_USER_MU
   update(_, {data: {signIn: userData}}) {
     _isMounted = false
     context.login(userData)
+    console.log(userData)
     history.push('/feed')
   },
   onError(error) {
