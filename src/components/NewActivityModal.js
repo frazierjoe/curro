@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useMutation, gql } from '@apollo/client';
 import { ActivityTile } from './Activity/ActivityTile';
 import { ActivityDetail } from './Activity/ActivityDetail';
 import { AllowedActivity } from './Activity/AllowedActivity';
@@ -17,6 +18,8 @@ import {
 import Toolbar from '@material-ui/core/Toolbar';
 import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
+import CircularProgress from '@material-ui/core/CircularProgress';
+
 
 const useStyles = makeStyles((theme) => ({
   modal: {
@@ -66,6 +69,13 @@ const useStyles = makeStyles((theme) => ({
     flexWrap: 'wrap',
     overflow: 'hidden',
     backgroundColor: theme.palette.background.paper,
+  },
+  buttonProgress: {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    marginTop: -12,
+    marginLeft: -12,
   },
 }));
 
@@ -145,11 +155,35 @@ export const NewActivityModal = (props) => {
     clearState()
   }
 
+  const CREATE_POST_MUTATION = gql`
+    mutation createPost($input: CreatePostInput!) {
+      createPost(input: $input) {
+        id
+      }
+    }
+  `;
+
+  const [createPostMutation, {loading, error, data }] = useMutation(CREATE_POST_MUTATION, {
+    update(_, {data: {createPost: post}}) {
+      console.log(post)
+      // TODO clear state
+      props.handleClose()
+    },
+    onError(error) {
+      console.log(error)
+      console.log(error.message)
+      // TODO, don't close and tell user what happened
+      props.handleClose()
+    }
+  })
+
   const validatePost = (callback) => {
     console.log("Checking Form")
     console.log(post.title)
     console.log(post.note)
-    console.log(selectedDate)
+    var postDate = selectedDate.toISOString()
+    console.log(postDate)
+    console.log(new Date(postDate))
 
     const postTitleValid = post.title.length > 0
     const selectedDateValid = selectedDate !== null
@@ -163,17 +197,56 @@ export const NewActivityModal = (props) => {
     });
 
     if(postTitleValid && selectedDateValid) {
-      // TODO make api call
-      // TODO make api call to create activities and get activity id list
-      // TODO make api call to make post
-      console.log("Make api post")
       callback()
-      props.handleClose()
     } 
   }
   const postActivity = () => {
     validatePost(() => {
       console.log("make API call here")
+      // TODO map this to activity list
+      console.log(activityData)
+
+      var activityList = activityData.map((activity)=>{
+        var formatActivity = {
+          type: activity.type,
+          duration: activity.duration,
+          distance: {
+            value: parseFloat(activity.distance.value),
+            unit: activity.distance.unit
+          },
+          equipmentId: activity.equipmentId === "" ? undefined : activity.equipmentId,
+          additionalInfo: {
+            averageHeartRate: activity.averageHeartRate,
+            elevationGain: activity.elevationGain,
+            calories: activity.calories
+          }
+        }
+        return formatActivity
+      })
+
+      //  "type": "RUN",
+      // "duration": 3060000,
+    	// "distance": {"value": 10.4, "unit": "KM"},
+    	// "equipmentId": null,
+      // "additionalInfo": {
+      //   "averageHeartRate": null,
+      //   "elevationGain": null,
+      //   "calories": null
+			// }
+
+      console.log(activityList)
+      const postInput = {
+        input: {
+          title: post.title,
+          activityList: activityList,
+          note: post.note,
+          postDate: selectedDate.toISOString(),
+          // TODO change this to tagList of users
+          tagIdList: []  
+        }
+      }
+      console.log(postInput)
+      createPostMutation({ variables: postInput })
     })
 }
 
@@ -189,7 +262,8 @@ export const NewActivityModal = (props) => {
         <Toolbar disableGutters>
           <Button onClick={cancelPost} >Cancel</Button>
           <Typography variant="h6" className={classes.spacer} >New Post</Typography>
-          <Button onClick={postActivity} color="primary">POST</Button>
+          <Button onClick={postActivity} color="primary" disabled={loading}>POST</Button>
+          {loading && <CircularProgress size={24} className={classes.buttonProgress} />}
         </Toolbar>
         <form noValidate autoComplete="off">
           <TextField 

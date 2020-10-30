@@ -197,7 +197,7 @@ const [createUserMutation, {loading, error, data }] = useMutation(CREATE_USER_MU
 
       var userInput = {
         input: {
-          email: String(values.email),
+          email: String(values.email).toLowerCase(),
           first: String(values.first),
           last: String(values.last),
           username: String(values.username),
