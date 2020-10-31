@@ -6,6 +6,8 @@ import { cacheSlot } from '@apollo/client/cache';
 import { useSwipeable, Swipeable } from 'react-swipeable'
 import { responsePathAsArray } from 'graphql';
 import Month from './Month';
+import add from 'date-fns/add';
+
 
 
 const useStyles = makeStyles((theme) => ({
@@ -58,8 +60,8 @@ export const CalendarView = ({ postList, date, setDate, setView, firstDayOfWeek 
         console.log("Swiped next month/week/day")
         setDate(prevDate => {
             let copy = new Date(prevDate);
-            copy.setMonth(copy.getMonth() + 1);
-            return copy;
+            console.log('copy :>> ', copy);
+            return add(copy, {months: 1});
         });
     }
 
@@ -67,10 +69,9 @@ export const CalendarView = ({ postList, date, setDate, setView, firstDayOfWeek 
         console.log("Swiped previous month/week/day");
         setDate(prevDate => {
             let copy = new Date(prevDate);
-            copy.setMonth(copy.getMonth() - 1);
-            return copy;
+            console.log('copy :>> ', copy);
+            return add(copy, {months: -1});
         });
-
     }
 
     const swipeHandlers = useSwipeable({

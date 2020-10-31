@@ -19,8 +19,12 @@ import { setContext } from '@apollo/client/link/context';
 // Connect to deployed backend if in production. Else localhost.
 let uri = 'http://localhost:4000/graphql';
 if (process.env.NODE_ENV === 'production'){
-  uri = 'https://curro-api.herokuapp.com/graphql'
+  uri = 'https://curro-api.herokuapp.com/graphql';
 }
+
+// Todo: Delete later
+uri = 'https://curro-api.herokuapp.com/graphql';
+
 const httpLink = createHttpLink({
   uri: uri,
 });

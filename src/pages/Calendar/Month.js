@@ -1,51 +1,45 @@
-import React from 'react';
+import React, { cloneElement } from 'react';
 import Week from './Week';
 
 const weeksToDisplay = 6;
 
 const Month = ({ postList, date, setView, firstDayOfWeek }) => {
-    const generateWeekComponents = () => {
+
+    function getFirstDayOfMonthView(date, firstDayOfWeek = "Sunday") {
         // Get the first day of the month and get the first Sunday of that week.
         let dayOne = new Date(date.getFullYear(), date.getMonth());
         let firstSunday = new Date(dayOne);
         firstSunday.setDate(-1 * dayOne.getDay() + 1);
 
-        // Generate the first days of 6 weeks. It will be either all Sundays/Mondays
-        let firstDays = [];
-        for (let i = 0; i < (weeksToDisplay); i++) {
-            let item = new Date(firstSunday);
-
-            if (firstDayOfWeek === "Monday") {
-                // Edge case: if the first day of a month is sunday, I want to go back a week.  
-                if (dayOne.getDay() === 0) {
-                    item.setDate(item.getDate() - 7);
-                }
-                item.setDate(item.getDate() + 1);
+        let firstDayOfMonthView = firstSunday;
+        if (firstDayOfWeek === "Monday") {
+            // Edge case: if the first day of a month is sunday, I want to go back a week.  
+            if (dayOne.getDay() === 0) {
+                firstDayOfMonthView.setDate(firstDayOfMonthView.getDate() - 7);
             }
+            firstDayOfMonthView.setDate(firstDayOfMonthView.getDate() + 1);
+        }
+        return firstDayOfMonthView
+    }
 
-            firstDays.push(item);
-            firstSunday.setDate(firstSunday.getDate() + 7);
+    function getFirstDaysOfMonthView(date, firstDayOfWeek="Sunday"){
+        let weekIndex = getFirstDayOfMonthView(date, firstDayOfWeek);
+
+        let firstDaysOfMonthView = [];
+        for (let i = 0; i < weeksToDisplay; i++) {
+            let copy = new Date(weekIndex);
+            firstDaysOfMonthView.push(copy);
+            weekIndex.setDate(weekIndex.getDate() + 7);
         }
 
-        // Filter out all posts that occur within the month view.
-        // First determine the timeframe of our view.
-        let earliest = firstDays[0];
-        let latest = new Date(firstDays[weeksToDisplay - 1]);
-        latest.setDate(latest.getDate() + 7);
+        return firstDaysOfMonthView;
+    }
+    
+    const generateNoPostWeekComponents = () => {
+        let firstDaysOfMonthView = getFirstDaysOfMonthView(date, firstDayOfWeek);
 
-        let postsInMonth = undefined;
-        if (postList) {
-            postsInMonth = postList.filter(post => {
-                let creationTime = parseInt(post.createdAt);
-                return (creationTime < latest.getTime()) && (creationTime >= earliest.getTime());
-            });
-        }
-
-
-        let weeks = firstDays.map(firstDay => {
+        let weeks = firstDaysOfMonthView.map(firstDay => {
             return <Week
-                postsInMonth={postsInMonth}
-
                 currentMonth={date.getMonth()}
                 firstDay={firstDay}
                 setView={setView}
@@ -54,11 +48,73 @@ const Month = ({ postList, date, setView, firstDayOfWeek }) => {
         });
         return weeks;
     }
-    let weeks = generateWeekComponents();
 
-    // I need to determine which posts are within this month.
-    // I'll use linear scan for now; To-Do: Sort + binary search? Not sure if it's pre-sorted
+    const extractAndSortPostsInMonthView = () => {
+        // Determine the start and end of the month view
+        let earliest = getFirstDayOfMonthView(date, firstDayOfWeek);
+        let latest = new Date(earliest);
+        latest.setDate(latest.getDate() + weeksToDisplay * 7);
 
+        // Todo: Optimize finding all posts within the month view
+        // Linear scan all posts to filter them out
+        let postsInMonth = postList.filter(post => {
+            let creationTime = parseInt(post.createdAt);
+            return (creationTime < latest.getTime()) && (creationTime >= earliest.getTime());
+        });
+
+        // Sort the posts in the month by creation time
+        postsInMonth.sort(function (a, b) {
+            let creationTime_a = parseInt(a.createdAt);
+            let creationTime_b = parseInt(b.createdAt);
+            return creationTime_a - creationTime_b;
+        });
+
+        return postsInMonth;
+    }
+
+    const organizePostsInMonthViewByWeek = () => {
+        // Both of these arrays are sorted from earliest to latest
+        let postsInMonth = extractAndSortPostsInMonthView();
+        let firstDaysOfMonthView = getFirstDaysOfMonthView(date, firstDayOfWeek);
+
+        // Assign each post to a specific week
+        let postsPaginatedByWeeks = [];
+        for (let i = 0; i < firstDaysOfMonthView.length; i++) {
+            let startOfWeek = firstDaysOfMonthView[i];
+            let endOfWeek = new Date(startOfWeek);
+            endOfWeek.setDate(endOfWeek.getDate() + 7);
+
+            let postsThisWeek = [];
+            for (let j = 0; j < postsInMonth.length; j++) {
+                const post = postsInMonth[j];
+                const creationTime = new Date(parseInt(post.createdAt));
+                
+                let createdThisWeek = (startOfWeek <= creationTime) && (creationTime < endOfWeek);
+                if (createdThisWeek) postsThisWeek.push(post);
+            }
+            postsPaginatedByWeeks.push(postsThisWeek);
+        }
+        return postsPaginatedByWeeks
+    }
+
+    const injectPostsInWeekComponents = (weekComponents) => {
+        let postsPaginatedByWeeks = organizePostsInMonthViewByWeek();
+
+        // weekComponents and postsPaginatedByWeeks are parallel arrays
+        // We iterate over both to inject posts into the weekComponents
+        let injectedWeekComponents = [];
+        weekComponents.forEach((weekComponent, index) => {
+            const thisWeeksPosts = postsPaginatedByWeeks[index];
+            let injectedWeekComponent = cloneElement(weekComponent, {posts: thisWeeksPosts});
+
+            injectedWeekComponents.push(injectedWeekComponent);
+        });
+        console.log('injectedWeekComponents :>> ', injectedWeekComponents);
+        return injectedWeekComponents;
+    }
+
+    let uninjectedWeeks = generateNoPostWeekComponents();
+    let weeks = injectPostsInWeekComponents(uninjectedWeeks);
 
     return (
         <tbody>

@@ -1,15 +1,17 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
 
 const useStyles = makeStyles((theme) => ({
     // Always displayed styling
-    dayWrapperStyling : {
+    dayWrapperStyling: {
         display: "flex",
         flexDirection: "column",
         height: "100%"
     },
-    cellStyling : {
+    cellStyling: {
         border: "1px solid black",
         height: "calc(100%/6)",
         minHeight: "50px",
@@ -22,23 +24,10 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-const Day = ({ dayDate, currentMonth, setView, postsInWeek }) => {
+const Day = ({ postsToday, dayDate, currentMonth, setView }) => {
     // Styling
     const classes = useStyles();
     const offMonth = currentMonth !== dayDate.getMonth();
-
-    // Linear Scan
-    // Todo: Not Efficient, only works for one post in a day
-    let post = undefined;
-    if (postsInWeek){
-        postsInWeek.filter(post => {
-            let postDate = new Date(post.createdAt);
-            if (postDate.getDate() === dayDate.getDate() && postDate.getMonth() === dayDate.getMonth() && postDate.getFullYear() === dayDate.getFullYear()){
-                return true;
-            }
-            return false;
-        })
-    }
 
     // Event Handlers
     const enterDayView = () => {
@@ -46,14 +35,28 @@ const Day = ({ dayDate, currentMonth, setView, postsInWeek }) => {
         setView("day");
     };
 
+    //
+    let postsEntryWrapper = (<> </>);
+    if (postsToday.length > 0) {
+        let entries = postsToday.map(post => {
+            return (
+            <div key={`-dayEntry-${post.id}`}>{post.title}</div>
+            );
+        })
+        postsEntryWrapper = (
+            <div>
+                {entries}
+            </div>
+        )
+    }
     return (
         <td className={classes.cellStyling}>
             {/* Always have dayWrapperStyling. Sometimes have offMonthStyling */}
             <div className={`${classes.dayWrapperStyling} ${offMonth ? classes.offMonthStyling : ''}`}>
                 {/* Div that changes to day view */}
                 <div onClick={enterDayView}>
-                    {dayDate.getDate()}
-                    {post ? "I have a post today": ""}
+                    <div>{dayDate.getDate()}</div>
+                    {postsEntryWrapper}
                 </div>
             </div>
         </td>

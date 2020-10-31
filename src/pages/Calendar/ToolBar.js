@@ -20,6 +20,8 @@ import NativeSelect from '@material-ui/core/NativeSelect';
 import Tooltip from '@material-ui/core/Tooltip';
 import { Button, Hidden } from '@material-ui/core';
 import CalendarSettings from './CalendarSettings';
+import add from 'date-fns/add';
+
 
 
 
@@ -73,22 +75,19 @@ export const ToolBar = ({ date, setDate, view, setView, setFirstDayOfWeek }) => 
             case "month":
                 setDate(prevDate => {
                     let copy = new Date(prevDate);
-                    copy.setMonth(copy.getMonth() - 1);
-                    return copy;
+                    return add(copy, {months: -1});
                 });
                 break;
             case "week":
                 setDate(prevDate => {
                     let copy = new Date(prevDate);
-                    copy.setDate(copy.getDate() - 7);
-                    return copy;
+                    return add(copy, {weeks: -1});
                 });
                 break;
             case "day":
                 setDate(prevDate => {
                     let copy = new Date(prevDate);
-                    copy.setDate(copy.getDate() - 1);
-                    return copy;
+                    return add(copy, {days: -1});
                 });
                 break;
             default:
@@ -104,22 +103,19 @@ export const ToolBar = ({ date, setDate, view, setView, setFirstDayOfWeek }) => 
             case "month":
                 setDate(prevDate => {
                     let copy = new Date(prevDate);
-                    copy.setMonth(copy.getMonth() + 1);
-                    return copy;
+                    return add(copy, {months: 1});
                 });
                 break;
             case "week":
                 setDate(prevDate => {
                     let copy = new Date(prevDate);
-                    copy.setDate(copy.getDate() + 7);
-                    return copy;
+                    return add(copy, {weeks: 1});
                 });
                 break;
             case "day":
                 setDate(prevDate => {
                     let copy = new Date(prevDate);
-                    copy.setDate(copy.getDate() + 1);
-                    return copy;
+                    return add(copy, {days: 1});
                 });
                 break;
             default:
@@ -146,9 +142,8 @@ export const ToolBar = ({ date, setDate, view, setView, setFirstDayOfWeek }) => 
             alert("Sanity Check: Unrecognized view in ToolBar.js");
             break;
     }
-    // How to get local zone?
-    const toolbarTitle = date.toLocaleDateString("en-US", options);
 
+    const toolbarTitle = date.toLocaleDateString(undefined, options);
 
     return (
         <AppBar className={classes.appbar}>
