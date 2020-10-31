@@ -138,6 +138,6 @@ export const ProfileCard = props => {
             )}
         </CardContent>
       </Card>
-      <EditProfileModal openModal={openModal} handleClose={() => setOpenModal(false)}/>
+      <EditProfileModal me={loading ? "" : data.me} openModal={openModal} handleClose={() => setOpenModal(false)}/>
     </div>);
 }
