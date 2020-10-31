@@ -3,7 +3,7 @@ import Week from './Week';
 
 const weeksToDisplay = 6;
 
-const Month = ({ date, setView, firstDayOfWeek }) => {
+const Month = ({ postList, date, setView, firstDayOfWeek }) => {
     const generateWeekComponents = () => {
         // Get the first day of the month and get the first Sunday of that week.
         let dayOne = new Date(date.getFullYear(), date.getMonth());
@@ -27,17 +27,38 @@ const Month = ({ date, setView, firstDayOfWeek }) => {
             firstSunday.setDate(firstSunday.getDate() + 7);
         }
 
-        let weeks = firstDays.map(sunday => {
+        // Filter out all posts that occur within the month view.
+        // First determine the timeframe of our view.
+        let earliest = firstDays[0];
+        let latest = new Date(firstDays[weeksToDisplay - 1]);
+        latest.setDate(latest.getDate() + 7);
+
+        let postsInMonth = undefined;
+        if (postList) {
+            postsInMonth = postList.filter(post => {
+                let creationTime = parseInt(post.createdAt);
+                return (creationTime < latest.getTime()) && (creationTime >= earliest.getTime());
+            });
+        }
+
+
+        let weeks = firstDays.map(firstDay => {
             return <Week
+                postsInMonth={postsInMonth}
+
                 currentMonth={date.getMonth()}
-                sunday={sunday}
+                firstDay={firstDay}
                 setView={setView}
-                key={"-week" + sunday.toISOString()}
+                key={"-week" + firstDay.toISOString()}
             />
         });
         return weeks;
     }
     let weeks = generateWeekComponents();
+
+    // I need to determine which posts are within this month.
+    // I'll use linear scan for now; To-Do: Sort + binary search? Not sure if it's pre-sorted
+
 
     return (
         <tbody>

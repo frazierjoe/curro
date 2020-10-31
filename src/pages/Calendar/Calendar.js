@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from 'react';
+
+import DayView from './DayView';
 import { NewActivityModal } from '../../components/NewActivityModal';
 import { ToolBar } from './ToolBar';
 import { CalendarView } from './CalendarView';
+import WeeklyView from './WeeklyView';
+
 import { makeStyles } from '@material-ui/core/styles';
 import AddIcon from '@material-ui/icons/Add';
 import Fab from '@material-ui/core/Fab';
-import Paper from '@material-ui/core/Paper';
-import Grid from '@material-ui/core/Grid';
-import DayView from './DayView';
-import WeeklyView from './WeeklyView';
 
+import { gql, useQuery } from '@apollo/client';
 
 const useStyles = makeStyles((theme) => ({
     addFab: {
@@ -27,11 +28,63 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
+// API Calls
+const GET_POSTLIST = gql`
+  query getPostList{
+    me {
+        first
+        postList{
+            id
+            title
+            note
+            author {
+                username
+            }
+            tagList {
+                id
+                username
+            }
+            createdAt
+            updatedAt
+            activityList {
+                id
+                type
+                duration
+                distance {
+                    value
+                    unit
+                }
+                equipment {
+                    id
+                    type
+                    name
+                }
+                additionalInfo {
+                    averageHeartRate
+                    elevationGain
+                    calories
+                }
+            }
+            # likeList
+            # commentList
+        }
+    }
+}
+`;
 
 export const Calendar = () => {
     const classes = useStyles();
 
-    // Calendar State
+    // API State
+    const { data, loading, error } = useQuery(GET_POSTLIST);
+
+    let postList = undefined;
+    if (data){
+        postList = data.me.postList;
+    }
+    // console.log('postList :>> ', postList);
+
+    // Calendar UI State
     const [date, setDate] = useState(new Date());
     const [view, setView] = React.useState("month");
     const [openModal, setOpenModal] = useState(false);
@@ -61,13 +114,13 @@ export const Calendar = () => {
     let currentViewComponent = null;
     switch (view) {
         case "month":
-            currentViewComponent = <CalendarView date={date} setDate={setDate} setView={setView} firstDayOfWeek={firstDayOfWeek}/>;
+            currentViewComponent = <CalendarView postList={postList} date={date} setDate={setDate} setView={setView} firstDayOfWeek={firstDayOfWeek} />;
             break;
         case "week":
-            currentViewComponent = <WeeklyView date={date} firstDayOfWeek={firstDayOfWeek}/>;
+            currentViewComponent = <WeeklyView postList={postList} date={date} firstDayOfWeek={firstDayOfWeek} />;
             break;
         case "day":
-            currentViewComponent = <DayView date={date} />;
+            currentViewComponent = <DayView postList={postList} date={date} />;
             break;
         default:
             currentViewComponent = null;
@@ -77,7 +130,7 @@ export const Calendar = () => {
 
     return (
         <div styles={{ height: 670, alignItems: "stretch" }}>
-            <ToolBar date={date} setDate={setDate} view={view} setView={setView} setFirstDayOfWeek={setFirstDayOfWeek}/>
+            <ToolBar date={date} setDate={setDate} view={view} setView={setView} setFirstDayOfWeek={setFirstDayOfWeek} />
             {currentViewComponent}
             <NewActivityModal openModal={openModal} handleClose={() => setOpenModal(false)} />
             <span className={classes.addFab}>

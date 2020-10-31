@@ -22,10 +22,23 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-const Day = ({ dayDate, currentMonth, setView }) => {
+const Day = ({ dayDate, currentMonth, setView, postsInWeek }) => {
     // Styling
     const classes = useStyles();
     const offMonth = currentMonth !== dayDate.getMonth();
+
+    // Linear Scan
+    // Todo: Not Efficient, only works for one post in a day
+    let post = undefined;
+    if (postsInWeek){
+        postsInWeek.filter(post => {
+            let postDate = new Date(post.createdAt);
+            if (postDate.getDate() === dayDate.getDate() && postDate.getMonth() === dayDate.getMonth() && postDate.getFullYear() === dayDate.getFullYear()){
+                return true;
+            }
+            return false;
+        })
+    }
 
     // Event Handlers
     const enterDayView = () => {
@@ -40,6 +53,7 @@ const Day = ({ dayDate, currentMonth, setView }) => {
                 {/* Div that changes to day view */}
                 <div onClick={enterDayView}>
                     {dayDate.getDate()}
+                    {post ? "I have a post today": ""}
                 </div>
             </div>
         </td>

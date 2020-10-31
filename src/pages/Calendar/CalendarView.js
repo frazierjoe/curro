@@ -49,7 +49,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-export const CalendarView = ({ date, setDate, setView, firstDayOfWeek }) => {
+export const CalendarView = ({ postList, date, setDate, setView, firstDayOfWeek }) => {
     // Styles
     const classes = useStyles();
 
@@ -126,7 +126,7 @@ export const CalendarView = ({ date, setDate, setView, firstDayOfWeek }) => {
                     </tr>
                 </thead>
                 {/* The Month component generates TBody */}
-                <Month date={date} setView={setView} firstDayOfWeek={firstDayOfWeek}/>
+                <Month postList={postList} date={date} setView={setView} firstDayOfWeek={firstDayOfWeek}/>
             </table>
         </div>);
 }

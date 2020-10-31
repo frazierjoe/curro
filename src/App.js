@@ -16,12 +16,13 @@ import Header from './components/Header';
 import { ApolloClient, createHttpLink, InMemoryCache, ApolloProvider } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
 
-// let uri = 'http://localhost:4000/graphql';
-// if (process.env.NODE_ENV === 'production'){
-//   uri = 'https://curro-api.herokuapp.com/graphql'
-// }
+// Connect to deployed backend if in production. Else localhost.
+let uri = 'http://localhost:4000/graphql';
+if (process.env.NODE_ENV === 'production'){
+  uri = 'https://curro-api.herokuapp.com/graphql'
+}
 const httpLink = createHttpLink({
-  uri: 'http://localhost:4000/graphql',
+  uri: uri,
 });
 
 const authLink = setContext((_, { headers }) => {
