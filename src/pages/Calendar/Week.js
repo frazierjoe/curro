@@ -13,7 +13,7 @@ const Week = ({firstDay, currentMonth, setView, postsInMonth}) => {
     if (postsInMonth){
         postsInWeek = postsInMonth.filter(post => {
             let creationTime = parseInt(post.createdAt);
-            return (creationTime < latest.getTime()) && (creationTime >= earliest.getTime());
+            return (creationTime < latest) && (creationTime >= earliest);
         });
     }
     
