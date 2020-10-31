@@ -9,6 +9,8 @@ import WeeklyView from './WeeklyView';
 import { makeStyles } from '@material-ui/core/styles';
 import AddIcon from '@material-ui/icons/Add';
 import Fab from '@material-ui/core/Fab';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import Backdrop from '@material-ui/core/Backdrop';
 
 import { gql, useQuery } from '@apollo/client';
 
@@ -26,6 +28,13 @@ const useStyles = makeStyles((theme) => ({
         textAlign: 'center',
         color: theme.palette.text.secondary,
     },
+    spinnerWrapper: {
+        display: 'flex',
+        justifyContent: 'center',
+        alignContent: 'center',
+        height: '100%'
+    }
+
 }));
 
 // API Calls
@@ -79,10 +88,10 @@ export const Calendar = () => {
     const { data, loading, error } = useQuery(GET_POSTLIST);
 
     let postList = undefined;
-    if (data){
+    if (data) {
         postList = data.me.postList;
     }
-    // console.log('postList :>> ', postList);
+    // console.log('postList :>> ', postList);  
 
     // Calendar UI State
     const [date, setDate] = useState(new Date());
@@ -131,7 +140,12 @@ export const Calendar = () => {
     return (
         <div styles={{ height: 670, alignItems: "stretch" }}>
             <ToolBar date={date} setDate={setDate} view={view} setView={setView} setFirstDayOfWeek={setFirstDayOfWeek} />
-            {currentViewComponent}
+            {loading ? (
+                <div className={classes.spinnerWrapper}>
+                    <CircularProgress color="primary" />
+                </div>
+            )
+                : currentViewComponent}
             <NewActivityModal openModal={openModal} handleClose={() => setOpenModal(false)} />
             <span className={classes.addFab}>
                 <Fab color="secondary" aria-label="add" onClick={() => setOpenModal(true)}>
