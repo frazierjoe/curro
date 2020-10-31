@@ -122,13 +122,11 @@ export const ActivityDetail = (props) => {
               .toFixed((props.editActivityValues.distanceUnit === 'yds' | props.editActivityValues.distanceUnit === 'm') ? 0 : 2),
             unit: props.editActivityValues.distanceUnit.toUpperCase()
           },
-          equipment: {
-            id: props.editActivityValues.equipmentId,
-          },
+          equipmentId: props.editActivityValues.equipmentId,
           additionalInfo: {
-            averageHeartRate: props.editActivityValues.heartRate === '' ? 0 : parseInt(props.editActivityValues.heartRate),
-            elevationGain: props.editActivityValues.elevationGain === '' ? 0 : parseInt(props.editActivityValues.elevationGain),
-            calories: props.editActivityValues.calories === '' ? 0 : parseInt(props.editActivityValues.calories)
+            averageHeartRate: (props.editActivityValues.heartRate === '' || props.editActivityValues.heartRate === undefined) ? 0 : parseInt(props.editActivityValues.heartRate),
+            elevationGain: (props.editActivityValues.elevationGain === '' || props.editActivityValues.elevationGain === undefined) ? 0 : parseInt(props.editActivityValues.elevationGain),
+            calories: (props.editActivityValues.calories === '' || props.editActivityValues.calories === undefined) ? 0 : parseInt(props.editActivityValues.calories)
           }
         }]
       )

@@ -68,19 +68,20 @@ export const Login = props => {
   const context = useContext(AuthContext)
 
   const SIGNIN_USER_MUTATION = gql`
-  mutation signIn($input: SignInInput!){
-    signIn(input: $input){
-      user {
-        id
+    mutation signIn($input: SignInInput!){
+      signIn(input: $input){
+        user {
+          id
+        }
+        token
       }
-      token
     }
-  }
-`;
+  `;
 const [signinUserMutation, {loading, error, data }] = useMutation(SIGNIN_USER_MUTATION, {
   update(_, {data: {signIn: userData}}) {
     _isMounted = false
     context.login(userData)
+    console.log(userData)
     history.push('/feed')
   },
   onError(error) {
@@ -151,8 +152,8 @@ const [signinUserMutation, {loading, error, data }] = useMutation(SIGNIN_USER_MU
     validateForm(() => {
       const userInput = {
         input: {
-          email: values.email,
-          password: values.password
+          email: String(values.email).toLowerCase(),
+          password: String(values.password)
         }
       }
       signinUserMutation({ variables: userInput })
