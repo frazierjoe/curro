@@ -1,43 +1,41 @@
-import { makeStyles, Card, CardContent, CardHeader, CardActions } from '@material-ui/core';
-import IconButton from '@material-ui/core/IconButton';
-import FavoriteIcon from '@material-ui/icons/Favorite';
-import ShareIcon from '@material-ui/icons/Share';
+import { makeStyles } from '@material-ui/core';
 import React from 'react';
-import ActivityContent from './ActivityContent';
-
+import DayViewPost from './DayViewPost';
 
 const useStyles = makeStyles((theme) => ({
-    card: {
-        maxWidth: "400px",
-        margin: "2em",
-    },
-
+    dayViewPostsWrapper: {
+        display: "flex", 
+        justifyItems: "center", 
+        alignItems: "center", 
+        justifyContent: "center", 
+        flexDirection: "column"
+    }
 }));
 
-const DayView = ({ date }) => {
+
+
+const DayView = ({ postList, date }) => {
     const classes = useStyles();
+
+    // Linear Scan through postList to find a matching date
+    let postsToday = postList.filter(post => {
+        let postDate = new Date(post.postDate);
+        let sameYear = date.getFullYear() === postDate.getFullYear();
+        let sameMonth = date.getMonth() === postDate.getMonth();
+        let sameDate = date.getDate() === postDate.getDate();
+        let exactSameDate = sameYear && sameMonth && sameDate;
+        return exactSameDate;
+    });
+
+    // Map them to cards
+    let postComponents = postsToday.map(post => <DayViewPost post={post} key={`-dayView-post-${post.id}`}/>);
+
+
+    console.log('postsToday :>> ', postsToday);
+
     return (
-        <div style={{display: "flex", justifyContent: "center"}}>
-            <Card className={classes.card}>
-                <CardHeader
-                    title="I just went on a sick run dude"
-                    subheader={date.toLocaleDateString({ year: 'numeric', month: 'long', day: 'numeric' })}
-                />
-                <CardContent>
-                    Ran 3 miles, puked, ran 3 miles, puked, ran 3 miles, pukedRan 3 miles, puked, ran 3 miles, puked, ran 3 miles, puked
-                    Ran 3 miles, puked, ran 3 miles, puked, ran 3 miles, pukedRan 3 miles, puked, ran 3 miles, puked, ran 3 miles, pukedRan 3 miles, puked, ran 3 miles, puked, ran 3 miles, puked
-                    Ran 3 miles, puked, ran 3 miles, puked, ran 3 miles, pukedRan 3 miles, puked, ran 3 miles, puked, ran 3 miles, puked
-                </CardContent>
-                <ActivityContent/>
-                <CardActions disableSpacing>
-                    <IconButton aria-label="add to favorites">
-                        <FavoriteIcon />
-                    </IconButton>
-                    <IconButton aria-label="share">
-                        <ShareIcon />
-                    </IconButton>
-                </CardActions>
-            </Card>
+        <div className={classes.dayViewPostsWrapper}>
+            {postComponents}
         </div>
     );
 }

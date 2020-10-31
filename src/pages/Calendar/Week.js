@@ -81,7 +81,6 @@ const Week = ({ posts, firstDay, currentMonth, setView }) => {
             let postsInThisDay = postsPaginatedByDays[i];
             injectedDayComponents.push(cloneElement(dayComponent, {postsToday: postsInThisDay}));
         }
-        
 
         return injectedDayComponents;
     }
