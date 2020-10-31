@@ -42,30 +42,7 @@ const Week = ({ posts, firstDay, currentMonth, setView }) => {
         // Todo: Kind of inefficient. O(7n) time rn
         // Now dump posts into each slot of datesInWeek
         let postsPaginatedByDays = [];
-        // for (let i = 0; i < posts.length; i++) {
-        //     let post = posts[i];
-        //     let postCreationTime = new Date(parseInt(post.createdAt));
 
-        //     let postsThisDay = [];
-        //     for (let j = 0; j < daysInWeek; j++) {
-        //         const dayInWeek = datesInWeek[j];
-
-        //         let sameYear = dayInWeek.getFullYear() === postCreationTime.getFullYear();
-        //         let sameMonth = dayInWeek.getMonth() === postCreationTime.getMonth();
-        //         let sameDate = dayInWeek.getDate() === postCreationTime.getDate();
-        //         let exactSameDate = sameYear && sameMonth && sameDate;
-
-        //         if (exactSameDate) {
-        //             console.log("START---");
-        //             console.log('post :>> ', post);
-        //             console.log('dayInWeek :>> ', dayInWeek);
-        //             console.log('postCreationTime :>> ', postCreationTime);
-        //             console.log("\n");
-        //             postsThisDay.push(post)
-        //         };
-        //     }
-        //     postsPaginatedByDays.push(postsThisDay);
-        // }
 
         for (let i = 0; i < daysInWeek; i++) {
             const dayInWeek = datesInWeek[i];
@@ -73,7 +50,7 @@ const Week = ({ posts, firstDay, currentMonth, setView }) => {
             let postsThisDay = [];
             for (let j = 0; j < posts.length; j++) {
                 let post = posts[j];
-                let postCreationTime = new Date(parseInt(post.createdAt));
+                let postCreationTime = new Date(post.postDate);
                 
                 let sameYear = dayInWeek.getFullYear() === postCreationTime.getFullYear();
                 let sameMonth = dayInWeek.getMonth() === postCreationTime.getMonth();

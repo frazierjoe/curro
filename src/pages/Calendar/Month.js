@@ -58,14 +58,16 @@ const Month = ({ postList, date, setView, firstDayOfWeek }) => {
         // Todo: Optimize finding all posts within the month view
         // Linear scan all posts to filter them out
         let postsInMonth = postList.filter(post => {
-            let creationTime = parseInt(post.createdAt);
+            let creationTime = new Date(post.postDate);
             return (creationTime < latest.getTime()) && (creationTime >= earliest.getTime());
         });
 
         // Sort the posts in the month by creation time
         postsInMonth.sort(function (a, b) {
-            let creationTime_a = parseInt(a.createdAt);
-            let creationTime_b = parseInt(b.createdAt);
+            let creationTime_a = new Date(a.postDate);
+            let creationTime_b = new Date(b.postDate);
+            creationTime_a = creationTime_a.getTime();
+            creationTime_b = creationTime_b.getTime();
             return creationTime_a - creationTime_b;
         });
 
@@ -86,8 +88,9 @@ const Month = ({ postList, date, setView, firstDayOfWeek }) => {
 
             let postsThisWeek = [];
             for (let j = 0; j < postsInMonth.length; j++) {
-                const post = postsInMonth[j];
-                const creationTime = new Date(parseInt(post.createdAt));
+                let post = postsInMonth[j];
+                let creationTime = new Date(post.postDate);
+                creationTime = creationTime.getTime();
                 
                 let createdThisWeek = (startOfWeek <= creationTime) && (creationTime < endOfWeek);
                 if (createdThisWeek) postsThisWeek.push(post);

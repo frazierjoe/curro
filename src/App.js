@@ -22,9 +22,6 @@ if (process.env.NODE_ENV === 'production'){
   uri = 'https://curro-api.herokuapp.com/graphql';
 }
 
-// Todo: Delete later
-uri = 'https://curro-api.herokuapp.com/graphql';
-
 const httpLink = createHttpLink({
   uri: uri,
 });
