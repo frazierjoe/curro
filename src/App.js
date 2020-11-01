@@ -40,7 +40,25 @@ const authLink = setContext((_, { headers }) => {
 
 const client = new ApolloClient({
   link: authLink.concat(httpLink),
-  cache: new InMemoryCache()
+  cache: new InMemoryCache({
+    typePolicies: {
+      Query: {
+        fields: {
+          postList: {
+            keyArgs: false,
+            merge(existing = {posts: []}, incoming) {
+              const {posts: newPosts} = incoming
+              const {posts: oldPosts} = existing
+              return {
+                ...incoming,
+                posts: [...oldPosts, ...newPosts]
+              }
+            }
+          }
+        }
+      }
+    }
+  })
 });
 
 var theme = createMuiTheme({

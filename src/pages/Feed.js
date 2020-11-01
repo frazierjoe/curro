@@ -2,16 +2,16 @@ import React, { useState }  from 'react';
 import { AllCaughtUp } from '../components/Post/AllCaughtUp'
 import { useQuery, gql } from '@apollo/client';
 import { Waypoint } from 'react-waypoint';
-import Typography from '@material-ui/core/Typography';
 import { NewActivityModal } from '../components/NewActivityModal';
 import { makeStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
 import { PostCard } from '../components/Post/PostCard';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import AddIcon from '@material-ui/icons/Add';
 import Fab from '@material-ui/core/Fab';
+import Hidden from '@material-ui/core/Hidden';
+
 
 const useStyles = makeStyles((theme) => ({
   mainContent: {
@@ -50,9 +50,6 @@ const useStyles = makeStyles((theme) => ({
     position: 'fixed',
     bottom: 16,
     right: 16,
-    [theme.breakpoints.down('sm')]: {
-      display: 'none'
-    },
   },
   
 }));
@@ -62,7 +59,8 @@ var allCaughtUp = false
 export const Feed = () => {
 
   const [openModal, setOpenModal] = useState(false)
-  const [seenAllPost, setSeenAllPost] = useState(false)
+  const [seenAllPost, setSeenAllPost] = useState(allCaughtUp)
+  const [editPost, setEditPost] = useState(null)
   
   const sample_user_post = {
     id: "1",
@@ -122,6 +120,11 @@ export const Feed = () => {
             equipment{
               id
             }
+            additionalInfo{
+              averageHeartRate
+              elevationGain
+              calories
+            }
           }
           likeList {
             id
@@ -135,25 +138,12 @@ export const Feed = () => {
     }
   `;
 
-  const getPostSettings = {pageSize: 5, after: null}
-  const { loading, error, data, fetchMore, networkStatus } = useQuery(GET_POST_QUERY, {variables: getPostSettings, notifyOnNetworkStatusChange: true});
+  const getPostSettings = {pageSize: 10, after: null}
+  const { data, fetchMore, networkStatus } = useQuery(GET_POST_QUERY, {variables: getPostSettings, notifyOnNetworkStatusChange: true});
 
   const fetchMorePosts = () => {
     if(data.postList.hasMore) {
-      fetchMore({variables: {pageSize: 5, after: data.postList.cursor}, updateQuery: (previousPosts, {fetchMoreResult}) => {
-        if(!fetchMoreResult){
-          return previousPosts
-        }
-        return {
-          postList: {
-            __typename: previousPosts.postList.__typename,
-            posts: [...previousPosts.postList.posts, ...fetchMoreResult.postList.posts],
-            hasMore: fetchMoreResult.postList.hasMore,
-            cursor: fetchMoreResult.postList.cursor,
-          }
-          
-        }
-      }})
+      fetchMore({variables: {pageSize: 10, after: data.postList.cursor}})
     } else {
       if(!allCaughtUp){
         allCaughtUp = true
@@ -177,7 +167,7 @@ export const Feed = () => {
           <ListItem key={3} className={classes.listItem}>
             <PostCard post={sample_user_post} loading={true}/>
           </ListItem>
-       
+          <div className={classes.loadingPostProgress}><CircularProgress/></div>
       </List>
     </div>
     
@@ -192,9 +182,9 @@ export const Feed = () => {
         {data.postList.posts.map((post, index) => (
           <React.Fragment key={post.id}>
             <ListItem className={classes.listItem}>
-              <PostCard post={post}/>
+              <PostCard post={post} openEditPostModal={() => setOpenModal(true)} setEditPost={setEditPost}/>
             </ListItem>
-            {index === data.postList.posts.length - 1 && (
+            {index === data.postList.posts.length - 4 && (
               <Waypoint onEnter={fetchMorePosts}/>
             )}
           </React.Fragment>
@@ -208,11 +198,13 @@ export const Feed = () => {
     }
      
     </div>
-    <NewActivityModal openModal={openModal} handleClose={() => setOpenModal(false)} />
-    <span className={classes.addFab}>
-        <Fab color="secondary" aria-label="add" onClick={() => setOpenModal(true)}>
-            <AddIcon />
-        </Fab>
-    </span>
+    <NewActivityModal openModal={openModal} handleClose={() => setOpenModal(false)} editPost={editPost}/>
+    <Hidden smDown>
+      <span className={classes.addFab}>
+          <Fab color="secondary" aria-label="add" onClick={() => setOpenModal(true)}>
+              <AddIcon />
+          </Fab>
+      </span>
+    </Hidden>
   </div>);
 }

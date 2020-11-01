@@ -5,7 +5,7 @@ import { Route, Redirect } from 'react-router-dom';
 
 
 export const ProtectedRoute = ({ component: Component, ...rest }) => {
-  const { user, logout } = useContext(AuthContext)
+  const { user } = useContext(AuthContext)
 
   return (
     <Route {...rest} render={

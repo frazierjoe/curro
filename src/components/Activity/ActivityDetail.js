@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
   paper: {
     position: 'absolute',
     width: '40%',
-    height: '90%',
+    height: '98%',
     backgroundColor: theme.palette.background.paper,
     boxShadow: theme.shadows[4],
     padding: '0 8px 8px 8px',
@@ -85,19 +85,19 @@ export const ActivityDetail = (props) => {
       // update the element
       activitiesCopy[activityIndex] = {
         ...props.activityData[activityIndex],
-        duration: TimeHelper.getTotalMs(props.editActivityValues.duration),
+        duration: props.editActivityValues.duration ? TimeHelper.getTotalMs(props.editActivityValues.duration) : 0,
         distance: {
-          value: props.editActivityValues.distanceValue === '' ? 0 : parseFloat(props.editActivityValues.distanceValue)
-            .toFixed((props.editActivityValues.distanceUnit === 'yds' | props.editActivityValues.distanceUnit === 'm') ? 0 : 2),
+          value: props.editActivityValues.distanceValue ? parseFloat(Math.abs(props.editActivityValues.distanceValue))
+            .toFixed((props.editActivityValues.distanceUnit === 'yds' | props.editActivityValues.distanceUnit === 'm') ? 0 : 2) : 0,
           unit: props.editActivityValues.distanceUnit.toUpperCase()
         },
         equipment: {
-          id: props.editActivityValues.equipmentId,
+          id: props.editActivityValues.equipmentId ? props.editActivityValues.equipmentId : 0,
         },
         additionalInfo: {
-          averageHeartRate: props.editActivityValues.heartRate === '' ? 0 : parseInt(props.editActivityValues.heartRate),
-          elevationGain: props.editActivityValues.elevationGain === '' ? 0 : parseInt(props.editActivityValues.elevationGain),
-          calories: props.editActivityValues.calories === '' ? 0 : parseInt(props.editActivityValues.calories)
+          averageHeartRate: props.editActivityValues.averageHeartRate ? parseInt(props.editActivityValues.heartRate) : 0,
+          elevationGain: props.editActivityValues.elevationGain ? parseInt(props.editActivityValues.elevationGain) : 0,
+          calories: props.editActivityValues.calories ? parseInt(props.editActivityValues.calories) : 0
         }
       }
       //update the state
@@ -118,15 +118,15 @@ export const ActivityDetail = (props) => {
           type: props.activity.type.toUpperCase(),
           duration: TimeHelper.getTotalMs(props.editActivityValues.duration),
           distance: {
-            value: props.editActivityValues.distanceValue === '' ? 0 : parseFloat(props.editActivityValues.distanceValue)
-              .toFixed((props.editActivityValues.distanceUnit === 'yds' | props.editActivityValues.distanceUnit === 'm') ? 0 : 2),
+            value: props.editActivityValues.distanceValue ? parseFloat(Math.abs(props.editActivityValues.distanceValue))
+              .toFixed((props.editActivityValues.distanceUnit === 'yds' | props.editActivityValues.distanceUnit === 'm') ? 0 : 2) : 0,
             unit: props.editActivityValues.distanceUnit.toUpperCase()
           },
           equipmentId: props.editActivityValues.equipmentId,
           additionalInfo: {
-            averageHeartRate: (props.editActivityValues.heartRate === '' || props.editActivityValues.heartRate === undefined) ? 0 : parseInt(props.editActivityValues.heartRate),
-            elevationGain: (props.editActivityValues.elevationGain === '' || props.editActivityValues.elevationGain === undefined) ? 0 : parseInt(props.editActivityValues.elevationGain),
-            calories: (props.editActivityValues.calories === '' || props.editActivityValues.calories === undefined) ? 0 : parseInt(props.editActivityValues.calories)
+            averageHeartRate: props.editActivityValues.heartRate ? parseInt(props.editActivityValues.heartRate) : 0,
+            elevationGain: props.editActivityValues.elevationGain ? parseInt(props.editActivityValues.elevationGain) : 0,
+            calories:props.editActivityValues.calories ? parseInt(props.editActivityValues.calories) : 0
           }
         }]
       )
@@ -236,24 +236,24 @@ export const ActivityDetail = (props) => {
           </div>
           : <></>
         }
-        { props.activity.equipmentAllowed ? 
-          <FormControl variant="outlined" fullWidth className={classes.inputField}>
-            {/* TODO Change equipment to be shoes or bikes depending on activity */}
-            <InputLabel id="equipment-select">{props.activity.equipmentAllowed}</InputLabel>
-            <Select
-              labelId="equipment-select"
-              id="equipment-select-id"
-              value={props.editActivityValues.equipmentId}
-              onChange={props.handleEditActivityChange('equipmentId')}
-              label={props.activity.equipmentAllowed}
-            >
-              <MenuItem value=""><em>None</em></MenuItem>
-              <MenuItem value={"nike_id"}>NiKe PeGz</MenuItem>
-              <MenuItem value={"hoka_id"}>HoKa Clouds</MenuItem>
-            </Select>
-        </FormControl>
-          : <></>
-        }
+        { props.activity.equipmentAllowed && ( <></>
+
+        //   <FormControl variant="outlined" fullWidth className={classes.inputField}>
+        //     {/* TODO Change equipment to be shoes or bikes depending on activity */}
+        //     <InputLabel id="equipment-select">{props.activity.equipmentAllowed}</InputLabel>
+        //     <Select
+        //       labelId="equipment-select"
+        //       id="equipment-select-id"
+        //       value={props.editActivityValues.equipmentId}
+        //       onChange={props.handleEditActivityChange('equipmentId')}
+        //       label={props.activity.equipmentAllowed}
+        //     >
+        //       <MenuItem value=""><em>None</em></MenuItem>
+        //       <MenuItem value={"nike_id"}>NiKe PeGz</MenuItem>
+        //       <MenuItem value={"hoka_id"}>HoKa Clouds</MenuItem>
+        //     </Select>
+        // </FormControl>
+        )}
         { props.activity.additionalInfoAllowed ? 
           <div>
             <Typography variant="h6" className={classes.inputField} >Additional Information</Typography>

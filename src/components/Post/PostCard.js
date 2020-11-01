@@ -1,4 +1,5 @@
-import React, {useState} from 'react';
+import React, { useContext, useState, useRef } from 'react';
+import { AuthContext } from '../../auth';
 import { ActivityTile } from './ActivityTile';
 import { Comment } from './Comment';
 import { AddComment } from './AddComment';
@@ -11,23 +12,27 @@ import IconButton from '@material-ui/core/IconButton';
 import CardHeader from '@material-ui/core/CardHeader';
 import CardActions from '@material-ui/core/CardActions';
 import Avatar from '@material-ui/core/Avatar';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
-import Box from '@material-ui/core/Box';
-import GridList from '@material-ui/core/GridList';
-import GridListTile from '@material-ui/core/GridListTile';
 import FormGroup from '@material-ui/core/FormGroup';
+import Tooltip from '@material-ui/core/Tooltip';
 import List from '@material-ui/core/List';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItem from '@material-ui/core/ListItem';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
-import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
 import Favorite from '@material-ui/icons/Favorite';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
+import MenuItem from '@material-ui/core/MenuItem';
+import Menu from '@material-ui/core/Menu';
 import FavoriteBorder from '@material-ui/icons/FavoriteBorder';
+import ReportIcon from '@material-ui/icons/Report';
+import EditIcon from '@material-ui/icons/Edit';
 import Grid from '@material-ui/core/Grid';
+import Divider from '@material-ui/core/Divider';
+
+
 
 export const PostCard = props => {
-
   const useStyles = makeStyles((theme) => ({
     card: {
       margin: 0,
@@ -58,12 +63,21 @@ export const PostCard = props => {
       padding: "16px",
       paddingTop: 0,
     },
+    postMenu: {
+      marginTop: '32px',
+    },
   }));
+
+  const { user } = useContext(AuthContext)
 
   
   const [postLikeCount, setPostLikeCount] = useState(props.post.likeList.length)
-  //TODO check if logged in user has liked and set state based on that
-  const [likePost, setLikePost] = useState(false)
+  // This will only work if the like list is only user id's
+  const [likePost, setLikePost] = useState( props.post.likeList.includes(user.id))
+  const [openPostMenu, setOpenPostMenu] = useState(false)
+
+  // const postButtonRef = useRef()
+
 
   const handleLike = (event) => {
     setPostLikeCount(event.target.checked ? likePost + 1 : likePost - 1)
@@ -100,31 +114,56 @@ export const PostCard = props => {
               )
           }
           subheader={props.loading ? <Skeleton animation="wave" width="20%" /> : props.post.author.username}
+          action={
+            (!props.loading && user.id === props.post.author.id) && (
+              <Tooltip title="Edit" enterDelay={400}>
+                <IconButton aria-label="edit" onClick={() => { 
+                    // setOpenPostMenu(false); 
+                    props.setEditPost(props.post); 
+                    props.openEditPostModal()
+                }}>
+                  <EditIcon/>              
+                </IconButton>
+              </Tooltip>
+            )
+          }
         />
-
+        {/* <Menu
+          id={"post-menu-"+props.post.id}
+          className={classes.postMenu}
+          anchorEl={postButtonRef.current}
+          open={openPostMenu}
+          onClose={() => setOpenPostMenu(false)}
+        >
+          { user.id === props.post.author.id &&
+            <MenuItem onClick={() => {setOpenPostMenu(false); props.setEditPost(props.post); props.setEditPostModal(true)}}>
+              <ListItemIcon style={{minWidth: 32}}>
+                <EditIcon fontSize="small"/>
+              </ListItemIcon>
+              <Typography variant="inherit" >Edit</Typography>
+            </MenuItem>
+          }
+          <MenuItem onClick={() => console.log("Report")}>
+            <ListItemIcon style={{minWidth: 32}}>
+              <ReportIcon fontSize="small"/>
+            </ListItemIcon>
+            <Typography variant="inherit" >Report</Typography>
+          </MenuItem>
+        </Menu> */}
         <CardContent className={classes.cardContent}>
           {props.loading ? (
             <React.Fragment>
-              <Skeleton animation="wave" width="70%" style={{ marginBottom: 8 }} />
-              <Grid container spacing={2}>
-                <Grid item xs={5}>
-                  <Skeleton animation="wave"  width="100%" variant="rect" height={128} style={{ marginBottom: 8 }} />
-                </Grid>
-                <Grid item xs={5}>
-                  <Skeleton animation="wave"  width="100%" variant="rect" height={128} style={{ marginBottom: 8 }} />
-                </Grid>
-              </Grid>
-          
-              <Skeleton animation="wave" style={{ marginBottom: 8 }} />
+              <Skeleton animation="wave" width="70%" height={40} style={{ marginBottom: 8 }} />
+              <Skeleton animation="wave"  width="100%" variant="rect" height={74} style={{ marginBottom: 8 }} />        
               <Skeleton animation="wave" style={{ marginBottom: 8 }} />
               <Skeleton animation="wave" width="90%" style={{ marginBottom: 8 }} />
+              <Skeleton animation="wave" style={{ marginBottom: 8 }} />
               <Skeleton animation="wave" width="70%" style={{ marginBottom: 16 }} />
             </React.Fragment>
           ) : (
             <div>
-              <Typography variant="h4">{props.post.title}</Typography>
-              <div className={classes.activityGrid}>
-               {props.post.activityList.length > 0 && <Typography variant="h6">Activities</Typography>}
+              <Typography variant="h5">{props.post.title}</Typography>
+              {props.post.activityList.length > 0 && <div className={classes.activityGrid}>
                 <List>
                   {props.post.activityList.map((activity) => (
                     <ActivityTile 
@@ -134,7 +173,7 @@ export const PostCard = props => {
                     />
                   ))}
                 </List>
-              </div>
+              </div>}
               <Typography variant="body1" component="p">{props.post.note}</Typography>
 
             </div>
