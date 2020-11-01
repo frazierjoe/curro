@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import { ActivityTile } from '../Activity/ActivityTile';
+import { ActivityTile } from './ActivityTile';
 import { Comment } from './Comment';
 import { AddComment } from './AddComment';
 import Typography from '@material-ui/core/Typography';
@@ -16,23 +16,22 @@ import Box from '@material-ui/core/Box';
 import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
 import FormGroup from '@material-ui/core/FormGroup';
-
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
 import Favorite from '@material-ui/icons/Favorite';
 import FavoriteBorder from '@material-ui/icons/FavoriteBorder';
+import Grid from '@material-ui/core/Grid';
 
 export const PostCard = props => {
 
   const useStyles = makeStyles((theme) => ({
     card: {
-      margin: theme.spacing(2),
-      width: "60vw",
-      [theme.breakpoints.down('sm')]: {
-        width: '100vw',
-      },
+      margin: 0,
+      width: "100%",
     },
     cardContent: {
       paddingTop: '0px',
@@ -53,8 +52,7 @@ export const PostCard = props => {
       backgroundColor: theme.palette.background.paper,
     },
     cardActions: {
-      padding: "16px",
-      paddingBottom: 0,
+      padding: "0 16px 0 16px",
     },
     commentSection: {
       padding: "16px",
@@ -73,25 +71,21 @@ export const PostCard = props => {
   }
 
 
-  const formatDate = (createdAt) => {
+  const formatDate = (postDate) => {
     var options = { year: 'numeric', month: 'long', day: 'numeric' };
-
-    var date = new Date(1970,0,1)
-    date.setMilliseconds(createdAt)
- 
+    var date = new Date(postDate) 
     return date.toLocaleDateString("en-US", options)
   }
   
   const classes = useStyles();
 
-  console.log(props.post)
-
   return (
-    <div>
+    
       <Card className={classes.card}>
         <CardHeader
           avatar={
-            <Avatar 
+            props.loading ? <Skeleton animation="wave" variant="circle" width={40} height={40} />
+            : <Avatar 
               aria-label="profile-picture" 
               className={classes.profilePicture}
               alt="User Profile"
@@ -100,40 +94,46 @@ export const PostCard = props => {
           }
           title={
             props.loading ? (
-              <Skeleton animation="wave" width="80%" />
+              <Skeleton animation="wave" width="40%" />
             ) : (
                 props.post.author.first + ' ' + props.post.author.last
               )
           }
-          subheader={props.loading ? <Skeleton animation="wave" width="40%" /> : props.post.author.username}
+          subheader={props.loading ? <Skeleton animation="wave" width="20%" /> : props.post.author.username}
         />
 
         <CardContent className={classes.cardContent}>
           {props.loading ? (
             <React.Fragment>
-              <Box display="flex" style={{ marginBottom: '16px' }}>
-                <Box m="auto">
-                  <Skeleton animation="wave" variant="circle" width={128} height={128} />
-                </Box>
-              </Box>
-              <Skeleton animation="wave" style={{ marginBottom: 6 }} />
-              <Skeleton animation="wave" width="90%" style={{ marginBottom: 16 }} />
-              <Skeleton animation="wave" height={16} width="70%" />
+              <Skeleton animation="wave" width="70%" style={{ marginBottom: 8 }} />
+              <Grid container spacing={2}>
+                <Grid item xs={5}>
+                  <Skeleton animation="wave"  width="100%" variant="rect" height={128} style={{ marginBottom: 8 }} />
+                </Grid>
+                <Grid item xs={5}>
+                  <Skeleton animation="wave"  width="100%" variant="rect" height={128} style={{ marginBottom: 8 }} />
+                </Grid>
+              </Grid>
+          
+              <Skeleton animation="wave" style={{ marginBottom: 8 }} />
+              <Skeleton animation="wave" style={{ marginBottom: 8 }} />
+              <Skeleton animation="wave" width="90%" style={{ marginBottom: 8 }} />
+              <Skeleton animation="wave" width="70%" style={{ marginBottom: 16 }} />
             </React.Fragment>
           ) : (
             <div>
               <Typography variant="h4">{props.post.title}</Typography>
               <div className={classes.activityGrid}>
-                <GridList className={classes.gridList} cols={2.5} >
+               {props.post.activityList.length > 0 && <Typography variant="h6">Activities</Typography>}
+                <List>
                   {props.post.activityList.map((activity) => (
-                    <GridListTile key={activity.id} style={{boxShadow: 'none'}}>
-                        <ActivityTile 
-                          activity={activity} 
-                          edit={false}
-                        />
-                    </GridListTile>
+                    <ActivityTile 
+                      key={activity.id}
+                      activity={activity} 
+                      edit={false}
+                    />
                   ))}
-                </GridList>
+                </List>
               </div>
               <Typography variant="body1" component="p">{props.post.note}</Typography>
 
@@ -141,22 +141,29 @@ export const PostCard = props => {
             )}
         </CardContent>
         <CardActions className={classes.cardActions}>
-          <FormGroup row>
-
+        {props.loading ? <Skeleton animation="wave" height={32} width="30%"/>
+          : <FormGroup row>
             <FormControlLabel
               control={<Checkbox icon={<FavoriteBorder />} checkedIcon={<Favorite />} name="like"  checked={likePost} onChange={handleLike}/>}
               label={postLikeCount + " Like" + (postLikeCount === 1 ? '' : 's')}
             />
-          </FormGroup>
+          </FormGroup>}
           {/* TODO add comments */}
 
         </CardActions>
-        <div className={classes.commentSection}>
-          <Comment/>
-          <Typography variant="body2" color="textSecondary">{formatDate(props.post.createdAt)}</Typography>
-          <AddComment/>
+        {props.loading ? <div className={classes.commentSection}>
+          <Skeleton animation="wave" width="55%" style={{ marginBottom: 8 }} />
+          <Skeleton animation="wave" width="45%" style={{ marginBottom: 8 }} />
+          <Skeleton animation="wave" width="20%" style={{ marginBottom: 8 }} />
         </div>
+        : <div className={classes.commentSection}>
+          {/* <Comment/> */}
+          <Typography variant="body2" color="textSecondary" style={{marginBottom:8}}>
+            {formatDate(props.post.postDate)}
+          </Typography>
+          {/* <AddComment/> */}
+        </div> }
         
       </Card>
-    </div>);
+    );
 }
