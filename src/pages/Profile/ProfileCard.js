@@ -8,9 +8,9 @@ import CardContent from '@material-ui/core/CardContent';
 import IconButton from '@material-ui/core/IconButton';
 import CardHeader from '@material-ui/core/CardHeader';
 import Avatar from '@material-ui/core/Avatar';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
 import Box from '@material-ui/core/Box';
 import { EditProfileModal } from "../../components/EditProfileModal"
+import EditIcon from '@material-ui/icons/Edit';
 
 export const ProfileCard = props => {
 
@@ -64,13 +64,6 @@ export const ProfileCard = props => {
     setOpenModal(true);
   };
 
-  const handleClose = () => {
-    setOpenModal(false);
-  };
-  const editProfile = () => {
-    console.log("edit profile")
-    console.log("edit preferences")
-  }
   const classes = useStyles();
 
   const { loading, error, data } = useQuery(QUERY_ME);
@@ -86,7 +79,7 @@ export const ProfileCard = props => {
           action={
             loading ? <></> : (
               <IconButton aria-label="edit" onClick={handleOpen}>
-                <MoreVertIcon />
+                <EditIcon />
               </IconButton>
               
             )
@@ -138,6 +131,6 @@ export const ProfileCard = props => {
             )}
         </CardContent>
       </Card>
-      <EditProfileModal openModal={openModal} handleClose={() => setOpenModal(false)}/>
+      <EditProfileModal data={data} loading={loading} openModal={openModal} handleClose={() => setOpenModal(false)}/>
     </div>);
 }
