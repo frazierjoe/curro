@@ -92,6 +92,14 @@ export const EditProfileModal = (props) => {
   }
   const cancel = () => {
     console.log("do not update user")
+    setState({
+      first: props.data.me.first,
+      last: props.data.me.last,
+      username: props.data.me.username,
+      email: props.data.me.email,
+      bio: props.data.me.bio,
+      profilePictureURL: props.data.me.profilePictureURL
+    });
     props.handleClose();
   }
 
