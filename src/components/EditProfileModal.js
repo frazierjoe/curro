@@ -33,9 +33,6 @@ export const EditProfileModal = (props) => {
     `;
   const [updateUserMutation, { loading, error, data }] = useMutation(UPDATE_USER_MUTATION, {
     update(cache, { data: { updateUser: user } }) {
-      console.log(user)
-      console.log(cache)
-      console.log(cache.data.data["User:"+user.id])
       props.handleClose();
 
     },
@@ -55,7 +52,6 @@ export const EditProfileModal = (props) => {
     profilePictureURL: ""
   });
   if (!props.loading && props.data.me && !_isMounted) {
-    console.log(props.data.me)
     _isMounted = true;
     setState({
       first: props.data.me.first,
@@ -75,7 +71,6 @@ export const EditProfileModal = (props) => {
     var usernameValid = state.username.length > 0;
     var emailValid = emailRegex.test(state.email);
     if (firstValid && lastValid && usernameValid && emailValid) {
-      console.log("api call to update user")
       var userInput = {
         input: {
           userId: props.data.me.id,
