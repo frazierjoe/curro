@@ -81,7 +81,6 @@ const [signinUserMutation, {loading, error, data }] = useMutation(SIGNIN_USER_MU
   update(_, {data: {signIn: userData}}) {
     _isMounted = false
     context.login(userData)
-    console.log(userData)
     history.push('/feed')
   },
   onError(error) {
@@ -160,6 +159,11 @@ const [signinUserMutation, {loading, error, data }] = useMutation(SIGNIN_USER_MU
     })
   };
 
+  const submitForm = (event) => {
+    event.preventDefault()
+    loginUser()
+  }
+
   const newUser = () => {
     history.push('createAccount')
   }
@@ -178,7 +182,7 @@ const [signinUserMutation, {loading, error, data }] = useMutation(SIGNIN_USER_MU
             <div>
               <Typography variant="h4">Login</Typography>
             </div>
-            <form noValidate autoComplete="off">
+            <form noValidate autoComplete="off" onSubmit={submitForm}>
               <TextField 
                 id="login-email" 
                 className={classes.textField} 
