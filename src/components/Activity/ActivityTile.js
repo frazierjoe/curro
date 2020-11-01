@@ -64,19 +64,20 @@ export const ActivityTile = props => {
         }
       />
       <CardContent className={classes.cardContent}>
-        <Typography variant="body1" component="p">{TimeHelper.formatTimeMs(props.activity.duration)}</Typography>
+        <Typography variant="body1" component="p">{(props.activity.duration !== null && props.activity.duration > 0) ? TimeHelper.formatTimeMs(props.activity.duration) : ""}</Typography>
         {
-          props.activity.distance.value > 0 ? 
+          (props.activity.distance !== null && props.activity.distance.value !== null && props.activity.distance.value > 0) ? 
           <div>
             <Typography variant="body1" component="p">{props.activity.distance.value + ' ' + props.activity.distance.unit.toLowerCase()}</Typography>
             {
-              props.activity.duration > 0 ? 
+              (props.activity.duration !== null && props.activity.duration > 0) ? 
             <Typography variant="body1" component="p">{DistanceHelper.calculateAveragePace(props.activity.distance, props.activity.duration, props.activity.type)}</Typography>
               : <></>
             }
           </div>
           : <></>
         }
+        <></>
       </CardContent>
     </Card>
     );

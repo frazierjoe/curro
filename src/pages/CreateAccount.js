@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React, { useContext } from 'react';
 import { AuthContext } from '../auth';
 import { useMutation, gql } from '@apollo/client';
 import { Footer } from '../components/Footer';
@@ -92,24 +92,24 @@ export const CreateAccount = props => {
     }
   `;
 
-const [createUserMutation, {loading, error, data }] = useMutation(CREATE_USER_MUTATION, {
-  update(_, {data: {createUser: userData}}) {
-    _isMounted = false
-    context.login(userData)
-    history.push('/feed')
-  },
-  onError(error) {
-    if(_isMounted){
-      setValues({ ...values, emailError: false, passwordError: false, errorMessage: error.message });
+  const [createUserMutation, { loading, error, data }] = useMutation(CREATE_USER_MUTATION, {
+    update(_, { data: { createUser: userData } }) {
+      _isMounted = false
+      context.login(userData)
+      history.push('/feed')
+    },
+    onError(error) {
+      if (_isMounted) {
+        setValues({ ...values, emailError: false, passwordError: false, errorMessage: error.message });
+      }
     }
-  }
-})
+  })
 
   const calculateAge = (date) => {
     var birthdate = new Date(date)
     var difference = Date.now() - birthdate.getTime()
     var ageDate = new Date(difference);
-    return Math.abs(ageDate.getUTCFullYear()-1970)
+    return Math.abs(ageDate.getUTCFullYear() - 1970)
   }
 
   const useStyles = makeStyles((theme) => ({
@@ -117,13 +117,13 @@ const [createUserMutation, {loading, error, data }] = useMutation(CREATE_USER_MU
       margin: '32px',
       padding: '8px 16px 8px 16px',
       alignItems: 'center',
-      flexWrap: 'wrap',  
+      flexWrap: 'wrap',
       [theme.breakpoints.down('md')]: {
         margin: '16px 0 0 0',
         padding: '2px 4px 2px 4px'
       },
     },
-    
+
     withoutLabel: {
       marginTop: theme.spacing(3),
     },
@@ -149,7 +149,7 @@ const [createUserMutation, {loading, error, data }] = useMutation(CREATE_USER_MU
   const validateForm = async (callback) => {
 
     var validAge = calculateAge(selectedDate) >= 13
-  
+
     var firstErrorMessage = 'First Name is required'
     var lastErrorMessage = 'Last Name is required'
     var usernameErrorMessage = 'Username is required'
@@ -171,26 +171,27 @@ const [createUserMutation, {loading, error, data }] = useMutation(CREATE_USER_MU
     var usernameValid = values.username.length > 0
     var birthdateValid = (selectedDate !== undefined) && validAge
 
-    setValues({ ...values, 
-      firstError: !firstValid, firstErrorMessage: firstErrorMessage, 
-      lastError: !lastValid, lastErrorMessage: lastErrorMessage, 
-      emailError: !emailValid, emailErrorMessage: emailErrorMessage, 
-      usernameError: !usernameValid, usernameErrorMessage: usernameErrorMessage, 
-      birthdateError: !birthdateValid, birthdateErrorMessage: !birthdateValid ? birthdateErrorMessage : '', 
+    setValues({
+      ...values,
+      firstError: !firstValid, firstErrorMessage: firstErrorMessage,
+      lastError: !lastValid, lastErrorMessage: lastErrorMessage,
+      emailError: !emailValid, emailErrorMessage: emailErrorMessage,
+      usernameError: !usernameValid, usernameErrorMessage: usernameErrorMessage,
+      birthdateError: !birthdateValid, birthdateErrorMessage: !birthdateValid ? birthdateErrorMessage : '',
       passwordError: !passwordValid, passwordErrorMessage: passwordErrorMessage,
-      confirmError: !confirmValid, confirmErrorMessage: confirmErrorMessage, 
-     });
+      confirmError: !confirmValid, confirmErrorMessage: confirmErrorMessage,
+    });
 
-    if(emailValid && passwordValid && confirmValid && birthdateValid && usernameValid && firstValid && lastValid) {
+    if (emailValid && passwordValid && confirmValid && birthdateValid && usernameValid && firstValid && lastValid) {
       await callback()
-    } 
+    }
   }
 
 
   const createUser = () => {
     validateForm(() => {
       console.log("Create user, form is valid")
-     
+
       var birthdate = new Date(selectedDate)
       console.log(birthdate.toISOString())
       console.log(birthdate.toISOString().toString())
@@ -205,8 +206,8 @@ const [createUserMutation, {loading, error, data }] = useMutation(CREATE_USER_MU
           birthdate: birthdate.toISOString().toString()
         }
       }
-      createUserMutation({variables: userInput})
-    })  
+      createUserMutation({ variables: userInput })
+    })
   };
 
   const existingUser = () => {
@@ -222,46 +223,46 @@ const [createUserMutation, {loading, error, data }] = useMutation(CREATE_USER_MU
               <Typography variant="h4">CreateAccount</Typography>
             </div>
             <form noValidate autoComplete="off">
-              <TextField 
-                id="create-first" 
-                className={classes.textField} 
-                label="First Name" 
+              <TextField
+                id="create-first"
+                className={classes.textField}
+                label="First Name"
                 fullWidth
                 required
                 helperText={values.firstError ? values.firstErrorMessage : ''}
                 onChange={handleChange('first')}
                 error={values.firstError}
                 variant="outlined" />
-              <TextField 
-                id="create-last" 
-                className={classes.textField} 
-                label="Last Name" 
+              <TextField
+                id="create-last"
+                className={classes.textField}
+                label="Last Name"
                 fullWidth
                 required
                 helperText={values.lastError ? values.lastErrorMessage : ''}
                 onChange={handleChange('last')}
                 error={values.lastError}
                 variant="outlined" />
-              <TextField 
-                id="create-username" 
-                className={classes.textField} 
-                label="Username" 
+              <TextField
+                id="create-username"
+                className={classes.textField}
+                label="Username"
                 fullWidth
                 required
                 helperText={values.usernameError ? values.usernameErrorMessage : ''}
                 onChange={handleChange('username')}
                 error={values.usernameError}
                 variant="outlined" />
-              <TextField 
-                  id="create-email" 
-                  className={classes.textField} 
-                  label="Email" 
-                  fullWidth
-                  required
-                  helperText={values.emailError ? values.emailErrorMessage : ''}
-                  onChange={handleChange('email')}
-                  error={values.emailError}
-                  variant="outlined" />
+              <TextField
+                id="create-email"
+                className={classes.textField}
+                label="Email"
+                fullWidth
+                required
+                helperText={values.emailError ? values.emailErrorMessage : ''}
+                onChange={handleChange('email')}
+                error={values.emailError}
+                variant="outlined" />
               <MuiPickersUtilsProvider utils={DateFnsUtils}>
                 <KeyboardDatePicker
                   disableToolbar
@@ -281,12 +282,12 @@ const [createUserMutation, {loading, error, data }] = useMutation(CREATE_USER_MU
                   }}
                 />
               </MuiPickersUtilsProvider>
-              <FormControl 
-                variant="outlined" 
-                fullWidth 
-                required 
-                error={values.passwordError} 
-                className={classes.textField} 
+              <FormControl
+                variant="outlined"
+                fullWidth
+                required
+                error={values.passwordError}
+                className={classes.textField}
               >
                 <InputLabel htmlFor="create-password">Password</InputLabel>
                 <OutlinedInput
@@ -313,12 +314,12 @@ const [createUserMutation, {loading, error, data }] = useMutation(CREATE_USER_MU
                 <FormHelperText id="create-confirm-error-message">{values.passwordError ? values.passwordErrorMessage : ''}</FormHelperText>
               </FormControl>
               <Typography variant="body2" color="textSecondary">Password must have 1 lowercase, 1 uppercase, 1 number, 1 special, and be at least 8 long</Typography>
-              <FormControl 
-                variant="outlined" 
-                fullWidth 
-                required 
-                error={values.confirmError} 
-                className={classes.textField} 
+              <FormControl
+                variant="outlined"
+                fullWidth
+                required
+                error={values.confirmError}
+                className={classes.textField}
               >
                 <InputLabel htmlFor="create-confirm">Confirm Password</InputLabel>
                 <OutlinedInput
@@ -347,7 +348,7 @@ const [createUserMutation, {loading, error, data }] = useMutation(CREATE_USER_MU
               <div>
                 <Typography variant="subtitle1" className={classes.errorMessage}>{values.errorMessage}</Typography>
                 <Button variant="contained" className={classes.textField} color="primary" fullWidth size="large" onClick={createUser} disabled={loading}>
-                  {loading ? <CircularProgress color="inherit" size={26}/> : <>Create Account</> } 
+                  {loading ? <CircularProgress color="inherit" size={26} /> : <>Create Account</>}
                 </Button>
                 <Button className={classes.textField} fullWidth size="medium" onClick={existingUser}>Already have an account? Login</Button>
               </div>
@@ -356,7 +357,7 @@ const [createUserMutation, {loading, error, data }] = useMutation(CREATE_USER_MU
         </Card>
 
       </Container>
-      
+
       <Footer />
     </div>);
 }
