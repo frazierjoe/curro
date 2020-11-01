@@ -1,8 +1,7 @@
-import { makeStyles, Card, CardContent, CardHeader, CardActions, Divider } from '@material-ui/core';
+import { makeStyles, Card, CardContent, CardHeader, CardActions, Divider, List, ListItem } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import ShareIcon from '@material-ui/icons/Share';
-import ActivityContent from './ActivityContent';
 import React from 'react';
 
 
@@ -15,8 +14,17 @@ const useStyles = makeStyles((theme) => ({
         textAlign: "center"
     }
 }));
-const WeekColumn = ({date}) => {
+const WeekColumn = ({postsToday, date}) => {
     const classes = useStyles();
+
+    let titles = postsToday.map(post => {
+        return (<ListItem>{post.title}</ListItem>)
+    })
+    let titlesList = (
+        <List>
+            {titles}
+        </List>
+    )
 
     return (
         <div>
@@ -25,22 +33,7 @@ const WeekColumn = ({date}) => {
                     {getDayStringShortened(date)} {date.toLocaleDateString(undefined, {day: "numeric"})}
                 </div>
                 <Divider></Divider>
-                <CardHeader
-                    title="I just went on a sick run dude"
-                    subheader={date.toLocaleDateString(undefined, {year: 'numeric', month: 'numeric', day: 'numeric' })}
-                />
-                <CardContent>
-                    Ran 3 miles, puked, ran 3 miles, puked, ran 3 miles, puked. Ran 3 miles, puked, ran 3 miles, puked, ran 3 miles, puked.Ran 3 miles, puked, ran 3 miles, puked, ran 3 miles, puked.Ran 3 miles, puked, ran 3 miles, puked, ran 3 miles, puked.Ran 3 miles, puked, ran 3 miles, puked, ran 3 miles, puked.Ran 3 miles, puked, ran 3 miles, puked, ran 3 miles, puked.Ran 3 miles, puked, ran 3 miles, puked, ran 3 miles, puked.Ran 3 miles, puked, ran 3 miles, puked, ran 3 miles, puked.Ran 3 miles, puked, ran 3 miles, puked, ran 3 miles, puked.Ran 3 miles, puked, ran 3 miles, puked, ran 3 miles, puked.
-                </CardContent>
-                <ActivityContent />
-                <CardActions disableSpacing>
-                    <IconButton aria-label="add to favorites">
-                        <FavoriteIcon />
-                    </IconButton>
-                    <IconButton aria-label="share">
-                        <ShareIcon />
-                    </IconButton>
-                </CardActions>
+                {titlesList}
             </Card>
         </div>
     );

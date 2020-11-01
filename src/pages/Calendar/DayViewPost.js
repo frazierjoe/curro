@@ -3,7 +3,7 @@ import { makeStyles, Card, CardContent, CardHeader, CardActions } from '@materia
 import IconButton from '@material-ui/core/IconButton';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import ShareIcon from '@material-ui/icons/Share';
-import ActivityContent from './ActivityContent';
+import { ActivityTile } from '../../components/Post/ActivityTile';
 
 const useStyles = makeStyles((theme) => ({
     card: {
@@ -15,6 +15,15 @@ const useStyles = makeStyles((theme) => ({
 const DayViewPost = ({ post }) => {
     const classes = useStyles();
     console.log('post :>> ', post);
+
+    let activityTiles = post.activityList.map((activity) => (
+        <ActivityTile
+            key={activity.id}
+            activity={activity}
+            edit={false}
+        />
+    ));
+
     return (
         <Card className={classes.card}>
             <CardHeader
@@ -25,8 +34,8 @@ const DayViewPost = ({ post }) => {
                 {post.note}
             </CardContent>
 
-            <ActivityContent activityList={post.activityList}/>
-            
+            {activityTiles}
+
             <CardActions disableSpacing>
                 <IconButton aria-label="add to favorites">
                     <FavoriteIcon />
