@@ -77,7 +77,7 @@ export const Login = props => {
       }
     }
   `;
-const [signinUserMutation, {loading, error, data }] = useMutation(SIGNIN_USER_MUTATION, {
+const [signinUserMutation, {loading }] = useMutation(SIGNIN_USER_MUTATION, {
   update(_, {data: {signIn: userData}}) {
     _isMounted = false
     context.login(userData)

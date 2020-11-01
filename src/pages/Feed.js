@@ -10,6 +10,8 @@ import ListItem from '@material-ui/core/ListItem';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import AddIcon from '@material-ui/icons/Add';
 import Fab from '@material-ui/core/Fab';
+import Hidden from '@material-ui/core/Hidden';
+
 
 const useStyles = makeStyles((theme) => ({
   mainContent: {
@@ -48,9 +50,6 @@ const useStyles = makeStyles((theme) => ({
     position: 'fixed',
     bottom: 16,
     right: 16,
-    [theme.breakpoints.down('sm')]: {
-      display: 'none'
-    },
   },
   
 }));
@@ -61,6 +60,7 @@ export const Feed = () => {
 
   const [openModal, setOpenModal] = useState(false)
   const [seenAllPost, setSeenAllPost] = useState(allCaughtUp)
+  const [editPost, setEditPost] = useState(null)
   
   const sample_user_post = {
     id: "1",
@@ -120,6 +120,11 @@ export const Feed = () => {
             equipment{
               id
             }
+            additionalInfo{
+              averageHeartRate
+              elevationGain
+              calories
+            }
           }
           likeList {
             id
@@ -134,7 +139,7 @@ export const Feed = () => {
   `;
 
   const getPostSettings = {pageSize: 10, after: null}
-  const { loading, error, data, fetchMore, networkStatus } = useQuery(GET_POST_QUERY, {variables: getPostSettings, notifyOnNetworkStatusChange: true});
+  const { data, fetchMore, networkStatus } = useQuery(GET_POST_QUERY, {variables: getPostSettings, notifyOnNetworkStatusChange: true});
 
   const fetchMorePosts = () => {
     if(data.postList.hasMore) {
@@ -177,7 +182,7 @@ export const Feed = () => {
         {data.postList.posts.map((post, index) => (
           <React.Fragment key={post.id}>
             <ListItem className={classes.listItem}>
-              <PostCard post={post}/>
+              <PostCard post={post} openEditPostModal={() => setOpenModal(true)} setEditPost={setEditPost}/>
             </ListItem>
             {index === data.postList.posts.length - 4 && (
               <Waypoint onEnter={fetchMorePosts}/>
@@ -193,11 +198,13 @@ export const Feed = () => {
     }
      
     </div>
-    <NewActivityModal openModal={openModal} handleClose={() => setOpenModal(false)} />
-    <span className={classes.addFab}>
-        <Fab color="secondary" aria-label="add" onClick={() => setOpenModal(true)}>
-            <AddIcon />
-        </Fab>
-    </span>
+    <NewActivityModal openModal={openModal} handleClose={() => setOpenModal(false)} editPost={editPost}/>
+    <Hidden smDown>
+      <span className={classes.addFab}>
+          <Fab color="secondary" aria-label="add" onClick={() => setOpenModal(true)}>
+              <AddIcon />
+          </Fab>
+      </span>
+    </Hidden>
   </div>);
 }

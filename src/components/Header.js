@@ -16,7 +16,6 @@ import Drawer from '@material-ui/core/Drawer';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import List from '@material-ui/core/List';
 import Divider from '@material-ui/core/Divider';
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -60,7 +59,7 @@ const Header = props => {
       alignItems: 'center',
       padding: theme.spacing(0, 1),
       ...theme.mixins.toolbar,
-      justifyContent: 'flex-end',
+      justifyContent: 'flex-start',
     },
     spacer: {
       flexGrow: 1,
@@ -127,7 +126,7 @@ const Header = props => {
   }
 `;
 
-  const [signOut, { signOutLoading, signOutError, signOutData }] = useMutation(MUTATION_SIGNOUT, {
+  const [signOut, { loading: signOutLoading}] = useMutation(MUTATION_SIGNOUT, {
     update(_, {data: {signOut: success}}) {
       console.log(success)
     },
@@ -168,7 +167,7 @@ const Header = props => {
           <IconButton edge="start" className={clsx(classes.menuButton, state.openDrawer && classes.hide)} color="inherit" aria-label="menu" onClick={handleDrawerOpen}>
             <MenuIcon />
           </IconButton>
-          <Button variant='text' className={classes.homeButton} onClick={() => history.push('/home')}>
+          <Button variant='text' className={classes.homeButton} onClick={() => history.push('/feed')}>
             <Avatar alt="Logo" src={process.env.PUBLIC_URL + '/logo192.png'} />
             <Typography variant="h6" className={classes.title} >
               Curro
@@ -212,7 +211,7 @@ const Header = props => {
                     history.push('/profile');
                   }
                   }>{loading | !data ? "Profile" : data.me.username}</MenuItem>
-                  <MenuItem onClick={() => logoutUser(history, client)}>Logout</MenuItem>
+                  <MenuItem onClick={() => logoutUser(history, client)} disabled={signOutLoading}>Logout</MenuItem>
                 </Menu>
               </div>}
           </div>
@@ -232,6 +231,10 @@ const Header = props => {
           <IconButton onClick={handleDrawerClose}>
             <MenuIcon />
           </IconButton>
+          <Avatar alt="Logo" color="primary" src={process.env.PUBLIC_URL + '/logoPink192.png'} />
+          <Typography variant="h6" className={classes.title} >
+            CURRO
+          </Typography>
         </div>
         <Divider />
         <List>

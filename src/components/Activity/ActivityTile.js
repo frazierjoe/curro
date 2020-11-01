@@ -34,24 +34,23 @@ export const ActivityTile = props => {
     props.setEditActivity(true)
     props.setEditActivityId(activity.id)
     props.setEditActivityValues({
-      distanceValue: activity.distance.value,
+      distanceValue: activity.distance.value ? activity.distance.value : 0,
       distanceUnit: activity.distance.unit.toLowerCase(),
       duration: TimeHelper.formatTimeString(activity.duration),
-      equipmentId: activity.equipmentId,
-      heartRate: activity.additionalInfo.averageHeartRate,
-      elevationGain: activity.additionalInfo.elevationGain,
-      calories: activity.additionalInfo.calories,
+      equipmentId: activity.equipmentId ? activity.equipmentId : 0,
+      heartRate: activity.additionalInfo.averageHeartRate ? activity.additionalInfo.averageHeartRate : 0,
+      elevationGain: activity.additionalInfo.elevationGain ? activity.additionalInfo.elevationGain : 0,
+      calories: activity.additionalInfo.calories ? activity.additionalInfo.calories : 0
     })
     props.setSelectedActivity(AllowedActivity[activity.activityId])
     props.setOpenActivityDetailModal(true)
   }
   const classes = useStyles();
 
-
   return (
     <Card className={classes.card} >
       <CardHeader
-        title={props.activity.type}
+        title={props.activity.type.replace(/_+/g, ' ')}
         style={{paddingBottom: '0px'}}
         action={
           props.edit === true ?
@@ -64,13 +63,13 @@ export const ActivityTile = props => {
         }
       />
       <CardContent className={classes.cardContent}>
-        <Typography variant="body1" component="p">{(props.activity.duration !== null && props.activity.duration > 0) ? TimeHelper.formatTimeMs(props.activity.duration) : ""}</Typography>
+        <Typography variant="body1" component="p">{props.activity.duration ? TimeHelper.formatTimeMs(props.activity.duration) : ""}</Typography>
         {
-          (props.activity.distance !== null && props.activity.distance.value !== null && props.activity.distance.value > 0) ? 
+          props.activity.distance.value ? 
           <div>
             <Typography variant="body1" component="p">{props.activity.distance.value + ' ' + props.activity.distance.unit.toLowerCase()}</Typography>
             {
-              (props.activity.duration !== null && props.activity.duration > 0) ? 
+              props.activity.duration ? 
             <Typography variant="body1" component="p">{DistanceHelper.calculateAveragePace(props.activity.distance, props.activity.duration, props.activity.type)}</Typography>
               : <></>
             }

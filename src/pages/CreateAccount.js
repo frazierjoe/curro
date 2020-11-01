@@ -92,7 +92,7 @@ export const CreateAccount = props => {
     }
   `;
 
-  const [createUserMutation, { loading, error, data }] = useMutation(CREATE_USER_MUTATION, {
+  const [createUserMutation, { loading }] = useMutation(CREATE_USER_MUTATION, {
     update(_, { data: { createUser: userData } }) {
       _isMounted = false
       context.login(userData)

@@ -19,6 +19,9 @@ import Toolbar from '@material-ui/core/Toolbar';
 import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
+import IconButton from '@material-ui/core/IconButton';
+import Tooltip from '@material-ui/core/Tooltip';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -28,7 +31,7 @@ const useStyles = makeStyles((theme) => ({
   paper: {
     position: 'absolute',
     width: '40%',
-    height: '90%',
+    height: '98%',
     backgroundColor: theme.palette.background.paper,
     boxShadow: theme.shadows[4],
     padding: '0 16px 16px 16px',
@@ -79,6 +82,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+var _previousPostId = ''
+
+
 export const NewActivityModal = (props) => {
   const classes = useStyles();
   const [selectedDate, setSelectedDate] = React.useState(new Date());
@@ -89,7 +95,7 @@ export const NewActivityModal = (props) => {
   const [selectedActivity, setSelectedActivity] = useState(AllowedActivity[0])
   const [editActivity, setEditActivity] = useState(false)
 
-  const [post, setPost] = React.useState({
+  const defaultPost = {
     title: '',
     note: '',
     titleError: false,
@@ -97,7 +103,8 @@ export const NewActivityModal = (props) => {
     titleErrorMessage: '',
     dateErrorMessage: '',
     errorMessage: ''
-  });
+  }
+  const [post, setPost] = React.useState(defaultPost);
 
   const handlePostChange = (prop) => (event) => {
 
@@ -125,6 +132,30 @@ export const NewActivityModal = (props) => {
 
   const [editActivityValues, setEditActivityValues] = React.useState(defaultActivityValues);
 
+  const editPost = props.editPost !== null
+  
+  if(editPost && _previousPostId !== props.editPost.id){
+    console.log("edit post loaded!")
+    console.log(props.editPost)
+    _previousPostId = props.editPost.id
+    setPost({
+      ...post,
+      id: props.editPost.id,
+      title: props.editPost.title,
+      note: props.editPost.note,
+    })
+    setSelectedDate(new Date(props.editPost.postDate))
+    var activityList = props.editPost.activityList.map((activity)=>{
+      var formatActivity = {
+        ...activity,
+        activityId: 1
+      }
+      return formatActivity
+    })
+    setActivityData(activityList)
+  }
+
+
   const handleEditActivityChange = (prop) => (event) => {
     if(prop === 'duration'){
       var onlyNumbersRegex = /[^\.\d\:]/g
@@ -139,7 +170,7 @@ export const NewActivityModal = (props) => {
   }
 
   const handleDateChange = (date) => {
-    if(date !== null){
+    if(date !== ''){
       setPost({ ...post, 
         dateError: false,
       });
@@ -149,10 +180,15 @@ export const NewActivityModal = (props) => {
   const clearState = () => {
     setActivityData([])
     setSelectedDate(new Date())
+    setPost(defaultPost)
+    _previousPostId = ''
+    console.log("Clear state")
+    console.log(post)
   }
   const cancelPost = () => {
-    props.handleClose()
     clearState()
+    props.handleClose()
+    
   }
 
   const CREATE_POST_MUTATION = gql`
@@ -163,11 +199,61 @@ export const NewActivityModal = (props) => {
     }
   `;
 
-  const [createPostMutation, {loading, error, data }] = useMutation(CREATE_POST_MUTATION, {
+  const [createPostMutation, {loading}] = useMutation(CREATE_POST_MUTATION, {
     update(_, {data: {createPost: post}}) {
       console.log(post)
-      // TODO clear state
+      clearState()
       props.handleClose()
+      //TODO add post to cache
+
+    },
+    onError(error) {
+      console.log(error)
+      console.log(error.message)
+      // TODO, don't close and tell user what happened
+      props.handleClose()
+    }
+  })
+
+const UPDATE_POST_MUTATION = gql`
+  mutation updatePost($input: UpdatePostInput!){
+    updatePost(input: $input){
+  		id
+  	}
+  }
+`;
+
+const [updatePostMutation, {loading: editLoading}] = useMutation(UPDATE_POST_MUTATION, {
+  update(_, {data: {editPost: post}}) {
+    console.log(post)
+    clearState()
+    props.handleClose()
+    //TODO update post in cache
+
+  },
+  onError(error) {
+    console.log(error)
+    console.log(error.message)
+    // TODO, don't close and tell user what happened
+    props.handleClose()
+  }
+})
+
+  const DELETE_POST_MUTATION = gql`
+    mutation deletePost($postId: ID!) {
+      deletePost(postId: $postId) {
+        message
+        success
+      }
+    }
+  `;
+
+  const [deletePostMutation, {loading: deleteLoading}] = useMutation(DELETE_POST_MUTATION, {
+    update(_, {data}) {
+      console.log(data)
+      clearState()
+      props.handleClose()
+      //TODO remove post from cache
     },
     onError(error) {
       console.log(error)
@@ -212,25 +298,62 @@ export const NewActivityModal = (props) => {
             calories: activity.calories
           }
         }
+        // Check if the activity already has an existing mongodb id
+        console.log(activity.id)
+        if(editPost && String(activity.id).match(/^[0-9a-fA-F]{24}$/)){
+          // add the existing id so API can update activty
+          formatActivity = {
+            ...formatActivity,
+            activityId: activity.id
+          }
+        }
         return formatActivity
       })
-
-      console.log(selectedDate.toISOString())
 
       const postInput = {
         input: {
           title: post.title,
           activityList: activityList,
           note: post.note,
-          postDate: selectedDate.toISOString(),
           // TODO change this to tagList of users
           tagIdList: []  
         }
       }
-      console.log(postInput)
-      createPostMutation({ variables: postInput })
+      
+      if(editPost){
+        console.log("API Call to editPostMutation")
+        const editPostInput = {
+          ...postInput,
+          input: {
+            ...postInput.input,
+            postId: props.editPost.id,
+          }
+        }
+        console.log(editPostInput)
+        updatePostMutation({ variables: editPostInput })
+      } else {
+        const creatPostInput = {
+          ...postInput,
+          input: {
+            ...postInput.input,
+            postDate: selectedDate.toISOString(),
+          }
+        }
+        
+
+        createPostMutation({ variables: creatPostInput })
+      }
+      
     })
-}
+  }
+
+  const deletePost = () => {
+    console.log("Delete Post", props.editPost.id)
+    const deleteInput = {
+      postId: props.editPost.id
+    }
+    deletePostMutation({variables: deleteInput})
+  }
 
   return (
     <div>
@@ -243,9 +366,22 @@ export const NewActivityModal = (props) => {
       <div style={classes.modalStyle} className={classes.paper}>
         <Toolbar disableGutters>
           <Button onClick={cancelPost} >Cancel</Button>
-          <Typography variant="h6" className={classes.spacer} >New Post</Typography>
-          <Button onClick={postActivity} color="primary" disabled={loading}>POST</Button>
-          {loading && <CircularProgress size={24} className={classes.buttonProgress} />}
+          {editPost && (
+            <Tooltip title="Delete" enterDelay={400}>
+              <span>
+                <IconButton onClick={deletePost} disabled={deleteLoading}>
+                  <DeleteForeverIcon/>
+                  {deleteLoading && <CircularProgress size={24} className={classes.buttonProgress} />}
+                </IconButton>
+              </span>
+            </Tooltip>
+          ) }
+          <Typography variant="h6" className={classes.spacer}>{editPost ? "Edit" : "New"} Post</Typography>
+          <Button onClick={postActivity} color="primary" disabled={loading}>
+            {editPost ? "SAVE" : "POST"}
+            {(loading || editLoading) && <CircularProgress size={24} className={classes.buttonProgress} />}
+          </Button>
+
         </Toolbar>
         <form noValidate autoComplete="off">
           <TextField 
@@ -278,7 +414,7 @@ export const NewActivityModal = (props) => {
             />
           </MuiPickersUtilsProvider>
           <div className={classes.activityGrid}>
-            <GridList className={classes.gridList} cols={2.5} >
+            <GridList className={classes.gridList} cols={1.5} >
               {activityData.map((activity) => (
                 <GridListTile key={activity.id} style={{boxShadow: 'none'}}>
                     <ActivityTile 
