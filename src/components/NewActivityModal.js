@@ -178,12 +178,7 @@ export const NewActivityModal = (props) => {
   })
 
   const validatePost = (callback) => {
-    console.log("Checking Form")
-    console.log(post.title)
-    console.log(post.note)
     var postDate = selectedDate.toISOString()
-    console.log(postDate)
-    console.log(new Date(postDate))
 
     const postTitleValid = post.title.length > 0
     const selectedDateValid = selectedDate !== null
@@ -202,13 +197,9 @@ export const NewActivityModal = (props) => {
   }
   const postActivity = () => {
     validatePost(() => {
-      console.log("make API call here")
-      // TODO map this to activity list
-      console.log(activityData)
-
       var activityList = activityData.map((activity)=>{
         var formatActivity = {
-          type: activity.type,
+          type: activity.type.replace(/\s+/g, '_').toUpperCase(),
           duration: activity.duration,
           distance: {
             value: parseFloat(activity.distance.value),
@@ -224,17 +215,8 @@ export const NewActivityModal = (props) => {
         return formatActivity
       })
 
-      //  "type": "RUN",
-      // "duration": 3060000,
-    	// "distance": {"value": 10.4, "unit": "KM"},
-    	// "equipmentId": null,
-      // "additionalInfo": {
-      //   "averageHeartRate": null,
-      //   "elevationGain": null,
-      //   "calories": null
-			// }
+      console.log(selectedDate.toISOString())
 
-      console.log(activityList)
       const postInput = {
         input: {
           title: post.title,

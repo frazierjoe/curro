@@ -230,7 +230,7 @@ const Header = props => {
       >
         <div className={classes.drawerHeader}>
           <IconButton onClick={handleDrawerClose}>
-            <ChevronLeftIcon />
+            <MenuIcon />
           </IconButton>
         </div>
         <Divider />
