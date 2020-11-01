@@ -2,10 +2,8 @@ import React, { useState }  from 'react';
 import { AllCaughtUp } from '../components/Post/AllCaughtUp'
 import { useQuery, gql } from '@apollo/client';
 import { Waypoint } from 'react-waypoint';
-import Typography from '@material-ui/core/Typography';
 import { NewActivityModal } from '../components/NewActivityModal';
 import { makeStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
 import { PostCard } from '../components/Post/PostCard';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -62,7 +60,7 @@ var allCaughtUp = false
 export const Feed = () => {
 
   const [openModal, setOpenModal] = useState(false)
-  const [seenAllPost, setSeenAllPost] = useState(false)
+  const [seenAllPost, setSeenAllPost] = useState(allCaughtUp)
   
   const sample_user_post = {
     id: "1",
@@ -135,25 +133,12 @@ export const Feed = () => {
     }
   `;
 
-  const getPostSettings = {pageSize: 5, after: null}
+  const getPostSettings = {pageSize: 10, after: null}
   const { loading, error, data, fetchMore, networkStatus } = useQuery(GET_POST_QUERY, {variables: getPostSettings, notifyOnNetworkStatusChange: true});
 
   const fetchMorePosts = () => {
     if(data.postList.hasMore) {
-      fetchMore({variables: {pageSize: 5, after: data.postList.cursor}, updateQuery: (previousPosts, {fetchMoreResult}) => {
-        if(!fetchMoreResult){
-          return previousPosts
-        }
-        return {
-          postList: {
-            __typename: previousPosts.postList.__typename,
-            posts: [...previousPosts.postList.posts, ...fetchMoreResult.postList.posts],
-            hasMore: fetchMoreResult.postList.hasMore,
-            cursor: fetchMoreResult.postList.cursor,
-          }
-          
-        }
-      }})
+      fetchMore({variables: {pageSize: 10, after: data.postList.cursor}})
     } else {
       if(!allCaughtUp){
         allCaughtUp = true
@@ -177,7 +162,7 @@ export const Feed = () => {
           <ListItem key={3} className={classes.listItem}>
             <PostCard post={sample_user_post} loading={true}/>
           </ListItem>
-       
+          <div className={classes.loadingPostProgress}><CircularProgress/></div>
       </List>
     </div>
     
@@ -194,7 +179,7 @@ export const Feed = () => {
             <ListItem className={classes.listItem}>
               <PostCard post={post}/>
             </ListItem>
-            {index === data.postList.posts.length - 1 && (
+            {index === data.postList.posts.length - 4 && (
               <Waypoint onEnter={fetchMorePosts}/>
             )}
           </React.Fragment>

@@ -146,7 +146,7 @@ export const CreateAccount = props => {
   const { history } = props;
   const classes = useStyles();
 
-  const validateForm = async (callback) => {
+  const validateForm = (callback) => {
 
     var validAge = calculateAge(selectedDate) >= 13
 
@@ -183,7 +183,7 @@ export const CreateAccount = props => {
     });
 
     if (emailValid && passwordValid && confirmValid && birthdateValid && usernameValid && firstValid && lastValid) {
-      await callback()
+      callback()
     }
   }
 
