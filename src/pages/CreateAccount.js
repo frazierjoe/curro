@@ -190,12 +190,8 @@ export const CreateAccount = props => {
 
   const createUser = () => {
     validateForm(() => {
-      console.log("Create user, form is valid")
-
       var birthdate = new Date(selectedDate)
-      console.log(birthdate.toISOString())
-      console.log(birthdate.toISOString().toString())
-
+      
       var userInput = {
         input: {
           email: String(values.email).toLowerCase(),
@@ -210,6 +206,12 @@ export const CreateAccount = props => {
     })
   };
 
+  const submitForm = (event) => {
+    event.preventDefault()
+    createUser()
+  }
+
+
   const existingUser = () => {
     history.push('login')
   }
@@ -222,7 +224,7 @@ export const CreateAccount = props => {
             <div>
               <Typography variant="h4">CreateAccount</Typography>
             </div>
-            <form noValidate autoComplete="off">
+            <form noValidate autoComplete="off" onSubmit={submitForm}>
               <TextField
                 id="create-first"
                 className={classes.textField}

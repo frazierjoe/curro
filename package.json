@@ -25,11 +25,8 @@
     "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.3",
     "react-swipeable": "^5.5.1",
-<<<<<<< HEAD
-    "serve": "^11.3.2"
-=======
+    "serve": "^11.3.2",
     "react-waypoint": "^9.0.3"
->>>>>>> posts
   },
   "scripts": {
     "start": "react-scripts start",
