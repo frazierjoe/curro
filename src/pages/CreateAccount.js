@@ -163,7 +163,7 @@ export const CreateAccount = props => {
     var emailRegex = /^(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:+)\])$/;
     // password with 1 lower, 1 upper, 1 number, 1 special, and at least 8 long
     var passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-    var emailValid = emailRegex.test(values.email)
+    var emailValid = emailRegex.test(String(values.email).toLowerCase())
     var passwordValid = passwordRegex.test(values.password)
     var confirmValid = values.password === values.confirm
     var firstValid = values.first.length > 0
@@ -194,11 +194,11 @@ export const CreateAccount = props => {
       
       var userInput = {
         input: {
-          email: String(values.email).toLowerCase(),
-          first: String(values.first),
-          last: String(values.last),
-          username: String(values.username),
-          password: String(values.password),
+          email: values.email.toLowerCase(),
+          first: values.first,
+          last: values.last,
+          username: values.username,
+          password: values.password,
           birthdate: birthdate.toISOString().toString()
         }
       }

@@ -3,17 +3,52 @@ import { makeStyles } from '@material-ui/core/styles';
 import Modal from '@material-ui/core/Modal';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
+import Typography from '@material-ui/core/Typography';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import Toolbar from '@material-ui/core/Toolbar';
 import { useMutation, gql } from '@apollo/client';
 
 
 const useStyles = makeStyles((theme) => ({
+  modal: {
+    top: 48,
+  },
   paper: {
     position: 'absolute',
-    width: 400,
+    width: '40%',
+    height: '98%',
     backgroundColor: theme.palette.background.paper,
-    border: '2px solid #000',
-    boxShadow: theme.shadows[5],
-    padding: theme.spacing(2, 4, 3),
+    boxShadow: theme.shadows[4],
+    padding: '0 16px 16px 16px',
+    margin: 0,
+    overflow: 'scroll',
+    overflowX: 'hidden',
+    [theme.breakpoints.down('sm')]: {
+      height: '100%', 
+      width: '100%',
+    },
+  },
+  spacer: {
+    flexGrow: 1,
+    textAlign: 'center',
+  },
+  buttonProgress: {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    marginTop: -12,
+    marginLeft: -12,
+  },
+  textField: {
+    margin: '16px 0 0 0',
+    '& label.Mui-focused': {
+      color: theme.palette.secondary.main,
+    },
+    '& .MuiOutlinedInput-root': {
+      '&.Mui-focused fieldset': {
+        borderColor: theme.palette.secondary.main,
+      },
+    },
   },
 }));
 var _isMounted = false;
@@ -69,7 +104,7 @@ export const EditProfileModal = (props) => {
     var firstValid = state.first.length > 0;
     var lastValid = state.last.length > 0;
     var usernameValid = state.username.length > 0;
-    var emailValid = emailRegex.test(state.email);
+    var emailValid = emailRegex.test(state.email.toLowerCase());
     if (firstValid && lastValid && usernameValid && emailValid) {
       var userInput = {
         input: {
@@ -82,16 +117,13 @@ export const EditProfileModal = (props) => {
         }
 
       }
-      
-      console.log(userInput)
-
       updateUserMutation({ variables: userInput })
+      _isMounted = false
       window.location.reload(true);
 
     }
   }
   const cancel = () => {
-    console.log("do not update user")
     setState({
       first: props.data.me.first,
       last: props.data.me.last,
@@ -100,6 +132,7 @@ export const EditProfileModal = (props) => {
       bio: props.data.me.bio,
       profilePictureURL: props.data.me.profilePictureURL
     });
+    _isMounted = false
     props.handleClose();
   }
 
@@ -109,40 +142,47 @@ export const EditProfileModal = (props) => {
 
   const body = (
     <div className={classes.paper}>
-      <h2 id="simple-modal-title" color="primary">Edit Profile</h2>
+      <Toolbar disableGutters>
+        <Button onClick={cancel}>Cancel</Button>
+        <Typography variant="h6" className={classes.spacer}>Edit Profile</Typography>
+        <Button onClick={save} color="primary" disabled={loading}>
+          SAVE
+          {loading && <CircularProgress size={24} className={classes.buttonProgress} />}
+        </Button>
+      </Toolbar>
       <form onSubmit={save}>
-        <TextField required id="standard-basic" fullWidth value={state.first} onChange={handleChange('first')} label="First Name"
+        <TextField required id="standard-basic" fullWidth className={classes.textField} value={state.first} onChange={handleChange('first')} label="First Name"
           error={state.first.length <= 0}
           helperText={state.first.length <= 0 ? 'First Name Required' : ' '}
         />
-        <TextField required id="standard-basic" fullWidth value={state.last} onChange={handleChange('last')} label="Last Name"
+        <TextField required id="standard-basic" fullWidth className={classes.textField} value={state.last} onChange={handleChange('last')} label="Last Name"
           error={state.last.length <= 0}
           helperText={state.last.length <= 0 ? 'Last Name Required' : ' '}
         />
-        <TextField required id="standard-basic" fullWidth value={state.username} onChange={handleChange('username')} label="Username"
+        <TextField required id="standard-basic" fullWidth className={classes.textField} value={state.username} onChange={handleChange('username')} label="Username"
           error={state.username.length <= 0}
           helperText={state.username.length <= 0 ? 'Username Required' : ' '}
         />
-        <TextField required id="standard-basic" fullWidth value={state.email} onChange={handleChange('email')} label="email"
+        {/* <TextField required id="standard-basic" fullWidth className={classes.textField} value={state.email} onChange={handleChange('email')} label="email"
           error={!emailRegex.test(state.email)}
           helperText={!emailRegex.test(state.email) ? 'Invalid Email' : ' '}
-        />
-        <TextField id="standard-basic" fullWidth value={state.profilePictureURL} onChange={handleChange('profilePictureURL')} label="Profile Picture URL" 
+        /> */}
+        <TextField id="standard-basic" fullWidth className={classes.textField} value={state.profilePictureURL} onChange={handleChange('profilePictureURL')} label="Profile Picture URL" 
           helperText={' '}
         />
-        <TextField id="standard-basic" fullWidth value={state.bio} multiline={true} rowsMax={3} onChange={handleChange('bio')} label="Bio" />
+        <TextField id="standard-basic" variant="outlined" fullWidth className={classes.textField} value={state.bio} multiline={true} rowsMax={5} rows={3} onChange={handleChange('bio')} label="Bio" />
       </form>
-      <br></br>
-      <Button type="submit" value="Submit" onClick={save} color="primary">SAVE</Button>
-      <Button onClick={cancel} color="primary">CANCEL</Button>
     </div>
   );
+
   return (
     <div>
       <Modal
         style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+        className={classes.modal}
         open={props.openModal}
         onClose={props.handleClose}
+        disableBackdropClick
         aria-labelledby="simple-modal-tditle"
         aria-describedby="simple-modal-description"
       >

@@ -22,6 +22,9 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
+import { GET_POST_QUERY } from '../utils/graphql';
+import { UPDATE_POST_MUTATION } from '../utils/graphql';
+import { CREATE_POST_MUTATION } from '../utils/graphql';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -80,6 +83,9 @@ const useStyles = makeStyles((theme) => ({
     marginTop: -12,
     marginLeft: -12,
   },
+  postDate: {
+    paddingTop: 16,
+  }
 }));
 
 var _previousPostId = ''
@@ -132,11 +138,9 @@ export const NewActivityModal = (props) => {
 
   const [editActivityValues, setEditActivityValues] = React.useState(defaultActivityValues);
 
-  const editPost = props.editPost !== null
+  const editPost = props.editPost ? true : false
   
   if(editPost && _previousPostId !== props.editPost.id){
-    console.log("edit post loaded!")
-    console.log(props.editPost)
     _previousPostId = props.editPost.id
     setPost({
       ...post,
@@ -178,12 +182,13 @@ export const NewActivityModal = (props) => {
     setSelectedDate(date);
   };
   const clearState = () => {
+    if(editPost){
+      props.setEditPost(null)
+    }
     setActivityData([])
     setSelectedDate(new Date())
     setPost(defaultPost)
     _previousPostId = ''
-    console.log("Clear state")
-    console.log(post)
   }
   const cancelPost = () => {
     clearState()
@@ -191,20 +196,33 @@ export const NewActivityModal = (props) => {
     
   }
 
-  const CREATE_POST_MUTATION = gql`
-    mutation createPost($input: CreatePostInput!) {
-      createPost(input: $input) {
-        id
-      }
-    }
-  `;
+  const formatDate = (postDate) => {
+    var options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long'};
+    var date = new Date(postDate) 
+    return date.toLocaleDateString("en-US", options)
+  }
 
   const [createPostMutation, {loading}] = useMutation(CREATE_POST_MUTATION, {
-    update(_, {data: {createPost: post}}) {
-      console.log(post)
+    update(store, result) {
+      const data = store.readQuery({
+        query: GET_POST_QUERY
+      })
+      const updatedPosts = [result.data.createPost, ...data.postList.posts]
+      
+      store.writeQuery({
+        query: GET_POST_QUERY,
+        data: {
+          postList: {
+            __typename: "CreatePost",
+            posts: updatedPosts,
+            hasMore: data.postList.hasMore,
+            cursor: data.postList.cursor
+          },
+        }
+      })
+
       clearState()
       props.handleClose()
-      //TODO add post to cache
 
     },
     onError(error) {
@@ -215,20 +233,33 @@ export const NewActivityModal = (props) => {
     }
   })
 
-const UPDATE_POST_MUTATION = gql`
-  mutation updatePost($input: UpdatePostInput!){
-    updatePost(input: $input){
-  		id
-  	}
-  }
-`;
-
 const [updatePostMutation, {loading: editLoading}] = useMutation(UPDATE_POST_MUTATION, {
-  update(_, {data: {editPost: post}}) {
-    console.log(post)
+  update(store, result) {
+    const data = store.readQuery({
+      query: GET_POST_QUERY
+    })
+
+    const updatedPosts = data.postList.posts.filter((post) => {
+      if(post.id === props.editPost.id){
+        return result.data.updatePost
+      }
+      return post
+    })
+    
+    store.writeQuery({
+      query: GET_POST_QUERY,
+      data: {
+        postList: {
+          __typename: "UpdatePost",
+          posts: updatedPosts,
+          hasMore: data.postList.hasMore,
+          cursor: data.postList.cursor
+        },
+      }
+    })
+
     clearState()
     props.handleClose()
-    //TODO update post in cache
 
   },
   onError(error) {
@@ -249,11 +280,30 @@ const [updatePostMutation, {loading: editLoading}] = useMutation(UPDATE_POST_MUT
   `;
 
   const [deletePostMutation, {loading: deleteLoading}] = useMutation(DELETE_POST_MUTATION, {
-    update(_, {data}) {
-      console.log(data)
+    update(store, _) {
+      const data = store.readQuery({
+        query: GET_POST_QUERY
+      })
+
+      const updatedPosts = data.postList.posts.filter((post) => {
+        if(post.id !== props.editPost.id){
+          return post
+        }
+      })
+
+      store.writeQuery({
+        query: GET_POST_QUERY,
+        data: {
+          postList: {
+            __typename: "DeletePost",
+            posts: updatedPosts,
+            hasMore: data.postList.hasMore,
+            cursor: data.postList.cursor
+          },
+        }
+      })
       clearState()
       props.handleClose()
-      //TODO remove post from cache
     },
     onError(error) {
       console.log(error)
@@ -299,7 +349,6 @@ const [updatePostMutation, {loading: editLoading}] = useMutation(UPDATE_POST_MUT
           }
         }
         // Check if the activity already has an existing mongodb id
-        console.log(activity.id)
         if(editPost && String(activity.id).match(/^[0-9a-fA-F]{24}$/)){
           // add the existing id so API can update activty
           formatActivity = {
@@ -321,7 +370,6 @@ const [updatePostMutation, {loading: editLoading}] = useMutation(UPDATE_POST_MUT
       }
       
       if(editPost){
-        console.log("API Call to editPostMutation")
         const editPostInput = {
           ...postInput,
           input: {
@@ -329,7 +377,6 @@ const [updatePostMutation, {loading: editLoading}] = useMutation(UPDATE_POST_MUT
             postId: props.editPost.id,
           }
         }
-        console.log(editPostInput)
         updatePostMutation({ variables: editPostInput })
       } else {
         const creatPostInput = {
@@ -348,7 +395,6 @@ const [updatePostMutation, {loading: editLoading}] = useMutation(UPDATE_POST_MUT
   }
 
   const deletePost = () => {
-    console.log("Delete Post", props.editPost.id)
     const deleteInput = {
       postId: props.editPost.id
     }
@@ -395,7 +441,8 @@ const [updatePostMutation, {loading: editLoading}] = useMutation(UPDATE_POST_MUT
             variant="outlined" 
             required
           />
-          <MuiPickersUtilsProvider utils={DateFnsUtils}>
+          {editPost ? <Typography variant="subtitle1" className={classes.postDate}>{formatDate(props.editPost.postDate)}</Typography>
+          : <MuiPickersUtilsProvider utils={DateFnsUtils}>
             <KeyboardDatePicker
               fullWidth
               required
@@ -412,7 +459,7 @@ const [updatePostMutation, {loading: editLoading}] = useMutation(UPDATE_POST_MUT
                 'aria-label': 'change date',
               }}
             />
-          </MuiPickersUtilsProvider>
+          </MuiPickersUtilsProvider>}
           <div className={classes.activityGrid}>
             <GridList className={classes.gridList} cols={1.5} >
               {activityData.map((activity) => (

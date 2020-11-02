@@ -13,8 +13,9 @@ import { ProtectedRoute } from './protected.route';
 import { Login } from './pages/Login';
 import { CreateAccount } from './pages/CreateAccount'
 import Header from './components/Header';
-import { ApolloClient, createHttpLink, InMemoryCache, ApolloProvider } from '@apollo/client';
+import { ApolloClient, createHttpLink, ApolloProvider } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
+import { cache } from './cache';
 
 // Connect to deployed backend if in production. Else localhost.
 let uri = 'http://localhost:4000/graphql';
@@ -40,25 +41,7 @@ const authLink = setContext((_, { headers }) => {
 
 const client = new ApolloClient({
   link: authLink.concat(httpLink),
-  cache: new InMemoryCache({
-    typePolicies: {
-      Query: {
-        fields: {
-          postList: {
-            keyArgs: false,
-            merge(existing = {posts: []}, incoming) {
-              const {posts: newPosts} = incoming
-              const {posts: oldPosts} = existing
-              return {
-                ...incoming,
-                posts: [...oldPosts, ...newPosts]
-              }
-            }
-          }
-        }
-      }
-    }
-  })
+  cache: cache
 });
 
 var theme = createMuiTheme({
@@ -97,7 +80,7 @@ function App() {
           <BrowserRouter>
             <Header/>
             <Switch>
-              <Route exact path='/' component={ Home }/>
+              <ProtectedRoute exact path='/' component={ Feed }/>
               <Route exact path='/home' component={ Home }/>
               <Route exact path='/login' component={ Login }/>
               <Route exact path='/create' component={ CreateAccount }/>

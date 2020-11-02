@@ -73,7 +73,7 @@ export const PostCard = props => {
   
   const [postLikeCount, setPostLikeCount] = useState(props.post.likeList.length)
   // This will only work if the like list is only user id's
-  const [likePost, setLikePost] = useState( props.post.likeList.includes(user.id))
+  const [likePost, setLikePost] = useState(props.post.likeList.includes(user.id))
   const [openPostMenu, setOpenPostMenu] = useState(false)
 
   // const postButtonRef = useRef()
@@ -184,7 +184,7 @@ export const PostCard = props => {
           : <FormGroup row>
             <FormControlLabel
               control={<Checkbox icon={<FavoriteBorder />} checkedIcon={<Favorite />} name="like"  checked={likePost} onChange={handleLike}/>}
-              label={postLikeCount + " Like" + (postLikeCount === 1 ? '' : 's')}
+              label={postLikeCount}
             />
           </FormGroup>}
           {/* TODO add comments */}

@@ -74,6 +74,9 @@ const Header = props => {
       width: theme.spacing(4),
       height: theme.spacing(4),
     },
+    logo: {
+      marginTop: '-8px',
+    },
   }));
 
   const menuButtonRef = useRef()
@@ -117,7 +120,7 @@ const Header = props => {
     client.cache.reset()
     logout()
     signOut()
-    history.push('/');
+    history.push('/login');
   };
 
   const MUTATION_SIGNOUT = gql`
@@ -168,7 +171,7 @@ const Header = props => {
             <MenuIcon />
           </IconButton>
           <Button variant='text' className={classes.homeButton} onClick={() => history.push('/feed')}>
-            <Avatar alt="Logo" src={process.env.PUBLIC_URL + '/logo192.png'} />
+            <Avatar alt="Logo" src={process.env.PUBLIC_URL + '/logo192.png'} className={classes.logo}/>
             <Typography variant="h6" className={classes.title} >
               Curro
             </Typography>
@@ -231,27 +234,27 @@ const Header = props => {
           <IconButton onClick={handleDrawerClose}>
             <MenuIcon />
           </IconButton>
-          <Avatar alt="Logo" color="primary" src={process.env.PUBLIC_URL + '/logoPink192.png'} />
+          <Avatar alt="Logo" color="primary" src={process.env.PUBLIC_URL + '/logoPink192.png'} className={classes.logo}/>
           <Typography variant="h6" className={classes.title} >
             CURRO
           </Typography>
         </div>
         <Divider />
         <List>
-          <ListItem button key={"Home"} onClick={() => {
-            handleDrawerClose()
-            history.push('/home');
-          }}>
-            <ListItemIcon><HomeIcon /></ListItemIcon>
-            <ListItemText primary={"Home"} />
-          </ListItem>
-          <ListItem button key={"Feed"} onClick={() => {
+          <ListItem button key={"Newsfeed"} onClick={() => {
             handleDrawerClose()
             history.push('/feed');
           }}>
-            <ListItemIcon><ExploreIcon /></ListItemIcon>
-            <ListItemText primary={"Feed"} />
+            <ListItemIcon><HomeIcon /></ListItemIcon>
+            <ListItemText primary={"Newsfeed"} />
           </ListItem>
+          {/* <ListItem button key={"Explore"} onClick={() => {
+            handleDrawerClose()
+            history.push('/explore');
+          }}>
+            <ListItemIcon><ExploreIcon /></ListItemIcon>
+            <ListItemText primary={"Explore"} />
+          </ListItem> */}
           <ListItem button key={"Calendar"} onClick={() => {
             handleDrawerClose()
             history.push('/calendar');
@@ -266,15 +269,15 @@ const Header = props => {
             <ListItemIcon><AccountBoxIcon /></ListItemIcon>
             <ListItemText primary={"Profile"} />
           </ListItem>
-          <ListItem button key={"About"} onClick={() => {
+          {/* <ListItem button key={"About"} onClick={() => {
             handleDrawerClose()
             history.push('/home');
           }}>
             <ListItemIcon><InfoIcon /></ListItemIcon>
             <ListItemText primary={"About"} />
-          </ListItem>
+          </ListItem> */}
         </List>
-        <Divider />
+        {/* <Divider />
         <List>
           <ListItem button key={"Settings"} onClick={() => {
             handleDrawerClose()
@@ -283,7 +286,7 @@ const Header = props => {
             <ListItemIcon><SettingsIcon /></ListItemIcon>
             <ListItemText primary={"Settings"} />
           </ListItem>
-        </List>
+        </List> */}
       </Drawer>
       <span className={state.openDrawer ? "dismissModal" : "hide"} onClick={handleDrawerClose}>
 

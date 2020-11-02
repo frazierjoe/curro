@@ -11,7 +11,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import AddIcon from '@material-ui/icons/Add';
 import Fab from '@material-ui/core/Fab';
 import Hidden from '@material-ui/core/Hidden';
-
+import { GET_POST_QUERY } from '../utils/graphql';
 
 const useStyles = makeStyles((theme) => ({
   mainContent: {
@@ -26,6 +26,9 @@ const useStyles = makeStyles((theme) => ({
     display: "block",
     margin: "auto",
     [theme.breakpoints.down('sm')]: {
+      width: '70%',
+    },
+    [theme.breakpoints.down('xs')]: {
       width: '100%',
       marginLeft: 0,
       marginRight: 0,
@@ -92,52 +95,6 @@ export const Feed = () => {
     createdAt: "1603683112465",
   }
 
-  const GET_POST_QUERY = gql`
-    query getPostList($pageSize: Int, $after:String){
-      postList(pageSize: $pageSize, after:$after){
-        cursor
-        hasMore
-        posts {
-          id
-          title
-          note
-          postDate
-          author {
-            id
-            username
-            first
-            last
-            profilePictureURL
-          }
-          activityList {
-            id
-            type
-            duration
-            distance {
-              value
-              unit
-            }
-            equipment{
-              id
-            }
-            additionalInfo{
-              averageHeartRate
-              elevationGain
-              calories
-            }
-          }
-          likeList {
-            id
-          }
-          commentList {
-            id
-          }
-          createdAt
-        }
-      }
-    }
-  `;
-
   const getPostSettings = {pageSize: 10, after: null}
   const { data, fetchMore, networkStatus } = useQuery(GET_POST_QUERY, {variables: getPostSettings, notifyOnNetworkStatusChange: true});
 
@@ -184,7 +141,7 @@ export const Feed = () => {
             <ListItem className={classes.listItem}>
               <PostCard post={post} openEditPostModal={() => setOpenModal(true)} setEditPost={setEditPost}/>
             </ListItem>
-            {index === data.postList.posts.length - 4 && (
+            { (index === data.postList.posts.length - 4) && (
               <Waypoint onEnter={fetchMorePosts}/>
             )}
           </React.Fragment>
@@ -198,8 +155,8 @@ export const Feed = () => {
     }
      
     </div>
-    <NewActivityModal openModal={openModal} handleClose={() => setOpenModal(false)} editPost={editPost}/>
-    <Hidden smDown>
+    <NewActivityModal openModal={openModal} handleClose={() => setOpenModal(false)} editPost={editPost} setEditPost={setEditPost}/>
+    <Hidden xsDown>
       <span className={classes.addFab}>
           <Fab color="secondary" aria-label="add" onClick={() => setOpenModal(true)}>
               <AddIcon />
