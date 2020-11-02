@@ -37,6 +37,7 @@ const Header = props => {
   const useStyles = makeStyles((theme) => ({
     root: {
       display: 'flex',
+      height: '100%',
       overflow: 'hidden',
     },
     header: {
@@ -87,7 +88,7 @@ const Header = props => {
   })
   const handleMenu = () => {
     setState({
-      ...state,
+      openDrawer: false,
       openProfileMenu: true
     });
   }
@@ -288,7 +289,7 @@ const Header = props => {
           </ListItem>
         </List> */}
       </Drawer>
-      <span className={state.openDrawer ? "dismissModal" : "hide"} onClick={handleDrawerClose}>
+      <span className={state.openDrawer ? "dismissModal" : "hide"} style={{position: 'fixed'}} onClick={handleDrawerClose}>
 
       </span>
     </div>);

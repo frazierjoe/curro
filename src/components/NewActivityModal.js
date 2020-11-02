@@ -324,7 +324,7 @@ const [updatePostMutation, {loading: editLoading}] = useMutation(UPDATE_POST_MUT
 
     setPost({ ...post, 
       titleError: !postTitleValid, titleErrorMessage: titleErrorMessage,
-      dateError: !selectedDateValid, titleErrorMessage: dateErrorMessage
+      dateError: !selectedDateValid, dateErrorMessage: dateErrorMessage
     });
 
     if(postTitleValid && selectedDateValid) {
