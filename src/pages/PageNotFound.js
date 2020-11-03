@@ -12,7 +12,7 @@ export const PageNotFound = () => {
       <Box align="center">
         <Typography variant="h1">404</Typography>
         <Typography variant="h6">The page you are looking for decided to take a rest day and is not currently running</Typography>
-        <Link className="text-link" to='/home'><Typography variant="subtitle1">Go back to the home page</Typography></Link>
+        <Link className="text-link" to='/'><Typography variant="subtitle1">Go back to the home page</Typography></Link>
       </Box>
     </Box>
     <Footer/>

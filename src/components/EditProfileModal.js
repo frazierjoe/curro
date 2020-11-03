@@ -67,7 +67,7 @@ export const EditProfileModal = (props) => {
       }
     `;
   const [updateUserMutation, { loading, error, data }] = useMutation(UPDATE_USER_MUTATION, {
-    update(cache, { data: { updateUser: user } }) {
+    update(_, { data: { updateUser: user } }) {
       props.handleClose();
 
     },
@@ -86,7 +86,8 @@ export const EditProfileModal = (props) => {
     bio: "",
     profilePictureURL: ""
   });
-  if (!props.loading && props.data.me && !_isMounted) {
+
+  if (props.openModal && !props.loading && props.data.me && !_isMounted) {
     _isMounted = true;
     setState({
       first: props.data.me.first,

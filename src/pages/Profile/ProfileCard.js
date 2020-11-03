@@ -55,7 +55,6 @@ export const ProfileCard = props => {
 
     var date = new Date(1970,0,1)
     date.setMilliseconds(createdAt)
-    console.log('typeof(createdAt) :>> ', typeof(createdAt));
     return date.toLocaleDateString("en-US", options)
   }
   const [openModal, setOpenModal] = React.useState(false);
