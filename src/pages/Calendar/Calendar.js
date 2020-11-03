@@ -128,7 +128,7 @@ export const Calendar = () => {
             currentViewComponent = <CalendarView postList={postList} date={date} setDate={setDate} setView={setView} firstDayOfWeek={firstDayOfWeek} />;
             break;
         case "week":
-            currentViewComponent = <WeeklyView postList={postList} date={date} firstDayOfWeek={firstDayOfWeek} />;
+            currentViewComponent = <WeeklyView postList={postList} date={date} setDate={setDate} setView={setView} firstDayOfWeek={firstDayOfWeek} />;
             break;
         case "day":
             currentViewComponent = <DayView postList={postList} date={date} />;

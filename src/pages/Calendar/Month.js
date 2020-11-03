@@ -1,9 +1,9 @@
 import React, { cloneElement } from 'react';
 import Week from './Week';
 
-const weeksToDisplay = 6;
+const WEEKS_TO_DISPLAY_IN_VIEW = 6;
 
-const Month = ({ postList, date, setView, firstDayOfWeek }) => {
+const Month = ({ postList, date, setDate, setView, firstDayOfWeek }) => {
 
     function getFirstDayOfMonthView(date, firstDayOfWeek = "Sunday") {
         // Get the first day of the month and get the first Sunday of that week.
@@ -26,7 +26,7 @@ const Month = ({ postList, date, setView, firstDayOfWeek }) => {
         let weekIndex = getFirstDayOfMonthView(date, firstDayOfWeek);
 
         let firstDaysOfMonthView = [];
-        for (let i = 0; i < weeksToDisplay; i++) {
+        for (let i = 0; i < WEEKS_TO_DISPLAY_IN_VIEW; i++) {
             let copy = new Date(weekIndex);
             firstDaysOfMonthView.push(copy);
             weekIndex.setDate(weekIndex.getDate() + 7);
@@ -41,6 +41,7 @@ const Month = ({ postList, date, setView, firstDayOfWeek }) => {
         let weeks = firstDaysOfMonthView.map(firstDay => {
             return <Week
                 currentMonth={date.getMonth()}
+                setDate={setDate}
                 firstDay={firstDay}
                 setView={setView}
                 key={"-week" + firstDay.toISOString()}
@@ -53,7 +54,7 @@ const Month = ({ postList, date, setView, firstDayOfWeek }) => {
         // Determine the start and end of the month view
         let earliest = getFirstDayOfMonthView(date, firstDayOfWeek);
         let latest = new Date(earliest);
-        latest.setDate(latest.getDate() + weeksToDisplay * 7);
+        latest.setDate(latest.getDate() + WEEKS_TO_DISPLAY_IN_VIEW * 7);
 
         // Todo: Optimize finding all posts within the month view
         // Linear scan all posts to filter them out

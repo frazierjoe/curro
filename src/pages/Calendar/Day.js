@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-const Day = ({ postsToday, dayDate, currentMonth, setView }) => {
+const Day = ({ postsToday, dayDate, currentMonth, setDate, setView }) => {
     // Styling
     const classes = useStyles();
     const offMonth = currentMonth !== dayDate.getMonth();
@@ -29,6 +29,7 @@ const Day = ({ postsToday, dayDate, currentMonth, setView }) => {
     // Event Handlers
     const enterDayView = () => {
         console.log('Clicked on' + dayDate.toISOString());
+        setDate(dayDate);
         setView("day");
     };
 

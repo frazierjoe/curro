@@ -1,4 +1,4 @@
-import { makeStyles } from '@material-ui/core';
+import { Card, CardHeader, makeStyles } from '@material-ui/core';
 import React from 'react';
 import DayViewPost from './DayViewPost';
 
@@ -9,13 +9,19 @@ const useStyles = makeStyles((theme) => ({
         alignItems: "center", 
         justifyContent: "center", 
         flexDirection: "column"
-    }
+    },
+    card: {
+        width: "40%",
+        margin: "2em",
+    },
 }));
 
 
 
 const DayView = ({ postList, date }) => {
     const classes = useStyles();
+
+
 
     // Linear Scan through postList to find a matching date
     let postsToday = postList.filter(post => {
@@ -32,9 +38,19 @@ const DayView = ({ postList, date }) => {
 
 
     console.log('postsToday :>> ', postsToday);
+    let noPostMessage = null;
+    if (postsToday.length === 0){
+        console.log('0');
+        noPostMessage = (
+            <Card className={classes.card}>
+                <CardHeader title="No Posts Today :(" />
+            </Card>
+        )
+    }
 
     return (
         <div className={classes.dayViewPostsWrapper}>
+            {noPostMessage}
             {postComponents}
         </div>
     );

@@ -46,7 +46,7 @@ const useStyles = makeStyles((theme) => ({
         height: "80vh"
     },
     tableHeader: {
-        color: theme.palette.text.primary,
+        color: theme.palette.text.primary
     }
 }));
 
@@ -127,7 +127,7 @@ export const CalendarView = ({ postList, date, setDate, setView, firstDayOfWeek 
                     </tr>
                 </thead>
                 {/* The Month component generates TBody */}
-                <Month postList={postList} date={date} setView={setView} firstDayOfWeek={firstDayOfWeek}/>
+                <Month postList={postList} date={date} setDate={setDate} setView={setView} firstDayOfWeek={firstDayOfWeek}/>
             </table>
         </div>);
 }

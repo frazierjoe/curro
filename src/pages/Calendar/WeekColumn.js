@@ -14,12 +14,18 @@ const useStyles = makeStyles((theme) => ({
         textAlign: "center"
     }
 }));
-const WeekColumn = ({postsToday, date}) => {
+const WeekColumn = ({postsToday, date, setDate, setView}) => {
     const classes = useStyles();
 
+    const viewSpecificDay = () => {
+        setDate(date);
+        setView('day');
+    }
+
     let titles = postsToday.map(post => {
-        return (<ListItem>{post.title}</ListItem>)
-    })
+        return (<ListItem key={`-WeekColumnListItem-${post.id}`}>{post.title}</ListItem>)
+    });
+
     let titlesList = (
         <List>
             {titles}
@@ -28,12 +34,12 @@ const WeekColumn = ({postsToday, date}) => {
 
     return (
         <div>
-            <Card className={classes.weekColumn}>
+            <Card className={classes.weekColumn} variant="outlined" onClick={viewSpecificDay}>
                 <div className={classes.weekHeader}>
                     {getDayStringShortened(date)} {date.toLocaleDateString(undefined, {day: "numeric"})}
                 </div>
                 <Divider></Divider>
-                {titlesList}
+                {postsToday.length === 0 ? null : titlesList}
             </Card>
         </div>
     );
