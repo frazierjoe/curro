@@ -10,12 +10,13 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 const NUMBER_OF_DAYS_IN_WEEK = 7;
-const WeeklyView = ({ postList, date, firstDayOfWeek }) => {
+const WeeklyView = ({ postList, date, setDate, setView, firstDayOfWeek }) => {
     const classes = useStyles();
 
     const getFirstDayOfWeekView = () => {
-        // Get the first day of the month and get the first Sunday of that week.
+        // Get the first day of the month at the earliest time and get the first Sunday of that week.
         let dayOne = new Date(date);
+        dayOne.setHours(0, 0, 0, 0);
         let sunday = new Date(dayOne);
         sunday.setDate(dayOne.getDate() - dayOne.getDay());
 
@@ -51,7 +52,12 @@ const WeeklyView = ({ postList, date, firstDayOfWeek }) => {
         for (let i = 0; i < 7; i++) {
             let day = new Date(firstDayOfWeekView);
             weekColumns.push(
-                <WeekColumn date={day} key={`-week-column + ${day.toISOString()}`} />
+                <WeekColumn
+                    date={day} 
+                    setDate={setDate}
+                    setView={setView}
+                    key={`-week-column + ${day.toISOString()}`} 
+                />
             )
             firstDayOfWeekView.setDate(firstDayOfWeekView.getDate() + 1);
         }

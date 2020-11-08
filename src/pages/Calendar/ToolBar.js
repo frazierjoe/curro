@@ -49,6 +49,9 @@ const useStyles = makeStyles((theme) => ({
             margin: 0,
         },
     },
+    shortcutText: {
+        color: theme.palette.background.main
+    }
 }));
 
 
@@ -189,9 +192,9 @@ export const ToolBar = ({ date, setDate, view, setView, setFirstDayOfWeek }) => 
                         name="age"
                         onChange={handleViewChange}
                     >
-                        <option value={"day"}>Day</option>
-                        <option value={"week"}>Week</option>
-                        <option value={"month"}>Month</option>
+                        <option value={"day"}>Day (d)</option>
+                        <option value={"week"}>Week (w)</option>
+                        <option value={"month"}>Month (m)</option>
                     </NativeSelect>
                 </FormControl>
             </Toolbar>
