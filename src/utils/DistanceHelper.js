@@ -1,7 +1,7 @@
 const DistanceHelper = {
   
   convertDistanceToUnit: function(distance, unit) {
-    switch(distance.unit) {
+    switch(distance.unit.toUpperCase()) {
       case "YDS":
         switch(unit){
           case "MI":
@@ -49,7 +49,7 @@ const DistanceHelper = {
       value: distance.value,
       unit: distance.unit
     }
-    switch(activityType) {
+    switch(activityType.toUpperCase()) {
       case "HIKE":
       case "BIKE":
         var totalMiles = this.convertDistanceToUnit(covertDistance, "MI")

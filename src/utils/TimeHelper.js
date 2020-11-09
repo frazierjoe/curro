@@ -3,7 +3,7 @@ import { addMinutes } from "date-fns"
 const TimeHelper = {
   
   formatTimeDisplay: function(timeString) {
-    if(timeString.length === 0){
+    if(!timeString){
       return ""
     }
 

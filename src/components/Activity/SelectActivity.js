@@ -59,9 +59,13 @@ export const SelectActivity = (props) => {
   }
 
   const selectActivity = (activity) => {
+    console.log(activity)
     props.setEditActivity(false)
     props.setSelectedActivity(activity)
     props.setOpenActivityDetailModal(true)
+    if(activity.defaultUnit){
+      props.setEditActivityValues({ ...props.editActivityValues, distanceUnit: activity.defaultUnit})
+    }
   };
 
   return (

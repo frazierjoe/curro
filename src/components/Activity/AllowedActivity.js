@@ -5,7 +5,8 @@ export const AllowedActivity = [
     durationAllowed: true,
     distanceAllowed: true,
     equipmentAllowed: "Shoes",
-    additionalInfoAllowed: true
+    additionalInfoAllowed: true,
+    defaultUnit: "mi"
   },
   {
     id: 1,
@@ -13,7 +14,8 @@ export const AllowedActivity = [
     durationAllowed: true,
     distanceAllowed: true,
     equipmentAllowed: "Bikes",
-    additionalInfoAllowed: true
+    additionalInfoAllowed: true,
+    defaultUnit: "mi"
   },
   {
     id: 2,
@@ -21,7 +23,8 @@ export const AllowedActivity = [
     durationAllowed: true,
     distanceAllowed: true,
     equipmentAllowed: false,
-    additionalInfoAllowed: true
+    additionalInfoAllowed: true,
+    defaultUnit: "yds"
   },
   {
     id: 3,
@@ -29,7 +32,7 @@ export const AllowedActivity = [
     durationAllowed: true,
     distanceAllowed: false,
     equipmentAllowed: false,
-    additionalInfoAllowed: false
+    additionalInfoAllowed: true
   },
   {
     id: 4,
@@ -45,7 +48,8 @@ export const AllowedActivity = [
     durationAllowed: true,
     distanceAllowed: true,
     equipmentAllowed: false,
-    additionalInfoAllowed: true
+    additionalInfoAllowed: true,
+    defaultUnit: "mi"
   },
   {
     id: 6,
@@ -69,6 +73,7 @@ export const AllowedActivity = [
     durationAllowed: true,
     distanceAllowed: true,
     equipmentAllowed: "SHOE",
-    additionalInfoAllowed: true
+    additionalInfoAllowed: true,
+    defaultUnit: "mi"
   },
 ]

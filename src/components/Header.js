@@ -78,6 +78,9 @@ const Header = props => {
     logo: {
       marginTop: '-8px',
     },
+    title: {
+      color: 'black',
+    },
   }));
 
   const menuButtonRef = useRef()
@@ -151,7 +154,6 @@ const Header = props => {
   
 
   if((user? true : false) && !_fetchedMe && (data? false : true) && !loading){
-    console.log("signed in now")
     _fetchedMe = true
     getMe()
   }
@@ -166,13 +168,15 @@ const Header = props => {
       <AppBar
         position="fixed"
         className={classes.header}
+        // Make the app bar white
+        color="inherit"
       >
         <Toolbar>
           <IconButton edge="start" className={clsx(classes.menuButton, state.openDrawer && classes.hide)} color="inherit" aria-label="menu" onClick={handleDrawerOpen}>
             <MenuIcon />
           </IconButton>
           <Button variant='text' className={classes.homeButton} onClick={() => history.push('/feed')}>
-            <Avatar alt="Logo" src={process.env.PUBLIC_URL + '/logo192.png'} className={classes.logo}/>
+            <Avatar alt="Logo" src={process.env.PUBLIC_URL + '/assets/logo/logoPink192.png'} className={classes.logo}/>
             <Typography variant="h6" className={classes.title} >
               Curro
             </Typography>
@@ -235,7 +239,7 @@ const Header = props => {
           <IconButton onClick={handleDrawerClose}>
             <MenuIcon />
           </IconButton>
-          <Avatar alt="Logo" color="primary" src={process.env.PUBLIC_URL + '/logoPink192.png'} className={classes.logo}/>
+          <Avatar alt="Logo" color="primary" src={process.env.PUBLIC_URL + '/assets/logo/logoPink192.png'} className={classes.logo}/>
           <Typography variant="h6" className={classes.title} >
             CURRO
           </Typography>

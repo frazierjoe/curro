@@ -1,5 +1,6 @@
 import React from 'react';
 import TimeHelper from '../../utils/TimeHelper'
+import DistanceHelper from '../../utils/DistanceHelper'
 import { makeStyles } from '@material-ui/core/styles';
 import Modal from '@material-ui/core/Modal';
 import Typography from '@material-ui/core/Typography';
@@ -54,7 +55,7 @@ const useStyles = makeStyles((theme) => ({
   },
   timeDisplay: {
     textAlign: 'center',
-    lineHeight: '56px'
+    lineHeight: '28px'
   }
 
 }));
@@ -192,6 +193,7 @@ export const ActivityDetail = (props) => {
               </Grid>
               <Grid item xs>
                 <Typography variant="body1" className={classes.timeDisplay} >{TimeHelper.formatTimeDisplay(props.editActivityValues.duration)}</Typography>
+                <Typography variant="body1" className={classes.timeDisplay}>{(props.editActivityValues.distanceValue && props.editActivityValues.duration) ? ("("+DistanceHelper.calculateAveragePace({value: props.editActivityValues.distanceValue, unit: props.editActivityValues.distanceUnit}, TimeHelper.getTotalMs(props.editActivityValues.duration), props.activity.type) + ")") : ""}</Typography>
               </Grid>
             </Grid>
           </div>
@@ -270,7 +272,7 @@ export const ActivityDetail = (props) => {
               onChange={props.handleEditActivityChange('heartRate')}
               fullWidth
             />
-            <TextField 
+            { props.activity.equipmentAllowed && <TextField 
               label="Elevation Gain (ft)" 
               type="number" 
               inputProps={{
@@ -282,7 +284,7 @@ export const ActivityDetail = (props) => {
               value={props.editActivityValues.elevationGain}
               onChange={props.handleEditActivityChange('elevationGain')}
               fullWidth
-            />
+            />}
             <TextField 
               label="Calories" 
               type="number" 

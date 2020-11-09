@@ -4,14 +4,13 @@ import DistanceHelper from '../../utils/DistanceHelper'
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
-import PoolIcon from '@material-ui/icons/Pool'; //swim, aqua-jog
-import DirectionsWalkIcon from '@material-ui/icons/DirectionsWalk'; //hike
+import PoolIcon from '@material-ui/icons/Pool'; //swim
 import DirectionsRunIcon from '@material-ui/icons/DirectionsRun'; //run, alter-g
 import DirectionsBikeIcon from '@material-ui/icons/DirectionsBike'; //bike
 import HotelIcon from '@material-ui/icons/Hotel'; //sleep
-import PhotoIcon from '@material-ui/icons/Photo'; //climb
-import SpaIcon from '@material-ui/icons/Spa'; //yoga
-import FitnessCenterIcon from '@material-ui/icons/FitnessCenter';
+import FitnessCenterIcon from '@material-ui/icons/FitnessCenter'; //default icon
+import Avatar from '@material-ui/core/Avatar';
+
 
 export const ActivityTile = props => {
   
@@ -34,15 +33,15 @@ export const ActivityTile = props => {
       case "SLEEP":
         return <HotelIcon/>
       case "CLIMB":
-        return <PhotoIcon/>
+        return <Avatar alt="Climb" variant="square" src={process.env.PUBLIC_URL + '/assets/icons/noun_climbing.png'} style={{height: "24px", width: "24px"}}/>
       case "ALTERG":
-        return <DirectionsRunIcon/>
+        return <Avatar alt="AlterG" variant="square" src={process.env.PUBLIC_URL + '/assets/icons/noun_treadmill.png'} style={{height: "24px", width: "24px"}}/>
       case "YOGA":
-        return <SpaIcon/>
+        return <Avatar alt="Yoga" variant="square" src={process.env.PUBLIC_URL + '/assets/icons/noun_yoga.png'} style={{height: "24px", width: "24px"}}/>
       case "AQUA_JOG":
-        return <PoolIcon/>
+        return <Avatar alt="Aqua" variant="square" src={process.env.PUBLIC_URL + '/assets/icons/noun_aqua.png'} style={{height: "24px", width: "24px"}}/>
       case "HIKE":
-        return <DirectionsWalkIcon/>
+        return <Avatar alt="Hike" src={process.env.PUBLIC_URL + '/assets/icons/noun_hiking.png'} style={{height: "24px", width: "24px"}}/>
       default:
         return <FitnessCenterIcon/>
     }

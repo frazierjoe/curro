@@ -84,9 +84,6 @@ export const CreateAccount = props => {
   const CREATE_USER_MUTATION = gql`
     mutation createUser($input: CreateUserInput!){
       createUser(input: $input){
-        user {
-          id
-        }
         token
       }
     }
@@ -267,11 +264,10 @@ export const CreateAccount = props => {
                 variant="outlined" />
               <MuiPickersUtilsProvider utils={DateFnsUtils}>
                 <KeyboardDatePicker
-                  disableToolbar
+                  required
                   fullWidth
                   error={values.birthdateError}
                   helperText={values.birthdateErrorMessage}
-                  variant="inline"
                   format="MM/dd/yyyy"
                   margin="normal"
                   id="create-birthdate"

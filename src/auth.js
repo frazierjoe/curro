@@ -42,9 +42,11 @@ const AuthProvider = props => {
 
   function login(userData){
     localStorage.setItem("token", userData.token)
+    const decodedToken = jwtDecode(localStorage.getItem("token"))
+
     dispatch({
       type: 'LOGIN',
-      payload: userData
+      payload: decodedToken
     })
   }
 

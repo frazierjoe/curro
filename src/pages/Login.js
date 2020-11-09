@@ -70,9 +70,6 @@ export const Login = props => {
   const SIGNIN_USER_MUTATION = gql`
     mutation signIn($input: SignInInput!){
       signIn(input: $input){
-        user {
-          id
-        }
         token
       }
     }

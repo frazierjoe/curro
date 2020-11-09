@@ -494,6 +494,8 @@ const [updatePostMutation, {loading: editLoading}] = useMutation(UPDATE_POST_MUT
         setSelectedActivity={setSelectedActivity}
         setOpenActivityDetailModal={setOpenActivityDetailModal}
         setEditActivity={setEditActivity}
+        setEditActivityValues={setEditActivityValues}
+        editActivityValues={editActivityValues}
       />
       <ActivityDetail 
         activityData={activityData}

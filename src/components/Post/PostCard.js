@@ -69,13 +69,13 @@ export const PostCard = props => {
   }));
 
   const { user } = useContext(AuthContext)
-
   
   const [postLikeCount, setPostLikeCount] = useState(props.post.likeList.length)
   // This will only work if the like list is only user id's
   const [likePost, setLikePost] = useState(props.post.likeList.includes(user.id))
   const [openPostMenu, setOpenPostMenu] = useState(false)
 
+  // This is for if we want to have a report button
   // const postButtonRef = useRef()
 
 
@@ -128,7 +128,8 @@ export const PostCard = props => {
             )
           }
         />
-        {/* <Menu
+        {/* FOR FUTURE WHEN WE WANT A REPORT BUTTON
+        <Menu
           id={"post-menu-"+props.post.id}
           className={classes.postMenu}
           anchorEl={postButtonRef.current}
