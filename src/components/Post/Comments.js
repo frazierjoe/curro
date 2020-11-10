@@ -3,7 +3,7 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 
 
-export const Comment = props => {
+export const Comments = props => {
 
   const useStyles = makeStyles((theme) => ({
     comment: {
@@ -29,6 +29,6 @@ export const Comment = props => {
 
   return (
     <div className={classes.comment}>
-      <Typography>Comment</Typography>
+      <Typography>No Comments</Typography>
     </div>);
 }

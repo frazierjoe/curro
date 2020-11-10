@@ -2,7 +2,7 @@ import React, { useContext, useState, useRef } from 'react';
 import { useMutation, gql } from '@apollo/client';
 import { AuthContext } from '../../auth';
 import { ActivityTile } from './ActivityTile';
-import { Comment } from './Comment';
+import { Comments } from './Comments';
 import { AddComment } from './AddComment';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
@@ -43,6 +43,7 @@ export const PostCard = props => {
     },
     cardContent: {
       paddingTop: '0px',
+      paddingBottom: '0px',
     },
     profilePicture: {
       width: '48px',
@@ -260,11 +261,11 @@ export const PostCard = props => {
           <Skeleton animation="wave" width="20%" style={{ marginBottom: 8 }} />
         </div>
         : <div className={classes.commentSection}>
-          {/* <Comment/> */}
+          <Comments/>
+          <AddComment postId={props.post.id}/>
           <Typography variant="body2" color="textSecondary" style={{marginBottom:8}}>
             {formatDate(props.post.postDate)}
           </Typography>
-          {/* <AddComment/> */}
         </div> }
         
       </Card>
