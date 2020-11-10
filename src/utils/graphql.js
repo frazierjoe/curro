@@ -32,7 +32,9 @@ const POST_FRAGMENT = gql`
       }
     }
     likeList {
-      id
+      user{
+        id
+      }
     }
     commentList {
       id

@@ -1,4 +1,5 @@
 import React, { useContext, useState, useRef } from 'react';
+import { useMutation, gql } from '@apollo/client';
 import { AuthContext } from '../../auth';
 import { ActivityTile } from './ActivityTile';
 import { Comment } from './Comment';
@@ -25,10 +26,12 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import FavoriteBorder from '@material-ui/icons/FavoriteBorder';
+import FavoriteTwoToneIcon from '@material-ui/icons/FavoriteTwoTone';
 import ReportIcon from '@material-ui/icons/Report';
 import EditIcon from '@material-ui/icons/Edit';
 import Grid from '@material-ui/core/Grid';
 import Divider from '@material-ui/core/Divider';
+import { CompassCalibrationOutlined } from '@material-ui/icons';
 
 
 
@@ -69,18 +72,77 @@ export const PostCard = props => {
   }));
 
   const { user } = useContext(AuthContext)
+
+  const didUserLikePost = (likeList) => {
+    var userLikedPost = false;
+    for(var i = 0; i < likeList.length; i++) {
+        if (likeList[i].user.id === user.id) {
+            userLikedPost = true;
+            break;
+        }
+    }
+    return userLikedPost
+  }
   
   const [postLikeCount, setPostLikeCount] = useState(props.post.likeList.length)
-  // This will only work if the like list is only user id's
-  const [likePost, setLikePost] = useState(props.post.likeList.includes(user.id))
+  const [likePost, setLikePost] = useState(didUserLikePost(props.post.likeList))
   const [openPostMenu, setOpenPostMenu] = useState(false)
 
   // This is for if we want to have a report button
   // const postButtonRef = useRef()
 
+  const CREATE_LIKE_POST_MUTATION = gql`
+    mutation createLikePost($input: LikePostInput!) {
+      createLikePost(input: $input) {
+        id
+      }
+    }
+  `;
+
+  const DELETE_LIKE_POST_MUTATION = gql`
+    mutation deleteLikePost($input: LikePostInput!) {
+      deleteLikePost(input: $input) {
+        message
+        success
+      }
+    }
+  `;
+
+  const [createLikePostMutation, { loading: createLikeLoading }] = useMutation(CREATE_LIKE_POST_MUTATION, {
+    update(_, { data: { createLikePost } }) {
+      console.log(createLikePost)
+    },
+    onError(error) {
+      console.log(error)
+    }
+  })
+
+  const [deleteLikePostMutation, { loading: deleteLikeLoading }] = useMutation(DELETE_LIKE_POST_MUTATION, {
+    update(_, { data: { deleteLikePost } }) {
+      console.log(deleteLikePost)
+    },
+    onError(error) {
+      console.log(error)
+    }
+  })
 
   const handleLike = (event) => {
-    setPostLikeCount(event.target.checked ? likePost + 1 : likePost - 1)
+    setPostLikeCount(event.target.checked ? postLikeCount + 1 : postLikeCount - 1)
+    const likeInput = {
+      input: {
+        postId: props.post.id
+      }
+    }
+
+    console.log(likeInput)
+    if(event.target.checked){
+      console.log("TODO: Like API call")
+      createLikePostMutation({ variables: likeInput })
+    } else {
+      console.log("TODO: Unlike API call")
+      deleteLikePostMutation({ variables: likeInput })
+
+    }
     setLikePost(event.target.checked)
   }
 
@@ -90,6 +152,7 @@ export const PostCard = props => {
     var date = new Date(postDate) 
     return date.toLocaleDateString("en-US", options)
   }
+
   
   const classes = useStyles();
 
@@ -184,7 +247,7 @@ export const PostCard = props => {
         {props.loading ? <Skeleton animation="wave" height={32} width="30%"/>
           : <FormGroup row>
             <FormControlLabel
-              control={<Checkbox icon={<FavoriteBorder />} checkedIcon={<Favorite />} name="like"  checked={likePost} onChange={handleLike}/>}
+              control={<Checkbox icon={postLikeCount > 0 ? <FavoriteTwoToneIcon color="action"/> : <FavoriteBorder/>} checkedIcon={<Favorite/>} name="like"  checked={likePost} onChange={handleLike} disabled={createLikeLoading || deleteLikeLoading}/>}
               label={postLikeCount}
             />
           </FormGroup>}

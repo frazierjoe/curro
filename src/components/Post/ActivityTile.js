@@ -23,7 +23,7 @@ export const ActivityTile = props => {
   const pace = (validDistance && validDuration) ? ("("+DistanceHelper.calculateAveragePace(props.activity.distance, props.activity.duration, props.activity.type) + ")") : ""
 
   const getActivityTypeIcon = (activityType) => {
-    switch(activityType) {
+    switch(activityType.toUpperCase()) {
       case "RUN":
         return <DirectionsRunIcon/>
       case "BIKE":
