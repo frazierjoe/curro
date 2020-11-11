@@ -7,6 +7,8 @@ import Typography from '@material-ui/core/Typography';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Toolbar from '@material-ui/core/Toolbar';
 import { useMutation, gql } from '@apollo/client';
+import IconButton from '@material-ui/core/IconButton';
+import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -52,22 +54,30 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 var _isMounted = false;
-export const CreateEquipmentModal = (props) => {
-  const CREATE_EQUIPMENT_MUTATION = gql`
-  mutation createEquipment($input: CreateEquipmentInput!) {
-        createEquipment(input: $input) {
+export default function EditEquipmentModal(props) {
+  // update equipment mutation below
+  const UPDATE_EQUIPMENT_MUTATION = gql`
+  mutation updateEquipment($input: UpdateEquipmentInput!) {
+        updateEquipment(input: $input) {
+          id
           name
           type
           limit {
             value
             unit
           }
+          usage {
+            value
+            unit
+          }
+          active
         }
       }
     `;
-  const [createEquipmentMutation, { loading, error, data }] = useMutation(CREATE_EQUIPMENT_MUTATION, {
-    update(cache, { data: { createEquipment: equipment } }) {
+  const [updateEquipmentMutation, { loading }] = useMutation(UPDATE_EQUIPMENT_MUTATION, {
+    update(_, { data }) {
       props.handleClose();
+      console.log(data)
 
     },
     onError(error) {
@@ -76,14 +86,39 @@ export const CreateEquipmentModal = (props) => {
     }
   })
 
+  const DELETE_EQUIPMENT_MUTATION = gql`
+  mutation deleteEquipment($equipmentId: ID!) {
+        deleteEquipment(equipmentId: $equipmentId) {
+          message
+          success
+        }
+      }
+    `;
+  const [deleteEquipmentMutation, { deleteLoading }] = useMutation(DELETE_EQUIPMENT_MUTATION, {
+    update(_, { data }) {
+      props.handleClose();
+      console.log(data)
+
+    },
+    onError(error) {
+      console.log(error)
+      console.log(error.message)
+    }
+  })
   const classes = useStyles();
   const [state, setState] = React.useState({
-    name: "",
-    type: props.type,
+    equipmentId: props.data.id,
+    name: props.data.name,
+    type: props.data.type,
     limit: {
-      value: "",
-      unit: "MI"
-    }
+      value: props.data.limit.value,
+      unit: props.data.limit.unit
+    },
+    usage: {
+      value: props.data.usage.value,
+      unit: props.data.usage.unit
+    },
+    active: true
   });
   
  const save = () => {
@@ -93,29 +128,59 @@ export const CreateEquipmentModal = (props) => {
     if (nameValid && limitValid) {
       var userInput = {
         input: {
+          equipmentId: props.data.id,
           name: state.name,
           type: state.type,
           limit: {
             value: parseInt(state.limit.value),
-            unit: state.limit.unit,
-          }
+            unit: state.limit.unit
+          },
+          usage: {
+            value: parseInt(state.usage.value),
+            unit: state.usage.unit
+          },
+          active: true
         }
 
       }
       console.log(userInput)
-      console.log(createEquipmentMutation({ variables: userInput }))
+      updateEquipmentMutation({ variables: userInput })
       _isMounted = false
       window.location.reload(true);
 
     }
   }
+  const deleteEq = () => {
+    setState({
+        equipmentId: props.data.id,
+        name: props.data.name,
+        type: props.data.type,
+        limit: {
+            value: props.data.limit.value,
+            unit: props.data.limit.unit
+        },
+        usage: {
+            value: props.data.usage.value,
+            unit: props.data.usage.unit
+        }
+    });
+    var input = { equipmentId: props.data.id }
+    deleteEquipmentMutation({variables: input})
+    _isMounted = false
+    window.location.reload(true);
+  };
   const cancel = () => {
     setState({
-        name: "",
-        type: state.type,
+        equipmentId: props.data.id,
+        name: props.data.name,
+        type: props.data.type,
         limit: {
-          value: "",
-          unit: "MI"
+            value: props.data.limit.value,
+            unit: props.data.limit.unit
+        },
+        usage: {
+            value: props.data.usage.value,
+            unit: props.data.usage.unit
         }
     });
     _isMounted = false
@@ -129,18 +194,28 @@ export const CreateEquipmentModal = (props) => {
         unit: state.limit.unit
       }});
     }
+    else if (prop == "usageValue") {
+        setState({ ...state, usage: {
+            value: String(event.target.value),
+            unit: state.usage.unit
+        }});
+    }
     else {
       setState({ ...state, [prop]: String(event.target.value) });
     }
     
   };
-  var titleText = (props.type).toLowerCase() + "s";
+  var titleText = (props.data.type).toLowerCase();
   titleText = titleText.charAt(0).toUpperCase() + titleText.slice(1);
   const body = (
     <div className={classes.paper}>
       <Toolbar disableGutters>
         <Button onClick={cancel}>Cancel</Button>
-        <Typography variant="h6" className={classes.spacer}>{"Add " + titleText}</Typography>
+        <IconButton onClick={deleteEq} disabled={deleteLoading}>
+                  <DeleteForeverIcon/>
+                  {deleteLoading && <CircularProgress size={24}  />}
+                </IconButton>
+        <Typography variant="h6" className={classes.spacer}>{"Edit " + titleText}</Typography>
         <Button onClick={save} color="primary" disabled={loading}>
           SAVE
           {loading && <CircularProgress size={24} className={classes.buttonProgress} />}
@@ -151,11 +226,14 @@ export const CreateEquipmentModal = (props) => {
           error={state.name.length <= 0}
           helperText={state.name.length <= 0 ? 'Name Required' : ' '}
         />
-        <TextField required id="standard-basic" fullWidth className={classes.textField} value={state.limit.value} onChange={handleChange('limitValue')} label="Capacity"
+        <TextField required id="standard-basic" fullWidth className={classes.textField} value={state.usage.value} onChange={handleChange('usageValue')} label="Usage"
+          error={isNaN(parseInt(state.limit.value)) || parseInt(state.limit.value) < 0}
+          helperText={isNaN(parseInt(state.limit.value)) || parseInt(state.limit.value) <= 0 ? 'Invalid Usage Value' : ' '}
+        />
+        <TextField required id="standard-basic" fullWidth className={classes.textField} value={state.limit.value} onChange={handleChange('limitValue')} label="Limit"
           error={isNaN(parseInt(state.limit.value)) || parseInt(state.limit.value) <= 0}
           helperText={isNaN(parseInt(state.limit.value)) || parseInt(state.limit.value) <= 0 ? 'Invalid Limit Value' : ' '}
         />
-        
       </form>
     </div>
   );

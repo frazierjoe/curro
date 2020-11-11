@@ -18,8 +18,8 @@ export const Profile = () => {
   return (
     <div>
       <ProfileCard/>
-      <EquipmentCard type="Shoes"/>
-      <EquipmentCard type="Bikes"/>
+      <EquipmentCard type="SHOE"/>
+      <EquipmentCard type="BIKE"/>
       
     </div>
     

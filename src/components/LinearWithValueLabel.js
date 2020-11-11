@@ -37,7 +37,7 @@ const useStyles = makeStyles({
 export default function LinearWithValueLabel(props) {
   const classes = useStyles();
   const [progress, setProgress] = React.useState(0);
-
+  
   React.useEffect(() => {
     const timer = setInterval(() => {
       setProgress((prevProgress) => (prevProgress >= props.progress ? props.progress : prevProgress + 1));

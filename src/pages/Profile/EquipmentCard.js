@@ -22,14 +22,19 @@ export const EquipmentCard = props => {
       me {
         id
         email
-        first
-        last
-        username
-        profilePictureURL
-        birthdate
-        bio
-        private
-        createdAt
+        equipmentList {
+          id
+          name
+          limit {
+            value
+            unit
+          }
+          type
+          usage {
+            value
+            unit
+          }
+        }
       }
     }
   `;
@@ -53,14 +58,6 @@ export const EquipmentCard = props => {
       height: 190,
     },
   }));
-  const formatDate = (createdAt) => {
-    var options = { year: 'numeric', month: 'long', day: 'numeric' };
-
-    var date = new Date(1970,0,1)
-    date.setMilliseconds(createdAt)
-    console.log('typeof(createdAt) :>> ', typeof(createdAt));
-    return date.toLocaleDateString("en-US", options)
-  }
   const [openModal, setOpenModal] = React.useState(false);
   
   const handleOpen = () => {
@@ -70,11 +67,17 @@ export const EquipmentCard = props => {
   const classes = useStyles();
 
   const { loading, error, data } = useQuery(QUERY_ME);
-
+  var equipmentListRender = [];
+  if (!loading) {
+    equipmentListRender = (data.me.equipmentList).map((e) => 
+      (e.type == props.type ? <Equipment data={e} loading={loading} name={e.name} progress={e.usage.value} capacity={e.limit.value} /> : "")  
+    );
+  }
   if (error) return (<div>
     <Typography variant="h5" style={{ margin: '16px' }}>ERROR: {error.message}</Typography>
   </div>);
-
+  var titleText = (props.type).toLowerCase() + "s";
+  titleText = titleText.charAt(0).toUpperCase() + titleText.slice(1);
   return (
     <div>
       <Card className={classes.card}>
@@ -91,7 +94,7 @@ export const EquipmentCard = props => {
             loading ? (
               <Skeleton animation="wave" width="80%" />
             ) : (
-                props.type
+                titleText
               )
           }
         />
@@ -105,8 +108,7 @@ export const EquipmentCard = props => {
             </React.Fragment>
           ) : (
             <Box display="block" alignItems="center">
-                <Equipment name="Nike Flex" progress="230" capacity="500"/>
-                <Equipment name="Nike Flex" progress="230" capacity="500"/>
+                {equipmentListRender}
             </Box>
 
             
@@ -114,7 +116,6 @@ export const EquipmentCard = props => {
             )}
         </CardContent>
       </Card>
-      {/* <EditProfileModal data={data} loading={loading} openModal={openModal} handleClose={() => setOpenModal(false)}/> */}
       <CreateEquipmentModal type={props.type} loading={loading} openModal={openModal} handleClose={() => setOpenModal(false)}/>
     </div>);
 }
