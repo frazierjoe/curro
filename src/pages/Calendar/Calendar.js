@@ -10,7 +10,6 @@ import { makeStyles } from '@material-ui/core/styles';
 import AddIcon from '@material-ui/icons/Add';
 import Fab from '@material-ui/core/Fab';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import Backdrop from '@material-ui/core/Backdrop';
 
 import { gql, useQuery } from '@apollo/client';
 
@@ -97,7 +96,7 @@ export const Calendar = () => {
 
     // Calendar UI State
     const [date, setDate] = useState(new Date());
-    const [view, setView] = React.useState("month");
+    const [view, setView] = useState("month");
     const [openModal, setOpenModal] = useState(false);
     const [firstDayOfWeek, setFirstDayOfWeek] = useState("Sunday");
 
