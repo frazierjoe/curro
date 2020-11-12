@@ -40,7 +40,7 @@ export const Comments = props => {
         <Typography variant="subtitle1" >{props.comments.length + " Comment" + (props.comments.length === 1 ? "" : "s")}</Typography>
         <List className={classes.comments}>
           {props.comments.map((comment, index) => (
-            <Comment key={comment.id} comment={comment}/>
+            <Comment key={comment.id} comment={comment} postId={props.postId}/>
           ))}
         </List>
       </React.Fragment>}

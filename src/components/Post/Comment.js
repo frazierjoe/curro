@@ -15,6 +15,8 @@ import IconButton from '@material-ui/core/IconButton';
 import Favorite from '@material-ui/icons/Favorite';
 import FavoriteBorder from '@material-ui/icons/FavoriteBorder';
 import FavoriteTwoToneIcon from '@material-ui/icons/FavoriteTwoTone';
+import { GET_POST_QUERY } from '../../utils/graphql';
+import produce from "immer";
 
 export const Comment = props => {
 
@@ -32,6 +34,7 @@ export const Comment = props => {
     likeCommentSection: {
       top: 42,
       right: 6,
+      width: 56,
     },
    
   }));
@@ -61,10 +64,42 @@ export const Comment = props => {
   `;
 
   const [likeCommentMutation, { loading: likeLoading }] = useMutation(LIKE_COMMENT_MUTATION, {
-    update(_, { data: { likeComment } }) {
-      console.log(likeComment.liked)
-      console.log(props.comment.id)
-      // TODO update post in cache with added/removed like
+    update(store, { data: { likeComment } }) {
+      
+      const data = store.readQuery({
+        query: GET_POST_QUERY
+      })
+
+      var postIndex = data.postList.posts.findIndex((post) => {
+        return post.id === props.postId
+      })
+
+      var commentIndex = data.postList.posts[postIndex].commentList.findIndex((postComment) => {
+        return postComment.id === props.comment.id
+      })
+
+      const updatedPosts = produce(data.postList.posts, x => {
+        if(likeComment.liked){
+          x[postIndex].commentList[commentIndex].likeList.push({user: user})
+        } else {
+          x[postIndex].commentList[commentIndex].likeList = x[postIndex].commentList[commentIndex].likeList.filter(commentLike => {
+            return commentLike.user.id !== user.id
+          })
+        }
+      })
+      
+      store.writeQuery({
+        query: GET_POST_QUERY,
+        data: {
+          postList: {
+            __typename: "UpdatePost",
+            posts: updatedPosts,
+            hasMore: data.postList.hasMore,
+            cursor: data.postList.cursor
+          },
+        }
+      })
+
     },
     onError(error) {
       console.log(error)

@@ -32,6 +32,8 @@ import ReportIcon from '@material-ui/icons/Report';
 import EditIcon from '@material-ui/icons/Edit';
 import Grid from '@material-ui/core/Grid';
 import Divider from '@material-ui/core/Divider';
+import { GET_POST_QUERY } from '../../utils/graphql';
+import produce from "immer";
 
 
 
@@ -101,10 +103,39 @@ export const PostCard = props => {
   `;
 
   const [likePostMutation, { loading: likeLoading }] = useMutation(LIKE_POST_MUTATION, {
-    update(_, { data: { likePost } }) {
+    update(store, { data: { likePost } }) {
       console.log(likePost.liked)
       console.log(props.post.id)
-      // TODO update post in cache with added/removed like
+      const data = store.readQuery({
+        query: GET_POST_QUERY
+      })
+
+      var postIndex = data.postList.posts.findIndex((post) => {
+        return post.id === props.post.id
+      })
+
+      const updatedPosts = produce(data.postList.posts, x => {
+        if(likePost.liked){
+          x[postIndex].likeList.push({user: user})
+        } else {
+          x[postIndex].likeList = x[postIndex].likeList.filter(postLike => {
+            return postLike.user.id !== user.id
+          })
+        }
+      })
+      
+      store.writeQuery({
+        query: GET_POST_QUERY,
+        data: {
+          postList: {
+            __typename: "UpdatePost",
+            posts: updatedPosts,
+            hasMore: data.postList.hasMore,
+            cursor: data.postList.cursor
+          },
+        }
+      })
+
     },
     onError(error) {
       console.log(error)

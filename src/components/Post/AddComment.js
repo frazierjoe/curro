@@ -11,6 +11,8 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import FormControl from '@material-ui/core/FormControl';
 import SendIcon from '@material-ui/icons/Send';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import { GET_POST_QUERY } from '../../utils/graphql';
+import produce from "immer";
 
 
 export const AddComment = props => {
@@ -59,9 +61,33 @@ export const AddComment = props => {
   `;
 
   const [createCommentMutation, { loading }] = useMutation(CREATE_COMMENT_MUTATION, {
-    update(_, { data: { createComment } }) {
-      console.log(createComment)
-      // TODO update post in cache with added comment
+    update(store, { data: { createComment } }) {
+
+      const data = store.readQuery({
+        query: GET_POST_QUERY
+      })
+
+      var postIndex = data.postList.posts.findIndex((post) => {
+        return post.id === props.postId
+      })
+
+      const updatedPosts = produce(data.postList.posts, x => {
+        x[postIndex].commentList.push(createComment)
+      })
+      
+      store.writeQuery({
+        query: GET_POST_QUERY,
+        data: {
+          postList: {
+            __typename: "UpdatePost",
+            posts: updatedPosts,
+            hasMore: data.postList.hasMore,
+            cursor: data.postList.cursor
+          },
+        }
+      })
+
+
     },
     onError(error) {
       console.log(error)
@@ -94,7 +120,6 @@ export const AddComment = props => {
       setComment('')
       setValidComment(false)
       //TODO disable focus from add comment
-      //TODO add new comment to comments
     }
   }
 
