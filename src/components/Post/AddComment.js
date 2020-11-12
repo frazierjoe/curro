@@ -1,4 +1,5 @@
 import React from 'react';
+import { useMutation, gql } from '@apollo/client';
 import { makeStyles } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
 import FilledInput from '@material-ui/core/FilledInput';
@@ -9,6 +10,8 @@ import InputLabel from '@material-ui/core/InputLabel';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import FormControl from '@material-ui/core/FormControl';
 import SendIcon from '@material-ui/icons/Send';
+import CircularProgress from '@material-ui/core/CircularProgress';
+
 
 export const AddComment = props => {
   
@@ -24,10 +27,46 @@ export const AddComment = props => {
         },
       },
     },
+    buttonProgress: {
+      position: 'absolute',
+      right: 16,
+    },
   }));
 
   const [comment, setComment] = React.useState('');
   const [validComment, setValidComment] = React.useState(false);
+
+  const CREATE_COMMENT_MUTATION = gql`
+    mutation createComment($input: CreateCommentInput!){
+      createComment(input: $input){
+        id
+        note
+        author{
+          id
+          profilePictureURL
+          first
+          last
+          username
+        }
+        likeList{
+          user{
+            id
+          }
+        }
+        createdAt
+      }
+    }
+  `;
+
+  const [createCommentMutation, { loading }] = useMutation(CREATE_COMMENT_MUTATION, {
+    update(_, { data: { createComment } }) {
+      console.log(createComment)
+      // TODO update post in cache with added comment
+    },
+    onError(error) {
+      console.log(error)
+    }
+  })
 
 
   const handleChange = (event) => {
@@ -44,9 +83,14 @@ export const AddComment = props => {
 
   const handlePostComment = () => {
     if(comment){
-      console.log("TODO make API post comment call")
-      console.log(props.postId)
-      console.log(comment)
+      const userInput = {
+        input: {
+          note: comment,
+          postId: props.postId
+        }
+      }
+      createCommentMutation({variables: userInput})
+
       setComment('')
       setValidComment(false)
       //TODO disable focus from add comment
@@ -72,17 +116,21 @@ export const AddComment = props => {
           multiline
           rowsMax={3}
           endAdornment={
-            <InputAdornment position="end">
-              <IconButton
-                aria-label="post-comment-button"
-                onClick={handlePostComment}
-                edge="end"
-                disabled={!validComment}
-                onMouseDown={handleMouseDownSend}
-              >
-                <SendIcon />
-              </IconButton>
-            </InputAdornment>
+            <React.Fragment>
+              <InputAdornment position="end">
+                <IconButton
+                  aria-label="post-comment-button"
+                  onClick={handlePostComment}
+                  edge="end"
+                  disabled={!validComment || loading}
+                  onMouseDown={handleMouseDownSend}
+                  type="submit"
+                >
+                  <SendIcon />
+                </IconButton>
+              </InputAdornment>
+              {loading  && <CircularProgress size={24} className={classes.buttonProgress} />}
+            </React.Fragment>
           }
           labelwidth={70}
         />

@@ -1,5 +1,24 @@
 import { gql } from '@apollo/client';
 
+const COMMENT_FRAGMENT = gql`
+  fragment FeedPageComment on Comment {
+    id
+    note
+    author{
+      id
+      profilePictureURL
+      first
+      last
+      username
+    }
+    likeList{
+      user{
+        id
+      }
+    }
+    createdAt
+  }
+`;
 
 const POST_FRAGMENT = gql`
   fragment FeedPagePost on Post {
@@ -37,10 +56,11 @@ const POST_FRAGMENT = gql`
       }
     }
     commentList {
-      id
+      ...FeedPageComment
     }
     createdAt
   }
+  ${COMMENT_FRAGMENT}
 `;
 
 export const GET_POST_QUERY = gql`

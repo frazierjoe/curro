@@ -159,7 +159,7 @@ export const CreateAccount = props => {
     // https://stackoverflow.com/questions/201323/how-to-validate-an-email-address-using-a-regular-expression
     var emailRegex = /^(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:+)\])$/;
     // password with 1 lower, 1 upper, 1 number, 1 special, and at least 8 long
-    var passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    var passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[#^()_\-=+@$!%*?&])[A-Za-z\d#^()_\-=+@$!%*?&]{8,}$/;
     var emailValid = emailRegex.test(String(values.email).toLowerCase())
     var passwordValid = passwordRegex.test(values.password)
     var confirmValid = values.password === values.confirm

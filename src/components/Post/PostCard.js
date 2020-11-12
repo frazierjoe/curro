@@ -4,6 +4,7 @@ import { AuthContext } from '../../auth';
 import { ActivityTile } from './ActivityTile';
 import { Comments } from './Comments';
 import { AddComment } from './AddComment';
+import { LikeButton } from './LikeButton';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Skeleton from '@material-ui/lab/Skeleton';
@@ -31,7 +32,6 @@ import ReportIcon from '@material-ui/icons/Report';
 import EditIcon from '@material-ui/icons/Edit';
 import Grid from '@material-ui/core/Grid';
 import Divider from '@material-ui/core/Divider';
-import { CompassCalibrationOutlined } from '@material-ui/icons';
 
 
 
@@ -75,14 +75,14 @@ export const PostCard = props => {
   const { user } = useContext(AuthContext)
 
   const didUserLikePost = (likeList) => {
-    var userLikedPost = false;
+    var userLiked = false;
     for(var i = 0; i < likeList.length; i++) {
         if (likeList[i].user.id === user.id) {
-            userLikedPost = true;
+            userLiked = true;
             break;
         }
     }
-    return userLikedPost
+    return userLiked
   }
   
   const [postLikeCount, setPostLikeCount] = useState(props.post.likeList.length)
@@ -92,40 +92,25 @@ export const PostCard = props => {
   // This is for if we want to have a report button
   // const postButtonRef = useRef()
 
-  const CREATE_LIKE_POST_MUTATION = gql`
-    mutation createLikePost($input: LikePostInput!) {
-      createLikePost(input: $input) {
-        id
+  const LIKE_POST_MUTATION = gql`
+    mutation likePost($input: LikePostInput!) {
+      likePost(input: $input) {
+        liked
       }
     }
   `;
 
-  const DELETE_LIKE_POST_MUTATION = gql`
-    mutation deleteLikePost($input: LikePostInput!) {
-      deleteLikePost(input: $input) {
-        message
-        success
-      }
-    }
-  `;
-
-  const [createLikePostMutation, { loading: createLikeLoading }] = useMutation(CREATE_LIKE_POST_MUTATION, {
-    update(_, { data: { createLikePost } }) {
-      console.log(createLikePost)
+  const [likePostMutation, { loading: likeLoading }] = useMutation(LIKE_POST_MUTATION, {
+    update(_, { data: { likePost } }) {
+      console.log(likePost.liked)
+      console.log(props.post.id)
+      // TODO update post in cache with added/removed like
     },
     onError(error) {
       console.log(error)
     }
   })
 
-  const [deleteLikePostMutation, { loading: deleteLikeLoading }] = useMutation(DELETE_LIKE_POST_MUTATION, {
-    update(_, { data: { deleteLikePost } }) {
-      console.log(deleteLikePost)
-    },
-    onError(error) {
-      console.log(error)
-    }
-  })
 
   const handleLike = (event) => {
     setPostLikeCount(event.target.checked ? postLikeCount + 1 : postLikeCount - 1)
@@ -136,14 +121,7 @@ export const PostCard = props => {
     }
 
     console.log(likeInput)
-    if(event.target.checked){
-      console.log("TODO: Like API call")
-      createLikePostMutation({ variables: likeInput })
-    } else {
-      console.log("TODO: Unlike API call")
-      deleteLikePostMutation({ variables: likeInput })
-
-    }
+    likePostMutation({ variables: likeInput })
     setLikePost(event.target.checked)
   }
 
@@ -151,6 +129,7 @@ export const PostCard = props => {
   const formatDate = (postDate) => {
     var options = { year: 'numeric', month: 'long', day: 'numeric' };
     var date = new Date(postDate) 
+
     return date.toLocaleDateString("en-US", options)
   }
 
@@ -245,15 +224,9 @@ export const PostCard = props => {
             )}
         </CardContent>
         <CardActions className={classes.cardActions}>
-        {props.loading ? <Skeleton animation="wave" height={32} width="30%"/>
-          : <FormGroup row>
-            <FormControlLabel
-              control={<Checkbox icon={postLikeCount > 0 ? <FavoriteTwoToneIcon color="action"/> : <FavoriteBorder/>} checkedIcon={<Favorite/>} name="like"  checked={likePost} onChange={handleLike} disabled={createLikeLoading || deleteLikeLoading}/>}
-              label={postLikeCount}
-            />
-          </FormGroup>}
-          {/* TODO add comments */}
-
+          {props.loading ? 
+            <Skeleton animation="wave" height={32} width="30%"/> :
+            <LikeButton likeCount={postLikeCount} isLiked={likePost} handleLike={handleLike} loading={likeLoading}/>}
         </CardActions>
         {props.loading ? <div className={classes.commentSection}>
           <Skeleton animation="wave" width="55%" style={{ marginBottom: 8 }} />
@@ -261,9 +234,9 @@ export const PostCard = props => {
           <Skeleton animation="wave" width="20%" style={{ marginBottom: 8 }} />
         </div>
         : <div className={classes.commentSection}>
-          <Comments/>
+          {(props.post.commentList.length > 0) && <Comments postId={props.post.id} comments={props.post.commentList}/>}
           <AddComment postId={props.post.id}/>
-          <Typography variant="body2" color="textSecondary" style={{marginBottom:8}}>
+          <Typography variant="body2" color="textSecondary" style={{marginBottom:8, marginTop:8}}>
             {formatDate(props.post.postDate)}
           </Typography>
         </div> }
