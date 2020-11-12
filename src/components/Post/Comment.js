@@ -53,16 +53,16 @@ export const Comment = props => {
   const [likeComment, setLikeComment] = useState(didUserLikeComment(props.comment.likeList))
 
   const LIKE_COMMENT_MUTATION = gql`
-    mutation likePost($input: LikePostInput!) {
-      likePost(input: $input) {
+    mutation likeComment($input: LikeCommentInput!) {
+      likeComment(input: $input) {
         liked
       }
     }
   `;
 
   const [likeCommentMutation, { loading: likeLoading }] = useMutation(LIKE_COMMENT_MUTATION, {
-    update(_, { data: { likePost } }) {
-      console.log(likePost.liked)
+    update(_, { data: { likeComment } }) {
+      console.log(likeComment.liked)
       console.log(props.comment.id)
       // TODO update post in cache with added/removed like
     },
@@ -81,7 +81,7 @@ export const Comment = props => {
     }
 
     console.log(likeInput)
-    // likeCommentMutation({ variables: likeInput })
+    likeCommentMutation({ variables: likeInput })
     setLikeComment(event.target.checked)
   }
 
