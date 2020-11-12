@@ -9,6 +9,9 @@ import Toolbar from '@material-ui/core/Toolbar';
 import { useMutation, gql } from '@apollo/client';
 import IconButton from '@material-ui/core/IconButton';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
+import Select from '@material-ui/core/Select';
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -50,7 +53,7 @@ const useStyles = makeStyles((theme) => ({
       '&.Mui-focused fieldset': {
         borderColor: theme.palette.secondary.main,
       },
-    },
+    }
   },
 }));
 var _isMounted = false;
@@ -118,14 +121,15 @@ export default function EditEquipmentModal(props) {
       value: props.data.usage.value,
       unit: props.data.usage.unit
     },
-    active: true
+    active: props.data.active
   });
   
  const save = () => {
     var nameValid = state.name.length > 0;
     var limitValid = !(isNaN(parseInt(state.limit.value)) || parseInt(state.limit.value) <= 0);
-    
-    if (nameValid && limitValid) {
+    var usageValid = !(isNaN(parseInt(state.usage.value)) || parseInt(state.usage.value) < 0);
+    console.log(usageValid)
+    if (nameValid && limitValid && usageValid) {
       var userInput = {
         input: {
           equipmentId: props.data.id,
@@ -136,10 +140,10 @@ export default function EditEquipmentModal(props) {
             unit: state.limit.unit
           },
           usage: {
-            value: parseInt(state.usage.value),
-            unit: state.usage.unit
+            value: props.data.usage.value,
+            unit: props.data.usage.unit
           },
-          active: true
+          active: props.data.active
         }
 
       }
@@ -162,7 +166,8 @@ export default function EditEquipmentModal(props) {
         usage: {
             value: props.data.usage.value,
             unit: props.data.usage.unit
-        }
+        },
+        active: props.data.active
     });
     var input = { equipmentId: props.data.id }
     deleteEquipmentMutation({variables: input})
@@ -181,7 +186,8 @@ export default function EditEquipmentModal(props) {
         usage: {
             value: props.data.usage.value,
             unit: props.data.usage.unit
-        }
+        },
+        active: props.data.active
     });
     _isMounted = false
     props.handleClose();
@@ -194,11 +200,23 @@ export default function EditEquipmentModal(props) {
         unit: state.limit.unit
       }});
     }
-    else if (prop == "usageValue") {
-        setState({ ...state, usage: {
-            value: String(event.target.value),
-            unit: state.usage.unit
-        }});
+    // else if (prop == "usageValue") {
+    //     setState({ ...state, usage: {
+    //         value: String(event.target.value),
+    //         unit: state.usage.unit
+    //     }});
+    // }
+    else if (prop == "unit") {
+      setState({ ...state, 
+        limit: {
+          value: state.limit.value,
+          unit: String(event.target.value)
+        }
+        // usage: {
+        //   value: state.usage.value,
+        //   unit: String(event.target.value)
+        // }
+      });
     }
     else {
       setState({ ...state, [prop]: String(event.target.value) });
@@ -226,14 +244,37 @@ export default function EditEquipmentModal(props) {
           error={state.name.length <= 0}
           helperText={state.name.length <= 0 ? 'Name Required' : ' '}
         />
-        <TextField required id="standard-basic" fullWidth className={classes.textField} value={state.usage.value} onChange={handleChange('usageValue')} label="Usage"
-          error={isNaN(parseInt(state.limit.value)) || parseInt(state.limit.value) < 0}
-          helperText={isNaN(parseInt(state.limit.value)) || parseInt(state.limit.value) <= 0 ? 'Invalid Usage Value' : ' '}
-        />
-        <TextField required id="standard-basic" fullWidth className={classes.textField} value={state.limit.value} onChange={handleChange('limitValue')} label="Limit"
-          error={isNaN(parseInt(state.limit.value)) || parseInt(state.limit.value) <= 0}
-          helperText={isNaN(parseInt(state.limit.value)) || parseInt(state.limit.value) <= 0 ? 'Invalid Limit Value' : ' '}
-        />
+        <Typography variant="body1" component="span">
+          {/* <TextField required id="standard-basic" className={classes.textField} value={state.usage.value} onChange={handleChange('usageValue')} label="Usage"
+            error={isNaN(parseInt(state.usage.value)) || parseInt(state.usage.value) < 0}
+            helperText={isNaN(parseInt(state.usage.value)) || parseInt(state.usage.value) < 0 ? 'Invalid Usage Value' : ' '}
+            inputProps={{
+              min: 0.000,
+              step: 0.001,
+            }}
+          /> */}
+           
+          <TextField required id="standard-basic" className={classes.textField} value={state.limit.value} onChange={handleChange('limitValue')} label="Limit"
+            error={isNaN(parseInt(state.limit.value)) || parseInt(state.limit.value) <= 0}
+            helperText={isNaN(parseInt(state.limit.value)) || parseInt(state.limit.value) <= 0 ? 'Invalid Limit Value' : ' '}
+            inputProps={{
+              min: 0.000,
+              step: 0.001,
+            }}
+          />
+          <InputLabel id="demo-simple-select-outlined-label">Unit</InputLabel>
+          <Select
+            labelId="demo-simple-select-outlined-label"
+            id="demo-simple-select-outlined"
+            value={state.limit.unit}
+            onChange={handleChange("unit")}
+            label="Unit"
+          >
+            <MenuItem value="MI">MI</MenuItem>
+            <MenuItem value="KM">KM</MenuItem>
+          </Select>
+        </Typography>
+        
       </form>
     </div>
   );

@@ -7,6 +7,9 @@ import Typography from '@material-ui/core/Typography';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Toolbar from '@material-ui/core/Toolbar';
 import { useMutation, gql } from '@apollo/client';
+import Select from '@material-ui/core/Select';
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -97,15 +100,15 @@ export const CreateEquipmentModal = (props) => {
           type: state.type,
           limit: {
             value: parseInt(state.limit.value),
-            unit: state.limit.unit,
+            unit: state.limit.unit
           }
         }
 
       }
       console.log(userInput)
       console.log(createEquipmentMutation({ variables: userInput }))
-      _isMounted = false
-      window.location.reload(true);
+      // _isMounted = false
+      // window.location.reload(true);
 
     }
   }
@@ -128,6 +131,14 @@ export const CreateEquipmentModal = (props) => {
         value: String(event.target.value),
         unit: state.limit.unit
       }});
+    }
+    else if (prop == "unit") {
+      setState({ ...state, 
+        limit: {
+          value: state.limit.value,
+          unit: String(event.target.value)
+        }
+      });
     }
     else {
       setState({ ...state, [prop]: String(event.target.value) });
@@ -154,7 +165,22 @@ export const CreateEquipmentModal = (props) => {
         <TextField required id="standard-basic" fullWidth className={classes.textField} value={state.limit.value} onChange={handleChange('limitValue')} label="Capacity"
           error={isNaN(parseInt(state.limit.value)) || parseInt(state.limit.value) <= 0}
           helperText={isNaN(parseInt(state.limit.value)) || parseInt(state.limit.value) <= 0 ? 'Invalid Limit Value' : ' '}
+          inputProps={{
+            min: 0.000,
+            step: 0.001,
+          }}
         />
+        <InputLabel id="demo-simple-select-outlined-label">Unit</InputLabel>
+          <Select
+            labelId="demo-simple-select-outlined-label"
+            id="demo-simple-select-outlined"
+            value={state.limit.unit}
+            onChange={handleChange("unit")}
+            label="Unit"
+          >
+            <MenuItem value="MI">MI</MenuItem>
+            <MenuItem value="KM">KM</MenuItem>
+          </Select>
         
       </form>
     </div>
