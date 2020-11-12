@@ -270,8 +270,10 @@ export default function EditEquipmentModal(props) {
             onChange={handleChange("unit")}
             label="Unit"
           >
-            <MenuItem value="MI">MI</MenuItem>
-            <MenuItem value="KM">KM</MenuItem>
+            <MenuItem value="MI">mi</MenuItem>
+            <MenuItem value="KM">km</MenuItem>
+            <MenuItem value="M">m</MenuItem>
+            <MenuItem value="YDS">yds</MenuItem>
           </Select>
         </Typography>
         

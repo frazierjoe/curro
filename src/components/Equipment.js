@@ -7,9 +7,7 @@ import EditIcon from '@material-ui/icons/Edit';
 import { makeStyles } from '@material-ui/core/styles';
 import EditEquipmentModal from '../components/EditEquipmentModal';
 import { Card, CardHeader, CardContent } from '@material-ui/core';
-
-
-
+import DistanceHelper from "../utils/DistanceHelper";
 
 export default function Equipment(props) {
     const useStyles = makeStyles((theme) => ({
@@ -23,6 +21,10 @@ export default function Equipment(props) {
       setOpenModal(true);
     };
     const classes = useStyles();
+    var distance = {value: props.data.usage.value, unit: props.data.usage.unit};
+    var usageValue = DistanceHelper.convertDistanceToUnit(distance, props.data.limit.unit)
+    
+
     return (
       <div>
         
@@ -35,9 +37,9 @@ export default function Equipment(props) {
         </Typography>
         
         <Typography variant="body1" component="p">  
-          {props.progress + " " + (props.data.usage.unit).toLowerCase() + " / " + props.capacity + " " + props.data.limit.unit.toLowerCase()}
+          {Math.round(usageValue*100)/100 + " " + (props.data.limit.unit).toLowerCase() + " / " + props.capacity + " " + props.data.limit.unit.toLowerCase()}
         </Typography>
-        <LinearWithValueLabel progress={Math.round(100 * parseFloat(props.progress) / parseFloat(props.capacity))}/>
+        <LinearWithValueLabel progress={usageValue < props.capacity ? Math.round(100 * parseFloat(usageValue) / parseFloat(props.capacity)) : 100}/>
         <EditEquipmentModal data={props.data} openModal={openModal} handleClose={() => setOpenModal(false)}/>
       </div>
     );
