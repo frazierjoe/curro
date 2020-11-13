@@ -7,21 +7,15 @@ import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import IconButton from '@material-ui/core/IconButton';
 import CardHeader from '@material-ui/core/CardHeader';
-import Avatar from '@material-ui/core/Avatar';
-import Box from '@material-ui/core/Box';
-import { EditProfileModal } from "../../components/EditProfileModal"
-import { CreateEquipmentModal } from '../../components/CreateEquipmentModal';
 import AddIcon from '@material-ui/icons/Add';
-import LinearWithValueLabel from "../../components/LinearWithValueLabel"
 import Equipment from "../../components/Equipment"
+import List from '@material-ui/core/List';
 
 export const EquipmentCard = props => {
 
   const QUERY_ME = gql`
     query {
       me {
-        id
-        email
         equipmentList {
           id
           name
@@ -41,11 +35,15 @@ export const EquipmentCard = props => {
 
   const useStyles = makeStyles((theme) => ({
     root: {
-      margin: '32px',
+      margin: 16,
     },
     card: {
-      maxWidth: 352,
-      margin: theme.spacing(2),
+      margin: 16,
+      marginLeft: 0,
+      [theme.breakpoints.down('xs')]: {
+        marginLeft: 16,
+        marginTop: 0,
+      },
     },
     cardContent: {
       paddingTop: '0px'
@@ -57,37 +55,50 @@ export const EquipmentCard = props => {
     media: {
       height: 190,
     },
+    equipmentList:{
+      width: '100%',
+    },
   }));
-  const [openModal, setOpenModal] = React.useState(false);
   
-  const handleOpen = () => {
-    setOpenModal(true);
+  const handleOpenNewEquipment = () => {
+    props.setCreateEquipmentType(props.type)
+    props.setOpenCreateEquipmentModal(true);
   };
 
   const classes = useStyles();
 
   const { loading, error, data } = useQuery(QUERY_ME);
   var equipmentListRender = [];
+  var equipmentCount = 0
   if (!loading) {
     equipmentListRender = (data.me.equipmentList).map((e) => 
-      (e.type == props.type ? <Equipment data={e} loading={loading} name={e.name} progress={e.usage.value} capacity={e.limit.value} /> : "")  
+      ((e.type === props.type) && <Equipment 
+        key={e.id} data={e} 
+        loading={loading} 
+        name={e.name} 
+        progress={e.usage.value} 
+        capacity={e.limit.value} 
+        setOpenEquipmentModal={props.setOpenEquipmentModal} 
+        setEditEquipmentData={props.setEditEquipmentData} 
+      />)  
     );
+    equipmentCount = data.me.equipmentList.filter((e) => e.type === props.type).length;
   }
   if (error) return (<div>
     <Typography variant="h5" style={{ margin: '16px' }}>ERROR: {error.message}</Typography>
   </div>);
   var titleText = (props.type).toLowerCase() + "s";
   titleText = titleText.charAt(0).toUpperCase() + titleText.slice(1);
+
   return (
     <div>
       <Card className={classes.card}>
         <CardHeader
           action={
             loading ? <></> : (
-              <IconButton aria-label="edit" onClick={handleOpen}>
+              <IconButton aria-label="edit" onClick={handleOpenNewEquipment}>
                 <AddIcon />
               </IconButton>
-              
             )
           }
           title={
@@ -107,15 +118,11 @@ export const EquipmentCard = props => {
               <Skeleton animation="wave" height={16} width="70%" />
             </React.Fragment>
           ) : (
-            <Box display="block" alignItems="center">
-                {equipmentListRender}
-            </Box>
-
-            
-              
+            <List className={classes.equipmentList}>
+                {equipmentCount === 0 ? "No " + titleText + " Added Yet" : equipmentListRender}
+            </List>
             )}
         </CardContent>
       </Card>
-      <CreateEquipmentModal type={props.type} loading={loading} openModal={openModal} handleClose={() => setOpenModal(false)}/>
     </div>);
 }

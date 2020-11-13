@@ -162,7 +162,7 @@ export const CreateEquipmentModal = (props) => {
           error={state.name.length <= 0}
           helperText={state.name.length <= 0 ? 'Name Required' : ' '}
         />
-        <TextField required id="standard-basic" fullWidth className={classes.textField} value={state.limit.value} onChange={handleChange('limitValue')} label="Capacity"
+        <TextField required id="standard-basic" fullWidth className={classes.textField} value={state.limit.value} onChange={handleChange('limitValue')} label="Limit"
           error={isNaN(parseInt(state.limit.value)) || parseInt(state.limit.value) <= 0}
           helperText={isNaN(parseInt(state.limit.value)) || parseInt(state.limit.value) <= 0 ? 'Invalid Limit Value' : ' '}
           inputProps={{

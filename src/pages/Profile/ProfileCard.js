@@ -36,7 +36,6 @@ export const ProfileCard = props => {
       margin: '32px',
     },
     card: {
-      maxWidth: 352,
       margin: theme.spacing(2),
     },
     cardContent: {

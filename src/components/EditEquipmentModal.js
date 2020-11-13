@@ -57,26 +57,28 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 var _isMounted = false;
+var _editDataMounted = false;
+
 export default function EditEquipmentModal(props) {
   // update equipment mutation below
   const UPDATE_EQUIPMENT_MUTATION = gql`
-  mutation updateEquipment($input: UpdateEquipmentInput!) {
-        updateEquipment(input: $input) {
-          id
-          name
-          type
-          limit {
-            value
-            unit
-          }
-          usage {
-            value
-            unit
-          }
-          active
+    mutation updateEquipment($input: UpdateEquipmentInput!) {
+      updateEquipment(input: $input) {
+        id
+        name
+        type
+        limit {
+          value
+          unit
         }
+        usage {
+          value
+          unit
+        }
+        active
       }
-    `;
+    }
+  `;
   const [updateEquipmentMutation, { loading }] = useMutation(UPDATE_EQUIPMENT_MUTATION, {
     update(_, { data }) {
       props.handleClose();
@@ -108,21 +110,23 @@ export default function EditEquipmentModal(props) {
       console.log(error.message)
     }
   })
+
   const classes = useStyles();
+  console.log(props.data)
+
   const [state, setState] = React.useState({
     equipmentId: props.data.id,
-    name: props.data.name,
-    type: props.data.type,
-    limit: {
-      value: props.data.limit.value,
-      unit: props.data.limit.unit
-    },
-    usage: {
-      value: props.data.usage.value,
-      unit: props.data.usage.unit
-    },
-    active: props.data.active
+    ...props.data
   });
+
+  if(!_editDataMounted && props.data.id){
+    _editDataMounted = true
+    setState({
+      equipmentId: props.data.id,
+      ...props.data
+    });
+  }
+  console.log(state)
   
  const save = () => {
     var nameValid = state.name.length > 0;
@@ -139,10 +143,6 @@ export default function EditEquipmentModal(props) {
             value: parseInt(state.limit.value),
             unit: state.limit.unit
           },
-          usage: {
-            value: props.data.usage.value,
-            unit: props.data.usage.unit
-          },
           active: props.data.active
         }
 
@@ -150,8 +150,7 @@ export default function EditEquipmentModal(props) {
       console.log(userInput)
       updateEquipmentMutation({ variables: userInput })
       _isMounted = false
-      window.location.reload(true);
-
+      _editDataMounted = false
     }
   }
   const deleteEq = () => {
@@ -172,6 +171,7 @@ export default function EditEquipmentModal(props) {
     var input = { equipmentId: props.data.id }
     deleteEquipmentMutation({variables: input})
     _isMounted = false
+    _editDataMounted = false
     window.location.reload(true);
   };
   const cancel = () => {
@@ -190,6 +190,7 @@ export default function EditEquipmentModal(props) {
         active: props.data.active
     });
     _isMounted = false
+    _editDataMounted = false
     props.handleClose();
   }
 
@@ -200,22 +201,12 @@ export default function EditEquipmentModal(props) {
         unit: state.limit.unit
       }});
     }
-    // else if (prop == "usageValue") {
-    //     setState({ ...state, usage: {
-    //         value: String(event.target.value),
-    //         unit: state.usage.unit
-    //     }});
-    // }
     else if (prop == "unit") {
       setState({ ...state, 
         limit: {
           value: state.limit.value,
           unit: String(event.target.value)
         }
-        // usage: {
-        //   value: state.usage.value,
-        //   unit: String(event.target.value)
-        // }
       });
     }
     else {
@@ -223,8 +214,10 @@ export default function EditEquipmentModal(props) {
     }
     
   };
+
   var titleText = (props.data.type).toLowerCase();
   titleText = titleText.charAt(0).toUpperCase() + titleText.slice(1);
+
   const body = (
     <div className={classes.paper}>
       <Toolbar disableGutters>
@@ -245,15 +238,6 @@ export default function EditEquipmentModal(props) {
           helperText={state.name.length <= 0 ? 'Name Required' : ' '}
         />
         <Typography variant="body1" component="span">
-          {/* <TextField required id="standard-basic" className={classes.textField} value={state.usage.value} onChange={handleChange('usageValue')} label="Usage"
-            error={isNaN(parseInt(state.usage.value)) || parseInt(state.usage.value) < 0}
-            helperText={isNaN(parseInt(state.usage.value)) || parseInt(state.usage.value) < 0 ? 'Invalid Usage Value' : ' '}
-            inputProps={{
-              min: 0.000,
-              step: 0.001,
-            }}
-          /> */}
-           
           <TextField required id="standard-basic" className={classes.textField} value={state.limit.value} onChange={handleChange('limitValue')} label="Limit"
             error={isNaN(parseInt(state.limit.value)) || parseInt(state.limit.value) <= 0}
             helperText={isNaN(parseInt(state.limit.value)) || parseInt(state.limit.value) <= 0 ? 'Invalid Limit Value' : ' '}
