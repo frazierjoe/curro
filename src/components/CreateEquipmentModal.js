@@ -10,6 +10,9 @@ import { useMutation, gql } from '@apollo/client';
 import Select from '@material-ui/core/Select';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
+import FormControl from '@material-ui/core/FormControl';
+import Grid from '@material-ui/core/Grid';
+import { CREATE_EQUIPMENT_MUTATION, ME_QUERY } from '../utils/graphql';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -24,8 +27,7 @@ const useStyles = makeStyles((theme) => ({
     boxShadow: theme.shadows[4],
     padding: '0 16px 16px 16px',
     margin: 0,
-    overflow: 'scroll',
-    overflowX: 'hidden',
+    overflow: 'hidden',
     [theme.breakpoints.down('sm')]: {
       height: '100%', 
       width: '100%',
@@ -53,25 +55,34 @@ const useStyles = makeStyles((theme) => ({
       },
     },
   },
+  distanceField: {
+    flexGrow: 1,
+  }
 }));
-var _isMounted = false;
 export const CreateEquipmentModal = (props) => {
-  const CREATE_EQUIPMENT_MUTATION = gql`
-  mutation createEquipment($input: CreateEquipmentInput!) {
-        createEquipment(input: $input) {
-          name
-          type
-          limit {
-            value
-            unit
+
+  const [createEquipmentMutation, { loading, error, data }] = useMutation(CREATE_EQUIPMENT_MUTATION, {
+    update(store, { data: { createEquipment } }) {
+      console.log("Before")
+      const data = store.readQuery({
+        query: ME_QUERY
+      })
+      console.log(data)
+      const updatedEquipmentList = [createEquipment, ...data.me.equipmentList]
+      console.log(updatedEquipmentList)
+
+      store.writeQuery({
+        query: ME_QUERY,
+        data: {
+          me: {
+            ...data.me,
+            __typename: "User",
+            equipmentList: updatedEquipmentList
           }
         }
-      }
-    `;
-  const [createEquipmentMutation, { loading, error, data }] = useMutation(CREATE_EQUIPMENT_MUTATION, {
-    update(cache, { data: { createEquipment: equipment } }) {
+      })
       props.handleClose();
-
+      
     },
     onError(error) {
       console.log(error)
@@ -85,7 +96,7 @@ export const CreateEquipmentModal = (props) => {
     type: props.type,
     limit: {
       value: "",
-      unit: "MI"
+      unit: "mi"
     }
   });
   
@@ -97,18 +108,16 @@ export const CreateEquipmentModal = (props) => {
       var userInput = {
         input: {
           name: state.name,
-          type: state.type,
+          type: props.type,
           limit: {
             value: parseInt(state.limit.value),
-            unit: state.limit.unit
+            unit: state.limit.unit.toUpperCase()
           }
         }
 
       }
       console.log(userInput)
-      console.log(createEquipmentMutation({ variables: userInput }))
-      // _isMounted = false
-      // window.location.reload(true);
+      createEquipmentMutation({ variables: userInput })
 
     }
   }
@@ -121,7 +130,6 @@ export const CreateEquipmentModal = (props) => {
           unit: "MI"
         }
     });
-    _isMounted = false
     props.handleClose();
   }
 
@@ -158,32 +166,56 @@ export const CreateEquipmentModal = (props) => {
         </Button>
       </Toolbar>
       <form onSubmit={save}>
-        <TextField required id="standard-basic" fullWidth className={classes.textField} value={state.name} onChange={handleChange('name')} label="Name"
+        <TextField 
+          required 
+          id="standard-basic" 
+          variant="outlined"
+          fullWidth 
+          className={classes.textField} 
+          value={state.name} 
+          onChange={handleChange('name')} 
+          label="Name"
           error={state.name.length <= 0}
           helperText={state.name.length <= 0 ? 'Name Required' : ' '}
         />
-        <TextField required id="standard-basic" fullWidth className={classes.textField} value={state.limit.value} onChange={handleChange('limitValue')} label="Limit"
-          error={isNaN(parseInt(state.limit.value)) || parseInt(state.limit.value) <= 0}
-          helperText={isNaN(parseInt(state.limit.value)) || parseInt(state.limit.value) <= 0 ? 'Invalid Limit Value' : ' '}
-          inputProps={{
-            min: 0.000,
-            step: 0.001,
-          }}
-        />
-        <InputLabel id="demo-simple-select-outlined-label">Unit</InputLabel>
-          <Select
-            labelId="demo-simple-select-outlined-label"
-            id="demo-simple-select-outlined"
-            value={state.limit.unit}
-            onChange={handleChange("unit")}
-            label="Unit"
-          >
-            <MenuItem value="MI">mi</MenuItem>
-            <MenuItem value="KM">km</MenuItem>
-            <MenuItem value="M">m</MenuItem>
-            <MenuItem value="YDS">yds</MenuItem>
-            
-          </Select>
+        <div className={classes.distanceField}>
+          <Grid container spacing={1}>
+            <Grid item xs>
+              <TextField 
+                label="Limit" 
+                type="number" 
+                inputProps={{
+                  min: 0.000,
+                  step: 0.001,
+                }}
+                variant="outlined"
+                className={classes.textField}
+                value={state.limit.value} 
+                onChange={handleChange('limitValue')} 
+                error={isNaN(parseInt(state.limit.value)) || parseInt(state.limit.value) <= 0}
+                helperText={isNaN(parseInt(state.limit.value)) || parseInt(state.limit.value) <= 0 ? 'Invalid Limit Value' : ' '}
+                fullWidth
+              />
+            </Grid>
+            <Grid item xs>
+              <FormControl variant="outlined" className={classes.textField} fullWidth>
+                <InputLabel id="distance-unit-select">Unit</InputLabel>
+                <Select
+                  labelId="distance-unit-select"
+                  id="distance-unit-select-id"
+                  value={state.limit.unit}
+                  onChange={handleChange("unit")}
+                  label="Distance"
+                >
+                  <MenuItem value={"mi"}>mi</MenuItem>
+                  <MenuItem value={"km"}>km</MenuItem>
+                  <MenuItem value={"m"}>m</MenuItem>
+                  <MenuItem value={"yds"}>yds</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+          </Grid>
+        </div>
         
       </form>
     </div>

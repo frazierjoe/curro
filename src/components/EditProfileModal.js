@@ -121,7 +121,6 @@ export const EditProfileModal = (props) => {
       updateUserMutation({ variables: userInput })
       _isMounted = false
       window.location.reload(true);
-
     }
   }
   const cancel = () => {

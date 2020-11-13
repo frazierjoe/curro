@@ -12,7 +12,9 @@ import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import Select from '@material-ui/core/Select';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
-
+import FormControl from '@material-ui/core/FormControl';
+import Grid from '@material-ui/core/Grid';
+import { UPDATE_EQUIPMENT_MUTATION, ME_QUERY } from '../utils/graphql';
 
 const useStyles = makeStyles((theme) => ({
   modal: {
@@ -26,8 +28,7 @@ const useStyles = makeStyles((theme) => ({
     boxShadow: theme.shadows[4],
     padding: '0 16px 16px 16px',
     margin: 0,
-    overflow: 'scroll',
-    overflowX: 'hidden',
+    overflow: 'hidden',
     [theme.breakpoints.down('sm')]: {
       height: '100%', 
       width: '100%',
@@ -55,34 +56,41 @@ const useStyles = makeStyles((theme) => ({
       },
     }
   },
+  distanceField: {
+    flexGrow: 1,
+  },
 }));
-var _isMounted = false;
+
 var _editDataMounted = false;
+var _previousId = "";
 
 export default function EditEquipmentModal(props) {
-  // update equipment mutation below
-  const UPDATE_EQUIPMENT_MUTATION = gql`
-    mutation updateEquipment($input: UpdateEquipmentInput!) {
-      updateEquipment(input: $input) {
-        id
-        name
-        type
-        limit {
-          value
-          unit
-        }
-        usage {
-          value
-          unit
-        }
-        active
-      }
-    }
-  `;
   const [updateEquipmentMutation, { loading }] = useMutation(UPDATE_EQUIPMENT_MUTATION, {
-    update(_, { data }) {
+    update(store, { data: {updateEquipment} }) {
+
+      const data = store.readQuery({
+        query: ME_QUERY
+      })
+
+      const updatedEquipmentList = data.me.equipmentList.map((equipment) => {
+        if(equipment.id === props.data.id){
+          return updateEquipment
+        }
+        return equipment
+      })
+      
+      store.writeQuery({
+        query: ME_QUERY,
+        data: {
+          me: {
+            ...data.me,
+            __typename: "User",
+            equipmentList: updatedEquipmentList
+          }
+        }
+      })
       props.handleClose();
-      console.log(data)
+      _editDataMounted = false
 
     },
     onError(error) {
@@ -92,18 +100,39 @@ export default function EditEquipmentModal(props) {
   })
 
   const DELETE_EQUIPMENT_MUTATION = gql`
-  mutation deleteEquipment($equipmentId: ID!) {
-        deleteEquipment(equipmentId: $equipmentId) {
-          message
-          success
-        }
+    mutation deleteEquipment($equipmentId: ID!) {
+      deleteEquipment(equipmentId: $equipmentId) {
+        message
+        success
       }
-    `;
+    }
+  `;
   const [deleteEquipmentMutation, { deleteLoading }] = useMutation(DELETE_EQUIPMENT_MUTATION, {
-    update(_, { data }) {
-      props.handleClose();
-      console.log(data)
+    update(store, { data: {deleteEquipment} }) {
 
+      const data = store.readQuery({
+        query: ME_QUERY
+      })
+
+      const updatedEquipmentList = data.me.equipmentList.filter((equipment) => {
+        if(equipment.id !== props.data.id){
+          return equipment
+        }
+      })
+      
+      store.writeQuery({
+        query: ME_QUERY,
+        data: {
+          me: {
+            ...data.me,
+            __typename: "User",
+            equipmentList: updatedEquipmentList
+          }
+        }
+      })
+
+      props.handleClose();
+      _editDataMounted = false
     },
     onError(error) {
       console.log(error)
@@ -112,27 +141,26 @@ export default function EditEquipmentModal(props) {
   })
 
   const classes = useStyles();
-  console.log(props.data)
 
   const [state, setState] = React.useState({
     equipmentId: props.data.id,
     ...props.data
   });
 
-  if(!_editDataMounted && props.data.id){
+  if((!_editDataMounted && props.data.id) || (_previousId !== props.data.id)){
     _editDataMounted = true
+    _previousId = props.data.id
     setState({
       equipmentId: props.data.id,
       ...props.data
     });
   }
-  console.log(state)
-  
+
  const save = () => {
     var nameValid = state.name.length > 0;
     var limitValid = !(isNaN(parseInt(state.limit.value)) || parseInt(state.limit.value) <= 0);
     var usageValid = !(isNaN(parseInt(state.usage.value)) || parseInt(state.usage.value) < 0);
-    console.log(usageValid)
+
     if (nameValid && limitValid && usageValid) {
       var userInput = {
         input: {
@@ -147,9 +175,8 @@ export default function EditEquipmentModal(props) {
         }
 
       }
-      console.log(userInput)
+
       updateEquipmentMutation({ variables: userInput })
-      _isMounted = false
       _editDataMounted = false
     }
   }
@@ -162,46 +189,35 @@ export default function EditEquipmentModal(props) {
             value: props.data.limit.value,
             unit: props.data.limit.unit
         },
-        usage: {
-            value: props.data.usage.value,
-            unit: props.data.usage.unit
-        },
         active: props.data.active
     });
     var input = { equipmentId: props.data.id }
     deleteEquipmentMutation({variables: input})
-    _isMounted = false
     _editDataMounted = false
-    window.location.reload(true);
   };
   const cancel = () => {
     setState({
-        equipmentId: props.data.id,
-        name: props.data.name,
-        type: props.data.type,
+        equipmentId: "",
+        name: "",
+        type: "",
         limit: {
-            value: props.data.limit.value,
-            unit: props.data.limit.unit
+            value: "",
+            unit: "MI"
         },
-        usage: {
-            value: props.data.usage.value,
-            unit: props.data.usage.unit
-        },
-        active: props.data.active
+        active: ""
     });
-    _isMounted = false
     _editDataMounted = false
     props.handleClose();
   }
 
   const handleChange = (prop) => (event) => {
-    if (prop == "limitValue") {
+    if (prop === "limitValue") {
       setState({ ...state, limit: {
         value: String(event.target.value),
         unit: state.limit.unit
       }});
     }
-    else if (prop == "unit") {
+    else if (prop === "unit") {
       setState({ ...state, 
         limit: {
           value: state.limit.value,
@@ -233,33 +249,55 @@ export default function EditEquipmentModal(props) {
         </Button>
       </Toolbar>
       <form onSubmit={save}>
-        <TextField required id="standard-basic" fullWidth className={classes.textField} value={state.name} onChange={handleChange('name')} label="Name"
+        <TextField 
+          required id="standard-basic" 
+          variant="outlined"
+          fullWidth 
+          className={classes.textField} 
+          value={state.name} 
+          onChange={handleChange('name')} 
+          label="Name"
           error={state.name.length <= 0}
           helperText={state.name.length <= 0 ? 'Name Required' : ' '}
         />
-        <Typography variant="body1" component="span">
-          <TextField required id="standard-basic" className={classes.textField} value={state.limit.value} onChange={handleChange('limitValue')} label="Limit"
-            error={isNaN(parseInt(state.limit.value)) || parseInt(state.limit.value) <= 0}
-            helperText={isNaN(parseInt(state.limit.value)) || parseInt(state.limit.value) <= 0 ? 'Invalid Limit Value' : ' '}
-            inputProps={{
-              min: 0.000,
-              step: 0.001,
-            }}
-          />
-          <InputLabel id="demo-simple-select-outlined-label">Unit</InputLabel>
-          <Select
-            labelId="demo-simple-select-outlined-label"
-            id="demo-simple-select-outlined"
-            value={state.limit.unit}
-            onChange={handleChange("unit")}
-            label="Unit"
-          >
-            <MenuItem value="MI">mi</MenuItem>
-            <MenuItem value="KM">km</MenuItem>
-            <MenuItem value="M">m</MenuItem>
-            <MenuItem value="YDS">yds</MenuItem>
-          </Select>
-        </Typography>
+          <div className={classes.distanceField}>
+            <Grid container spacing={1}>
+              <Grid item xs>
+                <TextField 
+                  label="Limit" 
+                  type="number" 
+                  inputProps={{
+                    min: 0.000,
+                    step: 0.001,
+                  }}
+                  variant="outlined"
+                  value={state.limit.value} 
+                  onChange={handleChange('limitValue')}
+                  error={isNaN(parseInt(state.limit.value)) || parseInt(state.limit.value) <= 0}
+                  helperText={isNaN(parseInt(state.limit.value)) || parseInt(state.limit.value) <= 0 ? 'Invalid Limit Value' : ' '}
+                  className={classes.textField}
+                  fullWidth
+                />
+              </Grid>
+              <Grid item xs>
+                <FormControl variant="outlined" className={classes.textField} fullWidth>
+                  <InputLabel id="distance-unit-select">Unit</InputLabel>
+                  <Select
+                    labelId="distance-unit-select"
+                    id="distance-unit-select-id"
+                    value={state.limit.unit}
+                    onChange={handleChange("unit")}
+                    label="Distance"
+                  >
+                    <MenuItem value={"MI"}>mi</MenuItem>
+                    <MenuItem value={"KM"}>km</MenuItem>
+                    <MenuItem value={"M"}>m</MenuItem>
+                    <MenuItem value={"YDS"}>yds</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+            </Grid>
+          </div>
         
       </form>
     </div>

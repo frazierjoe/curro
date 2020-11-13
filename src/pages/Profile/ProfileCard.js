@@ -1,5 +1,4 @@
 import React from 'react';
-import { useQuery, gql } from '@apollo/client';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Skeleton from '@material-ui/lab/Skeleton';
@@ -14,22 +13,6 @@ import EditIcon from '@material-ui/icons/Edit';
 
 export const ProfileCard = props => {
 
-  const QUERY_ME = gql`
-    query {
-      me {
-        id
-        email
-        first
-        last
-        username
-        profilePictureURL
-        birthdate
-        bio
-        private
-        createdAt
-      }
-    }
-  `;
 
   const useStyles = makeStyles((theme) => ({
     root: {
@@ -64,10 +47,8 @@ export const ProfileCard = props => {
 
   const classes = useStyles();
 
-  const { loading, error, data } = useQuery(QUERY_ME);
-
-  if (error) return (<div>
-    <Typography variant="h5" style={{ margin: '16px' }}>ERROR: {error.message}</Typography>
+  if (props.error) return (<div>
+    <Typography variant="h5" style={{ margin: '16px' }}>ERROR: {props.error.message}</Typography>
   </div>);
 
   return (
@@ -75,7 +56,7 @@ export const ProfileCard = props => {
       <Card className={classes.card}>
         <CardHeader
           action={
-            loading ? <></> : (
+            props.loading ? <></> : (
               <IconButton aria-label="edit" onClick={handleOpen}>
                 <EditIcon />
               </IconButton>
@@ -83,17 +64,17 @@ export const ProfileCard = props => {
             )
           }
           title={
-            loading ? (
+            props.loading ? (
               <Skeleton animation="wave" width="80%" />
             ) : (
-                data.me.first + ' ' + data.me.last
+                props.data.me.first + ' ' + props.data.me.last
               )
           }
-          subheader={loading ? <Skeleton animation="wave" width="40%" /> : data.me.username}
+          subheader={props.loading ? <Skeleton animation="wave" width="40%" /> : props.data.me.username}
         />
 
         <CardContent className={classes.cardContent}>
-          {loading ? (
+          {props.loading ? (
             <React.Fragment>
               <Box display="flex" style={{ marginBottom: '16px' }}>
                 <Box m="auto">
@@ -111,24 +92,24 @@ export const ProfileCard = props => {
                     <Avatar
                       alt="User Profile"
                       className={classes.largeAvatar}
-                      src={data.me.profilePictureURL}
+                      src={props.data.me.profilePictureURL}
                     />
                   </Box>
                 </Box>
                 <Typography variant="body1" component="p">
                   {
-                    data.me.bio
+                    props.data.me.bio
                   }
                 </Typography>
                 <Typography variant="body2" color="textSecondary" component="p" style={{ marginTop: '16px' }}>
                   {
-                    "Member since " + formatDate(data.me.createdAt)
+                    "Member since " + formatDate(props.data.me.createdAt)
                   }
                 </Typography>
               </div>
             )}
         </CardContent>
       </Card>
-      <EditProfileModal data={data} loading={loading} openModal={openModal} handleClose={() => setOpenModal(false)}/>
+      <EditProfileModal data={props.data} loading={props.loading} openModal={openModal} handleClose={() => setOpenModal(false)}/>
     </div>);
 }

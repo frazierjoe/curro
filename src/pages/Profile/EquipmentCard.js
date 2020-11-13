@@ -13,26 +13,6 @@ import List from '@material-ui/core/List';
 
 export const EquipmentCard = props => {
 
-  const QUERY_ME = gql`
-    query {
-      me {
-        equipmentList {
-          id
-          name
-          limit {
-            value
-            unit
-          }
-          type
-          usage {
-            value
-            unit
-          }
-        }
-      }
-    }
-  `;
-
   const useStyles = makeStyles((theme) => ({
     root: {
       margin: 16,
@@ -67,14 +47,13 @@ export const EquipmentCard = props => {
 
   const classes = useStyles();
 
-  const { loading, error, data } = useQuery(QUERY_ME);
   var equipmentListRender = [];
   var equipmentCount = 0
-  if (!loading) {
-    equipmentListRender = (data.me.equipmentList).map((e) => 
+  if (!props.loading) {
+    equipmentListRender = (props.data.me.equipmentList).map((e) => 
       ((e.type === props.type) && <Equipment 
         key={e.id} data={e} 
-        loading={loading} 
+        loading={props.loading} 
         name={e.name} 
         progress={e.usage.value} 
         capacity={e.limit.value} 
@@ -82,10 +61,10 @@ export const EquipmentCard = props => {
         setEditEquipmentData={props.setEditEquipmentData} 
       />)  
     );
-    equipmentCount = data.me.equipmentList.filter((e) => e.type === props.type).length;
+    equipmentCount = props.data.me.equipmentList.filter((e) => e.type === props.type).length;
   }
-  if (error) return (<div>
-    <Typography variant="h5" style={{ margin: '16px' }}>ERROR: {error.message}</Typography>
+  if (props.error) return (<div>
+    <Typography variant="h5" style={{ margin: '16px' }}>ERROR: {props.error.message}</Typography>
   </div>);
   var titleText = (props.type).toLowerCase() + "s";
   titleText = titleText.charAt(0).toUpperCase() + titleText.slice(1);
@@ -95,14 +74,14 @@ export const EquipmentCard = props => {
       <Card className={classes.card}>
         <CardHeader
           action={
-            loading ? <></> : (
+            props.loading ? <></> : (
               <IconButton aria-label="edit" onClick={handleOpenNewEquipment}>
                 <AddIcon />
               </IconButton>
             )
           }
           title={
-            loading ? (
+            props.loading ? (
               <Skeleton animation="wave" width="80%" />
             ) : (
                 titleText
@@ -111,7 +90,7 @@ export const EquipmentCard = props => {
         />
 
         <CardContent className={classes.cardContent}>
-          {loading ? (
+          {props.loading ? (
             <React.Fragment>
               <Skeleton animation="wave" style={{ marginBottom: 6 }} />
               <Skeleton animation="wave" width="90%" style={{ marginBottom: 16 }} />

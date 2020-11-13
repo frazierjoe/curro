@@ -2,6 +2,15 @@ import { InMemoryCache } from '@apollo/client';
 
 export const cache = new InMemoryCache({
   typePolicies: {
+    User: {
+      fields:{
+        equipmentList:{
+          merge(exisiting=[], incoming){
+            return incoming
+          }
+        }
+      }
+    },
     Query: {
       fields: {
         postList: {

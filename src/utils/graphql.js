@@ -93,3 +93,60 @@ export const CREATE_POST_MUTATION = gql`
   }
   ${POST_FRAGMENT}
 `;
+
+const EQUIPMENT_FRAGMENT = gql`
+  fragment MeEquipment on Equipment {
+    id
+    name
+    type
+    usage{
+      value
+      unit
+    }
+    limit {
+      value
+      unit
+    }
+    active
+    createdAt
+  }
+`;
+
+export const ME_QUERY = gql`
+  query {
+    me {
+      id
+      email
+      first
+      last
+      username
+      profilePictureURL
+      birthdate
+      bio
+      private
+      createdAt
+      equipmentList {
+        ...MeEquipment
+      }
+    }
+  }
+  ${EQUIPMENT_FRAGMENT}
+`;
+
+export const UPDATE_EQUIPMENT_MUTATION = gql`
+  mutation updateEquipment($input: UpdateEquipmentInput!) {
+    updateEquipment(input: $input) {
+      ...MeEquipment
+    }
+  }
+  ${EQUIPMENT_FRAGMENT}
+`;
+
+export const CREATE_EQUIPMENT_MUTATION = gql`
+  mutation createEquipment($input: CreateEquipmentInput!) {
+    createEquipment(input: $input) {
+      ...MeEquipment
+    }
+  }
+  ${EQUIPMENT_FRAGMENT}
+`;

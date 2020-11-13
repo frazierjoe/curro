@@ -1,4 +1,5 @@
 import React from 'react';
+import { useQuery, gql } from '@apollo/client';
 import { ProfileCard } from './ProfileCard';
 import { EquipmentCard } from './EquipmentCard';
 import { makeStyles } from '@material-ui/core/styles';
@@ -6,6 +7,7 @@ import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
 import EditEquipmentModal from '../../components/EditEquipmentModal';
 import { CreateEquipmentModal } from '../../components/CreateEquipmentModal';
+import { ME_QUERY } from '../../utils/graphql';
 
 
 export const Profile = () => {
@@ -34,6 +36,7 @@ export const Profile = () => {
   const [openCreateEquipmentModal, setOpenCreateEquipmentModal] = React.useState(false);
   const [createEquipmentType, setCreateEquipmentType] = React.useState("");
 
+  const { loading, error, data } = useQuery(ME_QUERY);
 
 
   const classes = useStyles();
@@ -42,12 +45,15 @@ export const Profile = () => {
     <div>
       <Grid container spacing={1}>
         <Grid item xs={12} sm={6} lg={4}>
-          <ProfileCard/>
+          <ProfileCard loading={loading} error={error} data={data}/>
         </Grid>
         <Grid item xs={12} sm={6} lg={4}>
           <Grid item xs={12}>
           <EquipmentCard 
             type="SHOE" 
+            data={data}
+            loading={loading}
+            error={error}
             setOpenEquipmentModal={setOpenEquipmentModal} 
             setEditEquipmentData={setEditEquipmentData} 
             setOpenCreateEquipmentModal={setOpenCreateEquipmentModal} 
@@ -57,6 +63,9 @@ export const Profile = () => {
           <Grid item xs={12}>
             <EquipmentCard 
               type="BIKE" 
+              data={data}
+              loading={loading}
+              error={error}
               setOpenEquipmentModal={setOpenEquipmentModal} 
               setEditEquipmentData={setEditEquipmentData} 
               setOpenCreateEquipmentModal={setOpenCreateEquipmentModal} 
