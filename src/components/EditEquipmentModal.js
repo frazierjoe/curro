@@ -1,4 +1,5 @@
 import React from 'react';
+import { ConfirmDelete } from './ConfirmDelete';
 import { makeStyles } from '@material-ui/core/styles';
 import Modal from '@material-ui/core/Modal';
 import Button from '@material-ui/core/Button';
@@ -65,6 +66,16 @@ var _editDataMounted = false;
 var _previousId = "";
 
 export default function EditEquipmentModal(props) {
+  const [openConfirmDelete, setOpenConfirmDelete] = React.useState(false);
+
+  const handleConfirmDeleteOpen = () => {
+    setOpenConfirmDelete(true);
+  };
+
+  const handleConfirmDeleteClose = () => {
+    setOpenConfirmDelete(false);
+  };
+
   const [updateEquipmentMutation, { loading }] = useMutation(UPDATE_EQUIPMENT_MUTATION, {
     update(store, { data: {updateEquipment} }) {
 
@@ -194,6 +205,7 @@ export default function EditEquipmentModal(props) {
     var input = { equipmentId: props.data.id }
     deleteEquipmentMutation({variables: input})
     _editDataMounted = false
+    handleConfirmDeleteClose()
   };
   const cancel = () => {
     setState({
@@ -238,7 +250,7 @@ export default function EditEquipmentModal(props) {
     <div className={classes.paper}>
       <Toolbar disableGutters>
         <Button onClick={cancel}>Cancel</Button>
-        <IconButton onClick={deleteEq} disabled={deleteLoading}>
+        <IconButton onClick={handleConfirmDeleteOpen} disabled={deleteLoading}>
                   <DeleteForeverIcon/>
                   {deleteLoading && <CircularProgress size={24}  />}
                 </IconButton>
@@ -300,6 +312,14 @@ export default function EditEquipmentModal(props) {
           </div>
         
       </form>
+      <ConfirmDelete
+        open={openConfirmDelete}
+        handleClose={handleConfirmDeleteClose}
+        action={deleteEq}
+        actionLabel={"Delete"}
+        title={"Delete " + titleText + "?"}
+        description={"Are you sure you wish to delete " + state.name + ". This can not be undone."}
+      />
     </div>
   );
 

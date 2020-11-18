@@ -151,7 +151,7 @@ export const AddComment = props => {
                   onMouseDown={handleMouseDownSend}
                   type="submit"
                 >
-                  <SendIcon />
+                  {(!validComment || loading) ? <SendIcon/> : <SendIcon color="secondary"/>}
                 </IconButton>
               </InputAdornment>
               {loading  && <CircularProgress size={24} className={classes.buttonProgress} />}

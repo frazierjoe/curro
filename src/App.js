@@ -7,6 +7,8 @@ import { Home } from './pages/Home';
 import { Calendar } from './pages/Calendar/Calendar';
 import { Feed } from './pages/Feed';
 import { Profile } from './pages/Profile/Profile';
+import { About } from './pages/About';
+import { Explore } from './pages/Explore/Explore';
 import { Settings } from './pages/Settings';
 import { PageNotFound } from './pages/PageNotFound';
 import { ProtectedRoute } from './protected.route';
@@ -82,6 +84,9 @@ function App() {
             <Switch>
               <ProtectedRoute exact path='/' component={ Feed }/>
               <Route exact path='/home' component={ Home }/>
+              <Route exact path='/about' component={ About }/>
+              <Route exact path='/explore' component={ Explore }/>
+              <Route exact path='/search' component={ Explore }/>
               <Route exact path='/login' component={ Login }/>
               <Route exact path='/create' component={ CreateAccount }/>
               <Route exact path='/createAccount' component={ CreateAccount }/>

@@ -42,7 +42,7 @@ export const Profile = () => {
   const classes = useStyles();
 
   return (
-    <div>
+    <div style={{overflow: 'hidden'}}>
       <Grid container spacing={1}>
         <Grid item xs={12} sm={6} lg={4}>
           <ProfileCard loading={loading} error={error} data={data}/>

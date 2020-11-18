@@ -264,19 +264,18 @@ export const ActivityDetail = (props) => {
               onChange={props.handleEditActivityChange('equipmentId')}
               label={props.activity.equipmentAllowed}
             >
-              <MenuItem value=""><em>None</em></MenuItem>
+              <MenuItem key="none" value=""><em>None</em></MenuItem>
               {data.me.equipmentList.map((equipment) => {
                 if(equipment.type === props.activity.equipmentName){
-                  return <MenuItem value={equipment.id}>{equipment.name}</MenuItem>
+                  return <MenuItem key={equipment.id} value={equipment.id}>{equipment.name}</MenuItem>
                 }
-                return <></>
               })}
             </Select>
         </FormControl>
         )}
         { props.activity.additionalInfoAllowed ? 
           <div>
-            <Typography variant="h6" className={classes.inputField} >Additional Information</Typography>
+            <Typography variant="h6" className={classes.inputField}>Additional Information</Typography>
             <TextField 
               label="Heart Rate" 
               type="number" 

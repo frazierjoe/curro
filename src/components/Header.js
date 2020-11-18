@@ -253,13 +253,13 @@ const Header = props => {
             <ListItemIcon><HomeIcon /></ListItemIcon>
             <ListItemText primary={"Newsfeed"} />
           </ListItem>
-          {/* <ListItem button key={"Explore"} onClick={() => {
+          <ListItem button key={"Explore"} onClick={() => {
             handleDrawerClose()
             history.push('/explore');
           }}>
             <ListItemIcon><ExploreIcon /></ListItemIcon>
             <ListItemText primary={"Explore"} />
-          </ListItem> */}
+          </ListItem>
           <ListItem button key={"Calendar"} onClick={() => {
             handleDrawerClose()
             history.push('/calendar');

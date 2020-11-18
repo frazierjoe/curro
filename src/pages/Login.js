@@ -227,7 +227,8 @@ const [signinUserMutation, {loading }] = useMutation(SIGNIN_USER_MUTATION, {
                   {loading ? <CircularProgress color="inherit" size={26}/> : <>Login</> } 
                 </Button>
                 <Button className={classes.textField} fullWidth size="medium" onClick={newUser}>Need an account</Button>
-                <div className={classes.forgotPassword}>
+                {/* TODO: Add forgot password */}
+                {/* <div className={classes.forgotPassword}>
                   <Link
                     component="button"
                     variant="body2"
@@ -238,7 +239,7 @@ const [signinUserMutation, {loading }] = useMutation(SIGNIN_USER_MUTATION, {
                   >
                     Forgot Password?
                   </Link>   
-                </div>            
+                </div> */}
               </div>
             </form>
           </CardContent>
