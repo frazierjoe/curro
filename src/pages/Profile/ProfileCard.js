@@ -13,7 +13,6 @@ import EditIcon from '@material-ui/icons/Edit';
 
 export const ProfileCard = props => {
 
-
   const useStyles = makeStyles((theme) => ({
     root: {
       margin: '32px',
@@ -56,7 +55,7 @@ export const ProfileCard = props => {
       <Card className={classes.card}>
         <CardHeader
           action={
-            props.loading ? <></> : (
+            (props.loading || !props.me) ? <></> : (
               <IconButton aria-label="edit" onClick={handleOpen}>
                 <EditIcon />
               </IconButton>
@@ -67,10 +66,12 @@ export const ProfileCard = props => {
             props.loading ? (
               <Skeleton animation="wave" width="80%" />
             ) : (
-                props.data.me.first + ' ' + props.data.me.last
+                props.me ? 
+                props.data.me.first + ' ' + props.data.me.last :
+                props.data.user.first + ' ' + props.data.user.last
               )
           }
-          subheader={props.loading ? <Skeleton animation="wave" width="40%" /> : props.data.me.username}
+          subheader={props.loading ? <Skeleton animation="wave" width="40%" /> : (props.me ? props.data.me.username : props.data.user.username)}
         />
 
         <CardContent className={classes.cardContent}>
@@ -92,24 +93,24 @@ export const ProfileCard = props => {
                     <Avatar
                       alt="User Profile"
                       className={classes.largeAvatar}
-                      src={props.data.me.profilePictureURL}
+                      src={props.me ? props.data.me.profilePictureURL : props.data.user.profilePictureURL}
                     />
                   </Box>
                 </Box>
                 <Typography variant="body1" component="p">
                   {
-                    props.data.me.bio
+                    props.me ? props.data.me.bio : props.data.user.bio
                   }
                 </Typography>
                 <Typography variant="body2" color="textSecondary" component="p" style={{ marginTop: '16px' }}>
                   {
-                    "Member since " + formatDate(props.data.me.createdAt)
+                    "Member since " + formatDate(props.me ? props.data.me.createdAt : props.data.user.createdAt)
                   }
                 </Typography>
               </div>
             )}
         </CardContent>
       </Card>
-      <EditProfileModal data={props.data} loading={props.loading} openModal={openModal} handleClose={() => setOpenModal(false)}/>
+      {props.me && <EditProfileModal data={props.data} loading={props.loading} openModal={openModal} handleClose={() => setOpenModal(false)}/>}
     </div>);
 }

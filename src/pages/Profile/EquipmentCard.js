@@ -50,18 +50,19 @@ export const EquipmentCard = props => {
   var equipmentListRender = [];
   var equipmentCount = 0
   if (!props.loading) {
-    equipmentListRender = (props.data.me.equipmentList).map((e) => 
+    equipmentListRender = (props.me ? props.data.me.equipmentList : props.data.user.equipmentList).map((e) => 
       ((e.type === props.type) && <Equipment 
         key={e.id} data={e} 
         loading={props.loading} 
         name={e.name} 
+        edit={props.me}
         progress={e.usage.value} 
         capacity={e.limit.value} 
         setOpenEquipmentModal={props.setOpenEquipmentModal} 
         setEditEquipmentData={props.setEditEquipmentData} 
       />)  
     );
-    equipmentCount = props.data.me.equipmentList.filter((e) => e.type === props.type).length;
+    equipmentCount = (props.me ? props.data.me.equipmentList : props.data.user.equipmentList).filter((e) => e.type === props.type).length;
   }
   if (props.error) return (<div>
     <Typography variant="h5" style={{ margin: '16px' }}>ERROR: {props.error.message}</Typography>
@@ -74,7 +75,7 @@ export const EquipmentCard = props => {
       <Card className={classes.card}>
         <CardHeader
           action={
-            props.loading ? <></> : (
+            (props.loading || !props.me) ? <></> : (
               <IconButton aria-label="edit" onClick={handleOpenNewEquipment}>
                 <AddIcon />
               </IconButton>

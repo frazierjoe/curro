@@ -56,8 +56,9 @@ const useStyles = makeStyles((theme) => ({
     position: 'absolute'
   },
   paginationControl: {
-    width: 364,
+    width: '348px',
     margin: 'auto',
+    userSelect: 'none',
   },
  
 }));
@@ -66,6 +67,7 @@ export const Explore = () => {
 
   const [filters, setFilters] = useState(() => ['Users']);
   const [searchQuery, setSearchQuery] = useState('');
+  const [validSearch, setValidSearch] = useState(false);
 
   const handleFilters = (event, newFilters) => {
     // Make sure there is always a filter selected
@@ -76,26 +78,44 @@ export const Explore = () => {
 
 
   const handleSearch = (event) => {
-    setSearchQuery(event.target.value);
+    const searchString = String(event.target.value)
+    if(!validSearch && searchString.length >= 1){
+      setValidSearch(true)
+    } else if(searchString.length === 0){
+      setValidSearch(false)
+    }
+    setSearchQuery(searchString);
     console.log("TODO API Call to search for ")
-    console.log(searchQuery)
+    console.log(searchString)
     console.log("with the following filters")
     console.log(filters)
   };
+
+  const handleKeypress = event => {
+    //check if enter key pressed
+    if(validSearch && event.key === 'Enter') {
+      submitSearch();
+    }
+  }
+
+  const submitSearch = (event) => {
+    console.log("Search " + filters + " for " + searchQuery)
+  }
 
   const classes = useStyles();
 
   return (
     <div>
-      <Paper className={classes.root}>
+      <Paper className={classes.root} type="form" onSubmit={submitSearch} noValidate autoComplete="off">
         <InputBase
           className={classes.input}
           value={searchQuery}
           onChange={handleSearch}
+          onKeyPress={handleKeypress}
           placeholder={"Search " + filters}
           inputProps={{ 'aria-label': 'search curro' }}
         />
-        <IconButton className={classes.iconButton} aria-label="search">
+        <IconButton className={classes.iconButton} aria-label="search" onClick={submitSearch} type="submit" disabled={!validSearch}>
           <SearchIcon />
         </IconButton>
         <Divider className={classes.divider} orientation="vertical" />

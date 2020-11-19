@@ -59,7 +59,7 @@ const useStyles = makeStyles((theme) => ({
 
 var allCaughtUp = false
 
-export const Feed = () => {
+export const Feed = (props) => {
 
   const [openModal, setOpenModal] = useState(false)
   const [seenAllPost, setSeenAllPost] = useState(allCaughtUp)
@@ -110,6 +110,7 @@ export const Feed = () => {
   }
 
   const classes = useStyles();
+  const { history } = props;
 
 
   if(!data ||  !data.postList.posts){
@@ -137,9 +138,9 @@ export const Feed = () => {
       {
       <List className={classes.list}>
         {data.postList.posts.map((post, index) => (
-          <React.Fragment key={post.id}>
+          <React.Fragment key={"post" + post.id}>
             <ListItem className={classes.listItem}>
-              <PostCard post={post} openEditPostModal={() => setOpenModal(true)} setEditPost={setEditPost}/>
+            <PostCard post={post} openEditPostModal={() => setOpenModal(true)} setEditPost={setEditPost} history={history}/>
             </ListItem>
             { (index === data.postList.posts.length - 4) && (
               <Waypoint onEnter={fetchMorePosts}/>

@@ -34,11 +34,12 @@ export default function Equipment(props) {
             primary={props.name} 
             secondary={Math.round(usageValue*100)/100 + " " + (props.data.limit.unit).toLowerCase() + " / " + props.capacity + " " + props.data.limit.unit.toLowerCase()} 
           /> 
-          <ListItemSecondaryAction>
+          {props.edit && <ListItemSecondaryAction>
             <IconButton edge="end" aria-label="edit" onClick={handleOpenEditEquipment}>
               <EditIcon fontSize="small"/>
             </IconButton>
           </ListItemSecondaryAction>
+          }
         </ListItem>
         <ListItem style={{paddingRight: 0, paddingTop: 0}}>
           <LinearWithValueLabel progress={usageValue < props.capacity ? Math.round(100 * parseFloat(usageValue) / parseFloat(props.capacity)) : 100}/>

@@ -50,6 +50,7 @@ export const PostCard = props => {
     profilePicture: {
       width: '48px',
       height: '48px',
+      cursor: 'pointer',
     },
     gridList: {      
       flexWrap: 'nowrap',
@@ -72,9 +73,19 @@ export const PostCard = props => {
     postMenu: {
       marginTop: '32px',
     },
+    profileClick: {
+      cursor: 'pointer',
+      userSelect: 'none',
+      "&:hover": {
+        textDecoration: 'underline',
+        color: theme.palette.secondary.main,
+      },
+    },
   }));
 
   const { user } = useContext(AuthContext)
+  const { history } = props;
+
 
   const didUserLikePost = (likeList) => {
     var userLiked = false;
@@ -164,6 +175,14 @@ export const PostCard = props => {
     return date.toLocaleDateString("en-US", options)
   }
 
+  const navigateToUserProfile = () => {
+    if(user.id === props.post.author.id){
+      history.push('profile')
+    } else {
+      history.push('profile/'+props.post.author.id)
+    }
+  }
+
   
   const classes = useStyles();
 
@@ -176,6 +195,7 @@ export const PostCard = props => {
             : <Avatar 
               aria-label="profile-picture" 
               className={classes.profilePicture}
+              onClick={navigateToUserProfile}
               alt="User Profile"
               src={props.post.author.profilePictureURL}
             />           
@@ -184,10 +204,13 @@ export const PostCard = props => {
             props.loading ? (
               <Skeleton animation="wave" width="40%" />
             ) : (
-                props.post.author.first + ' ' + props.post.author.last
+                <span className={classes.profileClick} onClick={navigateToUserProfile}>{props.post.author.first + ' ' + props.post.author.last}</span>
               )
           }
-          subheader={props.loading ? <Skeleton animation="wave" width="20%" /> : props.post.author.username}
+          subheader={props.loading ? 
+            <Skeleton animation="wave" width="20%" /> : 
+            <span className={classes.profileClick} onClick={navigateToUserProfile}>{props.post.author.username}</span>
+          }
           action={
             (!props.loading && user.id === props.post.author.id) && (
               <Tooltip title="Edit" enterDelay={400}>
@@ -242,7 +265,7 @@ export const PostCard = props => {
                 <List>
                   {props.post.activityList.map((activity) => (
                     <ActivityTile 
-                      key={activity.id}
+                      key={"activity" + activity.id}
                       activity={activity} 
                       edit={false}
                     />
@@ -265,7 +288,7 @@ export const PostCard = props => {
           <Skeleton animation="wave" width="20%" style={{ marginBottom: 8 }} />
         </div>
         : <div className={classes.commentSection}>
-          {(props.post.commentList.length > 0) && <Comments postId={props.post.id} comments={props.post.commentList}/>}
+          {(props.post.commentList.length > 0) && <Comments postId={props.post.id} comments={props.post.commentList} history={history}/>}
           <AddComment postId={props.post.id}/>
           <Typography variant="body2" color="textSecondary" style={{marginBottom:8, marginTop:8}}>
             {formatDate(props.post.postDate)}

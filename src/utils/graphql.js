@@ -95,7 +95,7 @@ export const CREATE_POST_MUTATION = gql`
 `;
 
 const EQUIPMENT_FRAGMENT = gql`
-  fragment MeEquipment on Equipment {
+  fragment EquipmentData on Equipment {
     id
     name
     type
@@ -112,31 +112,47 @@ const EQUIPMENT_FRAGMENT = gql`
   }
 `;
 
-export const ME_QUERY = gql`
-  query {
-    me {
-      id
-      email
-      first
-      last
-      username
-      profilePictureURL
-      birthdate
-      bio
-      private
-      createdAt
-      equipmentList {
-        ...MeEquipment
-      }
+const PROFILE_FRAGMENT = gql`
+  fragment ProfileData on User {
+    id
+    email
+    first
+    last
+    username
+    profilePictureURL
+    birthdate
+    bio
+    private
+    createdAt
+    equipmentList {
+      ...EquipmentData
     }
   }
   ${EQUIPMENT_FRAGMENT}
 `;
 
+export const ME_QUERY = gql`
+  query {
+    me {
+      ...ProfileData
+    }
+  }
+  ${PROFILE_FRAGMENT}
+`;
+
+export const USER_QUERY = gql`
+  query getUser($id: ID!){
+    user(id: $id){
+      ...ProfileData
+    }
+  }
+  ${PROFILE_FRAGMENT}
+`;
+
 export const UPDATE_EQUIPMENT_MUTATION = gql`
   mutation updateEquipment($input: UpdateEquipmentInput!) {
     updateEquipment(input: $input) {
-      ...MeEquipment
+      ...EquipmentData
     }
   }
   ${EQUIPMENT_FRAGMENT}
@@ -145,7 +161,7 @@ export const UPDATE_EQUIPMENT_MUTATION = gql`
 export const CREATE_EQUIPMENT_MUTATION = gql`
   mutation createEquipment($input: CreateEquipmentInput!) {
     createEquipment(input: $input) {
-      ...MeEquipment
+      ...EquipmentData
     }
   }
   ${EQUIPMENT_FRAGMENT}

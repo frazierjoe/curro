@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useContext } from 'react';
+import { AuthContext } from '../../auth';
 import { useQuery, gql } from '@apollo/client';
 import { ProfileCard } from './ProfileCard';
 import { EquipmentCard } from './EquipmentCard';
@@ -7,10 +8,10 @@ import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
 import EditEquipmentModal from '../../components/EditEquipmentModal';
 import { CreateEquipmentModal } from '../../components/CreateEquipmentModal';
-import { ME_QUERY } from '../../utils/graphql';
+import { ME_QUERY, USER_QUERY } from '../../utils/graphql';
 
 
-export const Profile = () => {
+export const Profile = (props) => {
   const useStyles = makeStyles((theme) => ({
     root: {
       margin: '32px',
@@ -30,13 +31,24 @@ export const Profile = () => {
     },
   }
 
+  const { user } = useContext(AuthContext)
+  const { userid } = props.match.params
+  var me = false
+  if(userid && user.id !== userid){
+    console.log(userid)
+  } else {
+    console.log("me")
+    me = true
+  }
+  
+
   const [openEquipmentModal, setOpenEquipmentModal] = React.useState(false);
   const [editEquipmentData, setEditEquipmentData] = React.useState(defaultEquipmentData);
 
   const [openCreateEquipmentModal, setOpenCreateEquipmentModal] = React.useState(false);
   const [createEquipmentType, setCreateEquipmentType] = React.useState("");
 
-  const { loading, error, data } = useQuery(ME_QUERY);
+  const { loading, error, data } = useQuery(me ? ME_QUERY : USER_QUERY, {variables: {id: userid}});
 
 
   const classes = useStyles();
@@ -45,11 +57,12 @@ export const Profile = () => {
     <div style={{overflow: 'hidden'}}>
       <Grid container spacing={1}>
         <Grid item xs={12} sm={6} lg={4}>
-          <ProfileCard loading={loading} error={error} data={data}/>
+          <ProfileCard loading={loading} error={error} data={data} me={me}/>
         </Grid>
         <Grid item xs={12} sm={6} lg={4}>
           <Grid item xs={12}>
           <EquipmentCard 
+            me={me}
             type="SHOE" 
             data={data}
             loading={loading}
@@ -62,6 +75,7 @@ export const Profile = () => {
           </Grid>
           <Grid item xs={12}>
             <EquipmentCard 
+              me={me}
               type="BIKE" 
               data={data}
               loading={loading}
@@ -74,8 +88,8 @@ export const Profile = () => {
           </Grid>
         </Grid>
       </Grid>
-      <EditEquipmentModal data={editEquipmentData} openModal={openEquipmentModal} handleClose={() => setOpenEquipmentModal(false)}/>
-      <CreateEquipmentModal type={createEquipmentType} openModal={openCreateEquipmentModal} handleClose={() => setOpenCreateEquipmentModal(false)}/>
+      {me && <EditEquipmentModal data={editEquipmentData} openModal={openEquipmentModal} handleClose={() => setOpenEquipmentModal(false)}/>}
+      {me && <CreateEquipmentModal type={createEquipmentType} openModal={openCreateEquipmentModal} handleClose={() => setOpenCreateEquipmentModal(false)}/>}
     </div>
     
     

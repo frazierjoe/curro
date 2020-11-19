@@ -144,7 +144,8 @@ const [signinUserMutation, {loading }] = useMutation(SIGNIN_USER_MUTATION, {
     } 
   }
 
-  const loginUser = () => {
+  const loginUser = (event) => {
+    event.preventDefault();
     validateForm(() => {
       const userInput = {
         input: {
@@ -163,6 +164,10 @@ const [signinUserMutation, {loading }] = useMutation(SIGNIN_USER_MUTATION, {
 
   const newUser = () => {
     history.push('createAccount')
+  }
+
+  const forgotPassword = () => {
+    console.log("TODO API call to forgot password")
   }
 
   return (
@@ -223,7 +228,7 @@ const [signinUserMutation, {loading }] = useMutation(SIGNIN_USER_MUTATION, {
               </FormControl>
               <div>
                 <Typography variant="subtitle1" className={classes.errorMessage}>{values.errorMessage}</Typography>
-                <Button variant="contained" className={classes.textField} color="primary" fullWidth size="large" onClick={loginUser} disabled={loading}>
+                <Button variant="contained" className={classes.textField} color="primary" fullWidth size="large" onClick={loginUser} disabled={loading} type="submit">
                   {loading ? <CircularProgress color="inherit" size={26}/> : <>Login</> } 
                 </Button>
                 <Button className={classes.textField} fullWidth size="medium" onClick={newUser}>Need an account</Button>
@@ -233,9 +238,7 @@ const [signinUserMutation, {loading }] = useMutation(SIGNIN_USER_MUTATION, {
                     component="button"
                     variant="body2"
                     color="secondary"
-                    onClick={() => {
-                      console.info("Forgot password");
-                    }}
+                    onClick={forgotPassword}
                   >
                     Forgot Password?
                   </Link>   

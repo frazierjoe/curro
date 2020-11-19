@@ -95,6 +95,7 @@ function App() {
               <ProtectedRoute exact path='/feed' component={ Feed }/>
               <ProtectedRoute exact path='/newsfeed' component={ Feed }/>
               <ProtectedRoute exact path='/profile' component={ Profile }/>
+              <ProtectedRoute exact path='/profile/:userid' component={ Profile }/>
               <ProtectedRoute exact path='/setting' component={ Settings }/>
               <ProtectedRoute exact path='/settings' component={ Settings }/>
               <Route exact path='/error' component={ PageNotFound }/>

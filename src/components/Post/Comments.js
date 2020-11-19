@@ -20,7 +20,7 @@ export const Comments = props => {
   }));
 
   const classes = useStyles();
-
+  const { history } = props;
   const [showComments, setShowComments] = useState(props.comments.length === 1)
 
   const showAllComments = () => {
@@ -40,7 +40,7 @@ export const Comments = props => {
         <Typography variant="subtitle1" >{props.comments.length + " Comment" + (props.comments.length === 1 ? "" : "s")}</Typography>
         <List className={classes.comments}>
           {props.comments.map((comment, index) => (
-            <Comment key={comment.id} comment={comment} postId={props.postId}/>
+            <Comment key={"comment" + comment.id} comment={comment} postId={props.postId} history={history}/>
           ))}
         </List>
       </React.Fragment>}

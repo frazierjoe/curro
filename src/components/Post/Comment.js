@@ -27,6 +27,7 @@ export const Comment = props => {
     profilePicture: {
       width: 32,
       height: 32,
+      cursor: 'pointer',
     },
     avatar: {
       minWidth: 48,
@@ -36,10 +37,18 @@ export const Comment = props => {
       right: 6,
       width: 56,
     },
-   
+    profileClick: {
+      cursor: 'pointer',
+      userSelect: 'none',
+      "&:hover": {
+        textDecoration: 'underline',
+        color: theme.palette.secondary.main,
+      },
+    },
   }));
 
   const { user } = useContext(AuthContext)
+  const { history } = props;
 
   const didUserLikeComment = (likeList) => {
     var userLiked = false;
@@ -128,22 +137,32 @@ export const Comment = props => {
  
     return date.toLocaleDateString("en-US", options)
   }
-  
+
+  const navigateToUserProfile = () => {
+    if(user.id === props.comment.author.id){
+      history.push('profile')
+    } else {
+      history.push('profile/'+props.comment.author.id)
+    }
+  }
+
   const classes = useStyles();
 
   return (
     <ListItem alignItems="flex-start" className={classes.comment}>
       <ListItemAvatar className={classes.avatar}>
-        <Avatar alt="Profile Picture" className={classes.profilePicture} src={props.comment.author.profilePictureURL} />
+        <Avatar alt="Profile Picture" className={classes.profilePicture} src={props.comment.author.profilePictureURL} onClick={navigateToUserProfile}/>
       </ListItemAvatar>
       <ListItemText
-        primary={props.comment.author.first + ' ' + props.comment.author.last}
+        primary={<span className={classes.profileClick} onClick={navigateToUserProfile}>{props.comment.author.first + ' ' + props.comment.author.last}</span>}
         secondary={
           <React.Fragment>
             <Typography
               component="span"
               variant="body2"
               color="textPrimary"
+              className={classes.profileClick} 
+              onClick={navigateToUserProfile}
             >
               {props.comment.author.username}
             </Typography>
