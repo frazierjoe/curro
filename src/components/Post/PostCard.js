@@ -175,12 +175,8 @@ export const PostCard = props => {
     return date.toLocaleDateString("en-US", options)
   }
 
-  const navigateToUserProfile = () => {
-    if(user.id === props.post.author.id){
-      history.push('profile')
-    } else {
-      history.push('profile/'+props.post.author.id)
-    }
+  const navigateToUserProfile = () => { 
+    history.push('profile/'+props.post.author.id)
   }
 
   
