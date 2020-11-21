@@ -155,10 +155,21 @@ export const ActivityDetail = (props) => {
   const ME_EQUIPMENT_QUERY = gql`
     query {
       me {
+        id
         equipmentList{
           id
           name
           type
+          usage{
+            value
+            unit
+          }
+          limit {
+            value
+            unit
+          }
+          active
+          createdAt
         }
       }
     }

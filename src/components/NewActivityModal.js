@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useMutation, gql } from '@apollo/client';
+import produce from "immer";
 import { ActivityTile } from './Activity/ActivityTile';
 import { ActivityDetail } from './Activity/ActivityDetail';
 import { AllowedActivity } from './Activity/AllowedActivity';
@@ -249,6 +250,8 @@ const [updatePostMutation, {loading: editLoading}] = useMutation(UPDATE_POST_MUT
       query: GET_POST_QUERY
     })
 
+    console.log(result.data.updatePost)
+
     const updatedPosts = data.postList.posts.filter((post) => {
       if(post.id === props.editPost.id){
         return result.data.updatePost
@@ -256,6 +259,7 @@ const [updatePostMutation, {loading: editLoading}] = useMutation(UPDATE_POST_MUT
       return post
     })
     
+    // TODO update using immer look at Comment.js
     store.writeQuery({
       query: GET_POST_QUERY,
       data: {
@@ -387,6 +391,7 @@ const [updatePostMutation, {loading: editLoading}] = useMutation(UPDATE_POST_MUT
             postId: props.editPost.id,
           }
         }
+        console.log(editPostInput)
         updatePostMutation({ variables: editPostInput })
       } else {
         const creatPostInput = {

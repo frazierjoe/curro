@@ -20,6 +20,24 @@ const COMMENT_FRAGMENT = gql`
   }
 `;
 
+const EQUIPMENT_FRAGMENT = gql`
+  fragment EquipmentData on Equipment {
+    id
+    name
+    type
+    usage{
+      value
+      unit
+    }
+    limit {
+      value
+      unit
+    }
+    active
+    createdAt
+  }
+`;
+
 const POST_FRAGMENT = gql`
   fragment FeedPagePost on Post {
     id
@@ -42,7 +60,7 @@ const POST_FRAGMENT = gql`
         unit
       }
       equipment{
-        id
+        ...EquipmentData
       }
       additionalInfo{
         averageHeartRate
@@ -60,7 +78,8 @@ const POST_FRAGMENT = gql`
     }
     createdAt
   }
-  ${COMMENT_FRAGMENT}
+  ${COMMENT_FRAGMENT},
+  ${EQUIPMENT_FRAGMENT}
 `;
 
 export const GET_POST_QUERY = gql`
@@ -92,24 +111,6 @@ export const CREATE_POST_MUTATION = gql`
     }
   }
   ${POST_FRAGMENT}
-`;
-
-const EQUIPMENT_FRAGMENT = gql`
-  fragment EquipmentData on Equipment {
-    id
-    name
-    type
-    usage{
-      value
-      unit
-    }
-    limit {
-      value
-      unit
-    }
-    active
-    createdAt
-  }
 `;
 
 const PROFILE_FRAGMENT = gql`

@@ -145,6 +145,7 @@ const Header = props => {
   const QUERY_ME = gql`
   query {
     me {
+      id
       username
       profilePictureURL
     }
