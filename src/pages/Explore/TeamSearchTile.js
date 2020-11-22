@@ -39,7 +39,13 @@ export const TeamSearchTile = (props) => {
   return (
     <ListItem alignItems="flex-start" className={classes.resultItem} divider>
         <ListItemAvatar>
-          <Avatar variant="square" alt="Team Logo" src={props.team.teamPictureURL} className={classes.profilePicture} onClick={navigateToTeamProfile}/>
+          <Avatar 
+            variant="square" 
+            alt="Team Logo" 
+            src={props.team.profilePictureURL} 
+            className={classes.profilePicture} 
+            onClick={navigateToTeamProfile}
+          />
         </ListItemAvatar>
         <ListItemText
           primary={<span className={classes.profileClick} onClick={navigateToTeamProfile}>{props.team.name}</span>}
@@ -51,7 +57,7 @@ export const TeamSearchTile = (props) => {
                 className={classes.inline}
                 color="textPrimary"
               >
-                {props.team.memberCount + " Member" + (props.team.memberCount > 1 && "s")}
+                {props.team.memberCount + " Member" + (props.team.memberCount > 1 ? "s" : "")}
               </Typography>
               {props.team.description && (" — " + props.team.description)}
             </React.Fragment>

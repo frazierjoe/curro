@@ -87,8 +87,10 @@ const TEAM_SEARCH_QUERY = gql`
     searchTeam(search: $search){
       id
       name
-      createdAt
       description
+      profilePictureURL
+      memberCount
+      createdAt
     }
   }
 `;
