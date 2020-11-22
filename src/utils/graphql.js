@@ -141,6 +141,16 @@ export const ME_QUERY = gql`
   ${PROFILE_FRAGMENT}
 `;
 
+export const UPDATE_USER_MUTATION = gql`
+  mutation updateUser($input: UpdateUserInput!) {
+        updateUser(input: $input) {
+          ...ProfileData
+          
+        }
+      }
+      ${PROFILE_FRAGMENT}
+    `;
+
 export const USER_QUERY = gql`
   query getUser($id: ID!){
     user(id: $id){

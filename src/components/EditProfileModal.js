@@ -7,6 +7,7 @@ import Typography from '@material-ui/core/Typography';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Toolbar from '@material-ui/core/Toolbar';
 import { useMutation, gql } from '@apollo/client';
+import { UPDATE_USER_MUTATION } from "../utils/graphql";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -53,21 +54,10 @@ const useStyles = makeStyles((theme) => ({
 }));
 var _isMounted = false;
 export const EditProfileModal = (props) => {
-  const UPDATE_USER_MUTATION = gql`
-  mutation updateUser($input: UpdateUserInput!) {
-        updateUser(input: $input) {
-          id
-          email
-          first
-          last
-          bio
-          profilePictureURL
-          
-        }
-      }
-    `;
+  
   const [updateUserMutation, { loading, error, data }] = useMutation(UPDATE_USER_MUTATION, {
     update(_, { data: { updateUser: user } }) {
+      console.log(user)
       props.handleClose();
 
     },
@@ -118,9 +108,10 @@ export const EditProfileModal = (props) => {
         }
 
       }
+      console.log(userInput)
       updateUserMutation({ variables: userInput })
       _isMounted = false
-      window.location.reload(true);
+      // window.location.reload(true);
     }
   }
   const cancel = () => {
