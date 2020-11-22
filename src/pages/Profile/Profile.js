@@ -3,6 +3,7 @@ import { AuthContext } from '../../auth';
 import { useQuery, gql } from '@apollo/client';
 import { ProfileCard } from './ProfileCard';
 import { EquipmentCard } from './EquipmentCard';
+import { TeamListCard } from './TeamListCard';
 import { makeStyles } from '@material-ui/core/styles';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
@@ -18,6 +19,11 @@ export const Profile = (props) => {
     },
   }));
 
+  const defaultTeamData = {
+    id: "",
+    name: "",
+    profilePictureURL: ""
+  }
   const defaultEquipmentData = {
     name: "",
     type: "",
@@ -41,6 +47,8 @@ export const Profile = (props) => {
     me = true
   }
   
+  const [openCreatTeamModal, setOpenCreateTeamModal] = React.useState(false);
+  const [createTeamData, setCreateTeamData] = React.useState(defaultTeamData);
 
   const [openEquipmentModal, setOpenEquipmentModal] = React.useState(false);
   const [editEquipmentData, setEditEquipmentData] = React.useState(defaultEquipmentData);
@@ -57,7 +65,21 @@ export const Profile = (props) => {
     <div style={{overflow: 'hidden'}}>
       <Grid container spacing={1}>
         <Grid item xs={12} sm={6} lg={4}>
-          <ProfileCard loading={loading} error={error} data={data} me={me}/>
+          <Grid item xs={12}>
+            <ProfileCard loading={loading} error={error} data={data} me={me}/>
+            
+          </Grid>
+          <Grid item xs={12}>
+          <TeamListCard 
+              me={me}
+              data={data}
+              loading={loading}
+              error={error}
+              setOpenTeamModal={setOpenEquipmentModal} 
+              setEditEquipmentData={setEditEquipmentData} 
+              setOpenCreateTeamModal={setOpenCreateTeamModal}
+            />
+          </Grid>
         </Grid>
         <Grid item xs={12} sm={6} lg={4}>
           <Grid item xs={12}>
