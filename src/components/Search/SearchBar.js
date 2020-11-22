@@ -50,6 +50,7 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: 'auto',
     marginRight: 'auto',
     marginBottom: 0,
+    paddingTop: 0,
     paddingBottom: 0,
     width: "100%",
     maxHeight: "60vh",
@@ -127,28 +128,28 @@ export const SearchBar = (props) => {
     // Make sure there is always a filter selected
     if(newFilters){
       setFilters(newFilters);
+      console.log("filter swapped + "+searchQuery)
+      submitSearch(searchQuery, newFilters === "Users")
     }
   };
 
 
   const handleSearch = (event) => {
     const searchString = String(event.target.value)
+    console.log("handle s: "+searchString)
+    setSearchQuery(searchString);
     if(!validSearch && searchString.length >= 1){
       setValidSearch(true)
     } else if(searchString.length === 0){
       setValidSearch(false)
     }
-    setSearchQuery(searchString);
-    if(searchString !== ""){
-      submitSearch()
-    }
-    
+    submitSearch(searchString, filters.includes("Users"))
   };
 
   const handleKeypress = event => {
     //check if enter key pressed
     if(validSearch && event.key === 'Enter') {
-      submitSearch();
+      submitSearch(searchQuery, filters.includes("Users"));
     }
   }
 
@@ -169,16 +170,21 @@ export const SearchBar = (props) => {
   const [searchUserQuery, {data: userSearchData, loading: userSearchLoading, error}] = useLazyQuery(USER_SEARCH_QUERY)
   const [searchTeamQuery, {data: teamSearchData, loading: teamSearchLoading}] = useLazyQuery(TEAM_SEARCH_QUERY)
 
-  const submitSearch = () => {
+  const submitSearch = (searchString, userSearch) => {
     const searchInput = {
       variables: {
-        search: searchQuery
+        search: searchString
       }
     }
-    if(filters.includes("Users")){
-      searchUserQuery(searchInput)
-    } else if (filters.includes("Teams")){
-      searchTeamQuery(searchInput)
+    console.log(searchString)
+    if(searchString){
+      if(userSearch){
+        console.log("user")
+        searchUserQuery(searchInput)
+      } else {
+        console.log("team")
+        searchTeamQuery(searchInput)
+      }
     }
   }
   const classes = useStyles();

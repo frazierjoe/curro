@@ -120,6 +120,7 @@ export const Explore = (props) => {
       setValidSearch(false)
     }
     setSearchQuery(searchString);
+    submitSearch();
   };
 
   const handleKeypress = event => {
