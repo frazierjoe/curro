@@ -250,8 +250,6 @@ const [updatePostMutation, {loading: editLoading}] = useMutation(UPDATE_POST_MUT
       query: GET_POST_QUERY
     })
 
-    console.log(result.data.updatePost)
-
     const updatedPosts = data.postList.posts.filter((post) => {
       if(post.id === props.editPost.id){
         return result.data.updatePost
@@ -391,7 +389,6 @@ const [updatePostMutation, {loading: editLoading}] = useMutation(UPDATE_POST_MUT
             postId: props.editPost.id,
           }
         }
-        console.log(editPostInput)
         updatePostMutation({ variables: editPostInput })
       } else {
         const creatPostInput = {
@@ -413,8 +410,6 @@ const [updatePostMutation, {loading: editLoading}] = useMutation(UPDATE_POST_MUT
     const deleteInput = {
       postId: props.editPost.id
     }
-    console.log("Delete Post")
-    console.log(deleteInput)
     deletePostMutation({variables: deleteInput})
     handleConfirmDeleteClose()
   }
