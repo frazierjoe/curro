@@ -31,7 +31,10 @@ export const TeamSearchTile = (props) => {
   const { history } = props;
 
   const navigateToTeamProfile = () => {
-    history.push('team/'+props.team.id)
+    history.replace('/team/'+props.team.id)
+    if(props.handleDrawerClose){
+      props.handleDrawerClose()
+    }  
   }
 
   const classes = useStyles();
