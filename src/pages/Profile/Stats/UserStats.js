@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Card, CardContent, CardHeader, Snackbar } from '@material-ui/core';
 import UserStatsActivitySelect from './UserStatsActivitySelect';
-import UserStatsChart from './UserStatsChart';
+import UserStatsChartWrapper from './UserStatsChartWrapper';
 import { gql, useQuery } from '@apollo/client';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import MuiAlert from '@material-ui/lab/Alert';
@@ -94,15 +94,15 @@ const UserStats = () => {
                 title="Stats"
             />
             <CardContent>
-
                 <UserStatsActivitySelect activity={activity} setActivity={setActivity} />
+                
                 {loading ? 
                 (
                     <div className={classes.spinnerWrapper}>
                         <CircularProgress color="primary" />
                     </div>
                 )
-                : <UserStatsChart postList={data.me.postList} />
+                : <UserStatsChartWrapper postList={data.me.postList} />
                 }
 
 

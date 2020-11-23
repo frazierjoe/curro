@@ -1,5 +1,6 @@
 import React, { useContext, useState, useRef } from 'react';
 import { AuthContext } from '../auth';
+import { SearchBar } from './Search/SearchBar';
 import { withRouter } from 'react-router-dom';
 import { useLazyQuery, useMutation, gql, useApolloClient } from '@apollo/client';
 import Button from '@material-ui/core/Button';
@@ -88,10 +89,12 @@ const Header = props => {
   const [state, setState] = useState({
     openProfileMenu: false,
     openDrawer: false,
+    openSearch: false,
   })
   const handleMenu = () => {
     setState({
       openDrawer: false,
+      openSearch: false,
       openProfileMenu: true
     });
   }
@@ -110,10 +113,18 @@ const Header = props => {
     });
   }
 
+  const handleSearchOpen = () => {
+    setState({
+      ...state,
+      openSearch: true,
+    });
+  }
+
   const handleDrawerClose = () => {
     setState({
       ...state,
-      openDrawer: false
+      openDrawer: false,
+      openSearch: false,
     });
   }
 
@@ -145,6 +156,7 @@ const Header = props => {
   const QUERY_ME = gql`
   query {
     me {
+      id
       username
       profilePictureURL
     }
@@ -182,6 +194,7 @@ const Header = props => {
             </Typography>
           </Button>
           <div className={classes.spacer}></div>
+          <SearchBar openSearch={state.openSearch} handleSearchOpen={handleSearchOpen} handleDrawerClose={handleDrawerClose} history={history}/>
           <div ref={menuButtonRef}>
             {!user ? <Button className={classes.loginButton} onClick={
               () => {
@@ -253,13 +266,13 @@ const Header = props => {
             <ListItemIcon><HomeIcon /></ListItemIcon>
             <ListItemText primary={"Newsfeed"} />
           </ListItem>
-          {/* <ListItem button key={"Explore"} onClick={() => {
+          <ListItem button key={"Explore"} onClick={() => {
             handleDrawerClose()
             history.push('/explore');
           }}>
             <ListItemIcon><ExploreIcon /></ListItemIcon>
             <ListItemText primary={"Explore"} />
-          </ListItem> */}
+          </ListItem>
           <ListItem button key={"Calendar"} onClick={() => {
             handleDrawerClose()
             history.push('/calendar');
@@ -293,7 +306,7 @@ const Header = props => {
           </ListItem>
         </List> */}
       </Drawer>
-      <span className={state.openDrawer ? "dismissModal" : "hide"} style={{position: 'fixed'}} onClick={handleDrawerClose}>
+      <span className={(state.openDrawer || state.openSearch) ? "dismissModal" : "hide"} style={{position: 'fixed'}} onClick={handleDrawerClose}>
 
       </span>
     </div>);

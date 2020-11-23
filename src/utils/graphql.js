@@ -1,5 +1,42 @@
 import { gql } from '@apollo/client';
 
+const COMMENT_FRAGMENT = gql`
+  fragment FeedPageComment on Comment {
+    id
+    note
+    author{
+      id
+      profilePictureURL
+      first
+      last
+      username
+    }
+    likeList{
+      user{
+        id
+      }
+    }
+    createdAt
+  }
+`;
+
+const EQUIPMENT_FRAGMENT = gql`
+  fragment EquipmentData on Equipment {
+    id
+    name
+    type
+    usage{
+      value
+      unit
+    }
+    limit {
+      value
+      unit
+    }
+    active
+    createdAt
+  }
+`;
 
 const POST_FRAGMENT = gql`
   fragment FeedPagePost on Post {
@@ -23,7 +60,7 @@ const POST_FRAGMENT = gql`
         unit
       }
       equipment{
-        id
+        ...EquipmentData
       }
       additionalInfo{
         averageHeartRate
@@ -32,13 +69,17 @@ const POST_FRAGMENT = gql`
       }
     }
     likeList {
-      id
+      user{
+        id
+      }
     }
     commentList {
-      id
+      ...FeedPageComment
     }
     createdAt
   }
+  ${COMMENT_FRAGMENT},
+  ${EQUIPMENT_FRAGMENT}
 `;
 
 export const GET_POST_QUERY = gql`
@@ -70,4 +111,96 @@ export const CREATE_POST_MUTATION = gql`
     }
   }
   ${POST_FRAGMENT}
+`;
+
+const TEAM_FRAGMENT = gql`
+  fragment TeamData on Team {
+    id
+    name
+    description
+    profilePictureURL
+    owner {
+      username
+      id
+      first
+      last
+    }
+  }
+`;
+export const CREATE_TEAM_MUTATION = gql`
+  mutation createTeam($input: CreateTeamInput!) {
+    createTeam(input: $input) {
+      ...TeamData
+    }
+  }
+  ${TEAM_FRAGMENT}
+`;
+
+const PROFILE_FRAGMENT = gql`
+  fragment ProfileData on User {
+    id
+    email
+    first
+    last
+    username
+    profilePictureURL
+    birthdate
+    bio
+    private
+    createdAt
+    equipmentList {
+      ...EquipmentData
+    }
+    teamList {
+      ...TeamData
+    }
+  }
+  ${EQUIPMENT_FRAGMENT}
+  ${TEAM_FRAGMENT}
+`;
+
+export const ME_QUERY = gql`
+  query {
+    me {
+      ...ProfileData
+    }
+  }
+  ${PROFILE_FRAGMENT}
+`;
+
+export const UPDATE_USER_MUTATION = gql`
+  mutation updateUser($input: UpdateUserInput!) {
+        updateUser(input: $input) {
+          ...ProfileData
+          
+        }
+      }
+      ${PROFILE_FRAGMENT}
+    `;
+
+export const USER_QUERY = gql`
+  query getUser($id: ID!){
+    user(id: $id){
+      ...ProfileData
+    }
+  }
+  ${PROFILE_FRAGMENT}
+`;
+
+export const UPDATE_EQUIPMENT_MUTATION = gql`
+  mutation updateEquipment($input: UpdateEquipmentInput!) {
+    updateEquipment(input: $input) {
+      ...EquipmentData
+    }
+  }
+  ${EQUIPMENT_FRAGMENT}
+`;
+
+export const CREATE_EQUIPMENT_MUTATION = gql`
+  mutation createEquipment($input: CreateEquipmentInput!) {
+    createEquipment(input: $input) {
+      ...EquipmentData
+    }
+  }
+  ${EQUIPMENT_FRAGMENT}
 `;

@@ -9,8 +9,11 @@ import {
     VerticalGridLines,
     HorizontalGridLines,
     VerticalBarSeries,
-    ChartLabel
+    ChartLabel,
+    DiscreteColorLegend
 } from 'react-vis';
+import Legend from './Legend';
+import StatsSummary from './StatsSummary';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -18,15 +21,22 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 // Hm... Hardcoded Activities will cause issues if we ever change our enum
-const ALLOWED_ACTIVITIES = ['RUN', 'BIKE', 'SWIM', 'SLEEP', 'CLIMB', 'ALTERG', 'YOGA', 'AQUA_JOG', 'HIKE'];
-const colors = ['purple', 'green', 'red', 'yellow', 'orange', 'grey', 'black', 'blue', 'pink'];
+const colorMap = {
+    'RUN': 'purple',
+    'BIKE': 'green',
+    'SWIM': 'red',
+    'SLEEP': 'yellow',
+    'CLIMB': 'orange',
+    'ALTERG': 'grey',
+    'YOGA': 'black',
+    'AQUA_JOG': 'blue',
+    'HIKE': 'pink'
+}
 
 const ONE_DAY = 86400000;
 
-const UserStatsChart = ({ postList }) => {
+const UserStatsVerticalBarChart = ({ durationDataPoints, setDurationDataPoints, leadingDate, postList, DAYS_TO_DISPLAY, ALLOWED_ACTIVITIES }) => {
     const classes = useStyles();
-
-    const [durationDataPoints, setDurationDataPoints] = useState(null);
 
     function msToFlooredMin(ms) {
         return Math.floor(ms / 1000 / 60);
@@ -103,72 +113,73 @@ const UserStatsChart = ({ postList }) => {
             }, []);
         }
 
-        for (const activityEnum in activityDurationDataPoints) {
-            const dataPointsList = activityDurationDataPoints[activityEnum];
-            activityDurationDataPoints[activityEnum] = addPaddingDataPoints(dataPointsList, 7);
-        }
+        // for (const activityEnum in activityDurationDataPoints) {
+        //     const dataPointsList = activityDurationDataPoints[activityEnum];
+        //     activityDurationDataPoints[activityEnum] = addPaddingDataPoints(dataPointsList, 7);
+        // }
 
         return activityDurationDataPoints;
     }
 
 
-    function addPaddingDataPoints(dataPointsList, numberOfDaysInThePast) {
-        let today = startOfDay(new Date());
+    // Users don't post everyday, but our graph needs a data point for those days.
+    const generateMissingDates = (dataPointsList) => {
 
+        let mostRecentDate = startOfDay(leadingDate);
         let paddedData = [];
-        let dataIndex = 0;
+        for (let i = 0; i < DAYS_TO_DISPLAY; i++) {
 
-
-        let timeIndex = new Date(today);
-        timeIndex.setDate(timeIndex.getDate() - numberOfDaysInThePast + 1);
-        timeIndex = startOfDay(timeIndex);
-
-        while ((dataIndex < dataPointsList.length) && (startOfDay(dataPointsList[dataIndex].x) < timeIndex)) {
-            dataIndex += 1;
-        }
-
-        for (let i = 0; i < numberOfDaysInThePast; i++) {
-            // Normalize Post Time
-            let normalizedPostDate = startOfDay(new Date(dataPointsList[dataIndex].x));
-            if ((dataIndex < dataPointsList.length) && (normalizedPostDate.getTime() === timeIndex.getTime())) {
-                paddedData.push(dataPointsList[dataIndex]);
-                dataIndex++;
-            } else {
-                paddedData.push({ x: timeIndex.getTime(), y: 0 });
+            // Not efficient, O(n^2)
+            let found = false;
+            let j = 0;
+            for (j = 0; j < dataPointsList.length; j++) {
+                const point = dataPointsList[j];
+                if (startOfDay(new Date(point.x)).getTime() === mostRecentDate.getTime()) {
+                    found = true;
+                    break;
+                }
             }
 
-            timeIndex.setDate(timeIndex.getDate() + 1);
-            timeIndex = startOfDay(timeIndex);
+            if (found) {
+                paddedData.push(dataPointsList[j]);
+            } else {
+                paddedData.push({ x: startOfDay(mostRecentDate).getTime(), y: 0 });
+            }
+
+            mostRecentDate.setDate(mostRecentDate.getDate() - 1);
         }
-        return paddedData;
+        return paddedData.reverse();
     }
 
-    // If postList changes, recalculate the user stats
+
+    // If postList changes, recalculate the data points
     useEffect(() => {
         let newDurationDataPoints = convertPostListToDurationDataPoints(postList);
         setDurationDataPoints(newDurationDataPoints);
     }, [postList]);
 
+
+
     // Use our duration data points to construct Vertical Bar Series
     let verticalBarComponents = [];
-    let counter = 0;
     for (const activityEnum in durationDataPoints) {
 
         let dataPoints = durationDataPoints[activityEnum];
+        let paddedDataPoints = generateMissingDates(dataPoints);
         let verticalBarComponent = (
-            <VerticalBarSeries key={`--activityChart-${activityEnum}`} data={dataPoints} color={colors[counter]} />
+            <VerticalBarSeries key={`--activityChart-${activityEnum}`} data={paddedDataPoints} color={colorMap[activityEnum]} />
         )
         verticalBarComponents.push(verticalBarComponent);
-        counter++;
     }
 
+    console.log('durationDataPoints :>> ', durationDataPoints);
     return (
         <div>
             <XYPlot
                 width={1000} height={300}
                 xType='ordinal'
                 stackBy="y"
-                style={{overflow: 'visible'}}
+                style={{ overflow: 'visible' }}
             >
                 <VerticalGridLines />
                 <HorizontalGridLines />
@@ -206,9 +217,22 @@ const UserStatsChart = ({ postList }) => {
                 />
                 {/* <VerticalBarSeries data={[{ x: 1603947600000, y: 44 }]} color='pink'/> */}
                 {verticalBarComponents}
+
             </XYPlot>
+            <Legend />
+
+            {durationDataPoints ?
+                <StatsSummary
+                    leadingDate={leadingDate}
+                    durationDataPoints={durationDataPoints}
+                    DAYS_TO_DISPLAY={DAYS_TO_DISPLAY}
+                    ALLOWED_ACTIVITIES={ALLOWED_ACTIVITIES}
+                />
+                :
+                ''
+            }
         </div>
     );
 }
 
-export default UserStatsChart;
+export default UserStatsVerticalBarChart;

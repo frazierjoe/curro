@@ -1,4 +1,5 @@
 import React from 'react';
+import { useQuery, gql } from '@apollo/client';
 import TimeHelper from '../../utils/TimeHelper'
 import DistanceHelper from '../../utils/DistanceHelper'
 import { makeStyles } from '@material-ui/core/styles';
@@ -151,6 +152,31 @@ export const ActivityDetail = (props) => {
     props.handleClose()
   }
 
+  const ME_EQUIPMENT_QUERY = gql`
+    query {
+      me {
+        id
+        equipmentList{
+          id
+          name
+          type
+          usage{
+            value
+            unit
+          }
+          limit {
+            value
+            unit
+          }
+          active
+          createdAt
+        }
+      }
+    }
+  `;
+
+  const { loading, error, data } = useQuery(ME_EQUIPMENT_QUERY);
+
   return (
     <div>
       <Modal
@@ -238,27 +264,29 @@ export const ActivityDetail = (props) => {
           </div>
           : <></>
         }
-        { props.activity.equipmentAllowed && ( <></>
-
-        //   <FormControl variant="outlined" fullWidth className={classes.inputField}>
-        //     {/* TODO Change equipment to be shoes or bikes depending on activity */}
-        //     <InputLabel id="equipment-select">{props.activity.equipmentAllowed}</InputLabel>
-        //     <Select
-        //       labelId="equipment-select"
-        //       id="equipment-select-id"
-        //       value={props.editActivityValues.equipmentId}
-        //       onChange={props.handleEditActivityChange('equipmentId')}
-        //       label={props.activity.equipmentAllowed}
-        //     >
-        //       <MenuItem value=""><em>None</em></MenuItem>
-        //       <MenuItem value={"nike_id"}>NiKe PeGz</MenuItem>
-        //       <MenuItem value={"hoka_id"}>HoKa Clouds</MenuItem>
-        //     </Select>
-        // </FormControl>
+        { (props.activity.equipmentAllowed && !loading) && (
+          <FormControl variant="outlined" fullWidth className={classes.inputField}>
+            {/* TODO Change equipment to be shoes or bikes depending on activity */}
+            <InputLabel id="equipment-select">{props.activity.equipmentAllowed}</InputLabel>
+            <Select
+              labelId="equipment-select"
+              id="equipment-select-id"
+              value={props.editActivityValues.equipmentId}
+              onChange={props.handleEditActivityChange('equipmentId')}
+              label={props.activity.equipmentAllowed}
+            >
+              <MenuItem key="none" value=""><em>None</em></MenuItem>
+              {data.me.equipmentList.map((equipment) => {
+                if(equipment.type === props.activity.equipmentName){
+                  return <MenuItem key={equipment.id} value={equipment.id}>{equipment.name}</MenuItem>
+                }
+              })}
+            </Select>
+        </FormControl>
         )}
         { props.activity.additionalInfoAllowed ? 
           <div>
-            <Typography variant="h6" className={classes.inputField} >Additional Information</Typography>
+            <Typography variant="h6" className={classes.inputField}>Additional Information</Typography>
             <TextField 
               label="Heart Rate" 
               type="number" 

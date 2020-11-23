@@ -1,18 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Skeleton from '@material-ui/lab/Skeleton';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
-import IconButton from '@material-ui/core/IconButton';
 import CardHeader from '@material-ui/core/CardHeader';
 import Avatar from '@material-ui/core/Avatar';
 import Box from '@material-ui/core/Box';
-import { EditProfileModal } from "../../components/EditProfileModal"
-import EditIcon from '@material-ui/icons/Edit';
+import Button from '@material-ui/core/Button';
 
-export const ProfileCard = props => {
-  
+
+export const TeamCard = props => {
+
   const useStyles = makeStyles((theme) => ({
     root: {
       margin: '32px',
@@ -30,7 +29,19 @@ export const ProfileCard = props => {
     media: {
       height: 190,
     },
+    countBox: {
+      backgroundColor: theme.palette.background.main,
+      textAlign: 'center',
+      marginBottom: 8,
+    },
+    requestButton: {
+      marginBottom: 16,
+    }
   }));
+
+  const [joined, setJoined] = useState(false);
+  const [requestPending, setRequestPending] = useState(false);
+
   const formatDate = (createdAt) => {
     var options = { year: 'numeric', month: 'long', day: 'numeric' };
 
@@ -38,11 +49,16 @@ export const ProfileCard = props => {
     date.setMilliseconds(createdAt)
     return date.toLocaleDateString("en-US", options)
   }
-  const [openModal, setOpenModal] = React.useState(false);
   
-  const handleOpen = () => {
-    setOpenModal(true);
-  };
+  const requestTeam = () => {
+    if(joined){
+      console.log("TODO API call for Leaving Team :(")
+      setJoined(false)
+    } else {
+      console.log("TODO API call for Sending Request to join team")
+      setJoined(true)
+    }
+  }
 
   const classes = useStyles();
 
@@ -54,24 +70,12 @@ export const ProfileCard = props => {
     <div>
       <Card className={classes.card}>
         <CardHeader
-          action={
-            (props.loading || !props.me) ? <></> : (
-              <IconButton aria-label="edit" onClick={handleOpen}>
-                <EditIcon />
-              </IconButton>
-              
-            )
-          }
           title={
             props.loading ? (
               <Skeleton animation="wave" width="80%" />
-            ) : (
-                props.me ? 
-                props.data.me.first + ' ' + props.data.me.last :
-                props.data.user.first + ' ' + props.data.user.last
-              )
+            ) : props.data.team.name
           }
-          subheader={props.loading ? <Skeleton animation="wave" width="40%" /> : (props.me ? props.data.me.username : props.data.user.username)}
+          subheader="Team"
         />
 
         <CardContent className={classes.cardContent}>
@@ -91,26 +95,39 @@ export const ProfileCard = props => {
                 <Box display="flex" style={{ marginBottom: '16px' }}>
                   <Box m="auto">
                     <Avatar
-                      alt="User Profile"
+                      variant="square" 
+                      alt="Team Logo" 
                       className={classes.largeAvatar}
-                      src={props.me ? props.data.me.profilePictureURL : props.data.user.profilePictureURL}
+                      src={props.data.team.profilePictureURL}
                     />
                   </Box>
                 </Box>
-                <Typography variant="body1" component="p">
-                  {
-                    props.me ? props.data.me.bio : props.data.user.bio
-                  }
-                </Typography>
+                <Box className={classes.countBox}>
+                  <Typography variant="body1" color="textSecondary" component="p" style={{ marginTop: '16px' }}>
+                    {props.data.team.memberCount + " Member" + (props.data.team.memberCount > 1 ? "s" : "")}
+                  </Typography>
+                </Box>
+                {/* TODO Create Team follow button */}
+                {/* <Button 
+                  variant={(joined || requestPending) ? "outlined" : "contained"} 
+                  color="secondary" 
+                  size="small" 
+                  fullWidth 
+                  onClick={requestTeam}
+                  disabled={requestPending}
+                  className={classes.requestButton}>
+                  { requestPending ? "Request Pending" : (joined ? "Leave Team" : "Request To Join")}
+                </Button> */}
+
+                <Typography variant="body1" component="p">{props.data.team.description}</Typography>
                 <Typography variant="body2" color="textSecondary" component="p" style={{ marginTop: '16px' }}>
                   {
-                    "Member since " + formatDate(props.me ? props.data.me.createdAt : props.data.user.createdAt)
+                    "Team created " + formatDate(props.data.team.createdAt)
                   }
                 </Typography>
               </div>
             )}
         </CardContent>
       </Card>
-      {props.me && <EditProfileModal data={props.data} loading={props.loading} openModal={openModal} handleClose={() => setOpenModal(false)}/>}
     </div>);
 }

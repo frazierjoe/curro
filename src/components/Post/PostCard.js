@@ -1,8 +1,10 @@
 import React, { useContext, useState, useRef } from 'react';
+import { useMutation, gql } from '@apollo/client';
 import { AuthContext } from '../../auth';
 import { ActivityTile } from './ActivityTile';
-import { Comment } from './Comment';
+import { Comments } from './Comments';
 import { AddComment } from './AddComment';
+import { LikeButton } from './LikeButton';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Skeleton from '@material-ui/lab/Skeleton';
@@ -25,10 +27,13 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import FavoriteBorder from '@material-ui/icons/FavoriteBorder';
+import FavoriteTwoToneIcon from '@material-ui/icons/FavoriteTwoTone';
 import ReportIcon from '@material-ui/icons/Report';
 import EditIcon from '@material-ui/icons/Edit';
 import Grid from '@material-ui/core/Grid';
 import Divider from '@material-ui/core/Divider';
+import { GET_POST_QUERY } from '../../utils/graphql';
+import produce from "immer";
 
 
 
@@ -40,10 +45,12 @@ export const PostCard = props => {
     },
     cardContent: {
       paddingTop: '0px',
+      paddingBottom: '0px',
     },
     profilePicture: {
       width: '48px',
       height: '48px',
+      cursor: 'pointer',
     },
     gridList: {      
       flexWrap: 'nowrap',
@@ -66,21 +73,97 @@ export const PostCard = props => {
     postMenu: {
       marginTop: '32px',
     },
+    profileClick: {
+      cursor: 'pointer',
+      userSelect: 'none',
+      "&:hover": {
+        textDecoration: 'underline',
+        color: theme.palette.secondary.main,
+      },
+    },
   }));
 
   const { user } = useContext(AuthContext)
+  const { history } = props;
+
+
+  const didUserLikePost = (likeList) => {
+    var userLiked = false;
+    for(var i = 0; i < likeList.length; i++) {
+        if (likeList[i].user.id === user.id) {
+            userLiked = true;
+            break;
+        }
+    }
+    return userLiked
+  }
   
   const [postLikeCount, setPostLikeCount] = useState(props.post.likeList.length)
-  // This will only work if the like list is only user id's
-  const [likePost, setLikePost] = useState(props.post.likeList.includes(user.id))
+  const [likePost, setLikePost] = useState(didUserLikePost(props.post.likeList))
   const [openPostMenu, setOpenPostMenu] = useState(false)
 
   // This is for if we want to have a report button
   // const postButtonRef = useRef()
 
+  const LIKE_POST_MUTATION = gql`
+    mutation likePost($input: LikePostInput!) {
+      likePost(input: $input) {
+        liked
+      }
+    }
+  `;
+
+  const [likePostMutation, { loading: likeLoading }] = useMutation(LIKE_POST_MUTATION, {
+    update(store, { data: { likePost } }) {
+      console.log(likePost.liked)
+      console.log(props.post.id)
+      const data = store.readQuery({
+        query: GET_POST_QUERY
+      })
+
+      var postIndex = data.postList.posts.findIndex((post) => {
+        return post.id === props.post.id
+      })
+
+      const updatedPosts = produce(data.postList.posts, x => {
+        if(likePost.liked){
+          x[postIndex].likeList.push({user: user})
+        } else {
+          x[postIndex].likeList = x[postIndex].likeList.filter(postLike => {
+            return postLike.user.id !== user.id
+          })
+        }
+      })
+      
+      store.writeQuery({
+        query: GET_POST_QUERY,
+        data: {
+          postList: {
+            __typename: "UpdatePost",
+            posts: updatedPosts,
+            hasMore: data.postList.hasMore,
+            cursor: data.postList.cursor
+          },
+        }
+      })
+
+    },
+    onError(error) {
+      console.log(error)
+    }
+  })
+
 
   const handleLike = (event) => {
-    setPostLikeCount(event.target.checked ? likePost + 1 : likePost - 1)
+    setPostLikeCount(event.target.checked ? postLikeCount + 1 : postLikeCount - 1)
+    const likeInput = {
+      input: {
+        postId: props.post.id
+      }
+    }
+
+    console.log(likeInput)
+    likePostMutation({ variables: likeInput })
     setLikePost(event.target.checked)
   }
 
@@ -88,8 +171,14 @@ export const PostCard = props => {
   const formatDate = (postDate) => {
     var options = { year: 'numeric', month: 'long', day: 'numeric' };
     var date = new Date(postDate) 
+
     return date.toLocaleDateString("en-US", options)
   }
+
+  const navigateToUserProfile = () => { 
+    history.push('profile/'+props.post.author.id)
+  }
+
   
   const classes = useStyles();
 
@@ -102,6 +191,7 @@ export const PostCard = props => {
             : <Avatar 
               aria-label="profile-picture" 
               className={classes.profilePicture}
+              onClick={navigateToUserProfile}
               alt="User Profile"
               src={props.post.author.profilePictureURL}
             />           
@@ -110,10 +200,13 @@ export const PostCard = props => {
             props.loading ? (
               <Skeleton animation="wave" width="40%" />
             ) : (
-                props.post.author.first + ' ' + props.post.author.last
+                <span className={classes.profileClick} onClick={navigateToUserProfile}>{props.post.author.first + ' ' + props.post.author.last}</span>
               )
           }
-          subheader={props.loading ? <Skeleton animation="wave" width="20%" /> : props.post.author.username}
+          subheader={props.loading ? 
+            <Skeleton animation="wave" width="20%" /> : 
+            <span className={classes.profileClick} onClick={navigateToUserProfile}>{props.post.author.username}</span>
+          }
           action={
             (!props.loading && user.id === props.post.author.id) && (
               <Tooltip title="Edit" enterDelay={400}>
@@ -168,7 +261,7 @@ export const PostCard = props => {
                 <List>
                   {props.post.activityList.map((activity) => (
                     <ActivityTile 
-                      key={activity.id}
+                      key={"activity" + activity.id}
                       activity={activity} 
                       edit={false}
                     />
@@ -181,15 +274,9 @@ export const PostCard = props => {
             )}
         </CardContent>
         <CardActions className={classes.cardActions}>
-        {props.loading ? <Skeleton animation="wave" height={32} width="30%"/>
-          : <FormGroup row>
-            <FormControlLabel
-              control={<Checkbox icon={<FavoriteBorder />} checkedIcon={<Favorite />} name="like"  checked={likePost} onChange={handleLike}/>}
-              label={postLikeCount}
-            />
-          </FormGroup>}
-          {/* TODO add comments */}
-
+          {props.loading ? 
+            <Skeleton animation="wave" height={32} width="30%"/> :
+            <LikeButton likeCount={postLikeCount} isLiked={likePost} handleLike={handleLike} loading={likeLoading}/>}
         </CardActions>
         {props.loading ? <div className={classes.commentSection}>
           <Skeleton animation="wave" width="55%" style={{ marginBottom: 8 }} />
@@ -197,11 +284,11 @@ export const PostCard = props => {
           <Skeleton animation="wave" width="20%" style={{ marginBottom: 8 }} />
         </div>
         : <div className={classes.commentSection}>
-          {/* <Comment/> */}
-          <Typography variant="body2" color="textSecondary" style={{marginBottom:8}}>
+          {(props.post.commentList.length > 0) && <Comments postId={props.post.id} comments={props.post.commentList} history={history}/>}
+          <AddComment postId={props.post.id}/>
+          <Typography variant="body2" color="textSecondary" style={{marginBottom:8, marginTop:8}}>
             {formatDate(props.post.postDate)}
           </Typography>
-          {/* <AddComment/> */}
         </div> }
         
       </Card>

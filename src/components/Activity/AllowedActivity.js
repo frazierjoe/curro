@@ -5,6 +5,7 @@ export const AllowedActivity = [
     durationAllowed: true,
     distanceAllowed: true,
     equipmentAllowed: "Shoes",
+    equipmentName: "SHOE",
     additionalInfoAllowed: true,
     defaultUnit: "mi"
   },
@@ -14,6 +15,7 @@ export const AllowedActivity = [
     durationAllowed: true,
     distanceAllowed: true,
     equipmentAllowed: "Bikes",
+    equipmentName: "BIKE",
     additionalInfoAllowed: true,
     defaultUnit: "mi"
   },

@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { useMutation, gql } from '@apollo/client';
+import produce from "immer";
 import { ActivityTile } from './Activity/ActivityTile';
 import { ActivityDetail } from './Activity/ActivityDetail';
 import { AllowedActivity } from './Activity/AllowedActivity';
 import { AddActivityButton } from './Activity/AddActivityButton';
 import { makeStyles } from '@material-ui/core/styles';
 import { SelectActivity } from './Activity/SelectActivity';
+import { ConfirmDelete } from './ConfirmDelete';
 import Modal from '@material-ui/core/Modal';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
@@ -100,6 +102,15 @@ export const NewActivityModal = (props) => {
   const [editActivityId, setEditActivityId] = useState(0)
   const [selectedActivity, setSelectedActivity] = useState(AllowedActivity[0])
   const [editActivity, setEditActivity] = useState(false)
+  const [openConfirmDelete, setOpenConfirmDelete] = React.useState(false);
+
+  const handleConfirmDeleteOpen = () => {
+    setOpenConfirmDelete(true);
+  };
+
+  const handleConfirmDeleteClose = () => {
+    setOpenConfirmDelete(false);
+  };
 
   const defaultPost = {
     title: '',
@@ -246,6 +257,7 @@ const [updatePostMutation, {loading: editLoading}] = useMutation(UPDATE_POST_MUT
       return post
     })
     
+    // TODO update using immer look at Comment.js
     store.writeQuery({
       query: GET_POST_QUERY,
       data: {
@@ -399,6 +411,7 @@ const [updatePostMutation, {loading: editLoading}] = useMutation(UPDATE_POST_MUT
       postId: props.editPost.id
     }
     deletePostMutation({variables: deleteInput})
+    handleConfirmDeleteClose()
   }
 
   return (
@@ -415,7 +428,7 @@ const [updatePostMutation, {loading: editLoading}] = useMutation(UPDATE_POST_MUT
           {editPost && (
             <Tooltip title="Delete" enterDelay={400}>
               <span>
-                <IconButton onClick={deletePost} disabled={deleteLoading}>
+                <IconButton onClick={handleConfirmDeleteOpen} disabled={deleteLoading}>
                   <DeleteForeverIcon/>
                   {deleteLoading && <CircularProgress size={24} className={classes.buttonProgress} />}
                 </IconButton>
@@ -483,6 +496,14 @@ const [updatePostMutation, {loading: editLoading}] = useMutation(UPDATE_POST_MUT
           <TextField className={classes.textField} label="Note" value={post.note} onChange={handlePostChange('note')} fullWidth multiline rows={7} variant="outlined" />
           {/* TODO add TAG list, look into select -> Multiple Select Chip */}
         </form>
+        <ConfirmDelete
+        open={openConfirmDelete}
+        handleClose={handleConfirmDeleteClose}
+        action={deletePost}
+        actionLabel={"Delete"}
+        title={"Delete Post?"}
+        description={"Are you sure you wish to delete this post. This can not be undone."}
+      />
       </div>
       
       </Modal>
