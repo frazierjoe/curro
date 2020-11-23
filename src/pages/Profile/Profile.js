@@ -10,6 +10,7 @@ import Grid from '@material-ui/core/Grid';
 import EditEquipmentModal from '../../components/EditEquipmentModal';
 import { CreateEquipmentModal } from '../../components/CreateEquipmentModal';
 import { ME_QUERY, USER_QUERY } from '../../utils/graphql';
+import { CreateTeamModal } from '../../components/CreateTeamModal';
 
 
 export const Profile = (props) => {
@@ -47,7 +48,7 @@ export const Profile = (props) => {
     me = true
   }
   
-  const [openCreatTeamModal, setOpenCreateTeamModal] = React.useState(false);
+  const [openCreateTeamModal, setOpenCreateTeamModal] = React.useState(false);
   const [createTeamData, setCreateTeamData] = React.useState(defaultTeamData);
 
   const [openEquipmentModal, setOpenEquipmentModal] = React.useState(false);
@@ -60,7 +61,7 @@ export const Profile = (props) => {
 
 
   const classes = useStyles();
-
+  const { history } = props;
   return (
     <div style={{overflow: 'hidden'}}>
       <Grid container spacing={1}>
@@ -70,7 +71,7 @@ export const Profile = (props) => {
             
           </Grid>
           <Grid item xs={12}>
-          <TeamListCard 
+            <TeamListCard 
               me={me}
               data={data}
               loading={loading}
@@ -78,6 +79,7 @@ export const Profile = (props) => {
               setOpenTeamModal={setOpenEquipmentModal} 
               setEditEquipmentData={setEditEquipmentData} 
               setOpenCreateTeamModal={setOpenCreateTeamModal}
+              history={history}
             />
           </Grid>
         </Grid>
@@ -112,6 +114,7 @@ export const Profile = (props) => {
       </Grid>
       {me && <EditEquipmentModal data={editEquipmentData} openModal={openEquipmentModal} handleClose={() => setOpenEquipmentModal(false)}/>}
       {me && <CreateEquipmentModal type={createEquipmentType} openModal={openCreateEquipmentModal} handleClose={() => setOpenCreateEquipmentModal(false)}/>}
+      {me && <CreateTeamModal openModal={openCreateTeamModal} handleClose={() => setOpenCreateTeamModal(false)}/>}
     </div>
     
     

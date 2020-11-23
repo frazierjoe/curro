@@ -94,6 +94,25 @@ export const CREATE_POST_MUTATION = gql`
   ${POST_FRAGMENT}
 `;
 
+const TEAM_FRAGMENT = gql`
+  fragment TeamData on Team {
+    id
+    name
+    description
+    profilePictureURL
+  }
+`;
+export const CREATE_TEAM_MUTATION = gql`
+  mutation createTeam($input: createTeamInput!) {
+    createTeam(input: $input) {
+      ...TeamData
+    }
+  }
+  ${TEAM_FRAGMENT}
+`;
+
+
+
 const EQUIPMENT_FRAGMENT = gql`
   fragment EquipmentData on Equipment {
     id
@@ -127,8 +146,12 @@ const PROFILE_FRAGMENT = gql`
     equipmentList {
       ...EquipmentData
     }
+    teamList {
+      ...TeamData
+    }
   }
   ${EQUIPMENT_FRAGMENT}
+  ${TEAM_FRAGMENT}
 `;
 
 export const ME_QUERY = gql`

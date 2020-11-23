@@ -10,9 +10,10 @@ import CardHeader from '@material-ui/core/CardHeader';
 import AddIcon from '@material-ui/icons/Add';
 import Equipment from "../../components/Equipment"
 import List from '@material-ui/core/List';
+import TeamListItem from "../../components/TeamListItem"
 
 export const TeamListCard = props => {
-
+  const { history } = props;
   const useStyles = makeStyles((theme) => ({
     root: {
       margin: 16,
@@ -48,28 +49,21 @@ export const TeamListCard = props => {
 
   var teamListRender = [];
   var teamCount = 0
-//   if (!props.loading) {
-//     console.log(props)
-//     teamListRender = (props.me ? props.data.me.teamList : props.data.user.teamList).map((e) => 
-//       ((e.type === props.type) && <Equipment 
-//         key={e.id} data={e} 
-//         loading={props.loading} 
-//         name={e.name} 
-//         edit={props.me}
-//         progress={e.usage.value} 
-//         capacity={e.limit.value} 
-//         setOpenTeamModal={props.setOpenTeamModal} 
-//         setEditTeamData={props.setEditTeamData} 
-//       />)  
-//     );
-//     teamCount = (props.me ? props.data.me.teamList : props.data.user.teamList).filter((e) => e.type === props.type).length;
-//   }
+  if (!props.loading) {
+    teamListRender = (props.me ? props.data.me.teamList : props.data.user.teamList).map((e) => 
+      ((e.type === props.type) && <TeamListItem 
+        key={e.id} data={e} 
+        loading={props.loading} 
+        history={history}
+      />)  
+    );
+    teamCount = (props.me ? props.data.me.teamList : props.data.user.teamList).filter((e) => e.type === props.type).length;
+  }
   if (props.error) return (<div>
     <Typography variant="h5" style={{ margin: '16px' }}>ERROR: {props.error.message}</Typography>
   </div>);
 //   var titleText = (props.type).toLowerCase() + "s";
 //   titleText = titleText.charAt(0).toUpperCase() + titleText.slice(1);
-
   return (
     <div>
       <Card className={classes.card}>

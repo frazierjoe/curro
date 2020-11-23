@@ -12,7 +12,7 @@ import { EditProfileModal } from "../../components/EditProfileModal"
 import EditIcon from '@material-ui/icons/Edit';
 
 export const ProfileCard = props => {
-
+  
   const useStyles = makeStyles((theme) => ({
     root: {
       margin: '32px',
