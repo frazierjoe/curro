@@ -22,7 +22,7 @@ export default function TeamListItem(props) {
       }
     }))
     const navigateToTeamPage = () => {
-      // history.push('profile/'+props.data.id)
+      history.replace('/team/'+props.data.id)
       console.log("navigate to team page")
     }
     

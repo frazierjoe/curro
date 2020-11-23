@@ -136,26 +136,6 @@ export const CREATE_TEAM_MUTATION = gql`
   ${TEAM_FRAGMENT}
 `;
 
-
-
-const EQUIPMENT_FRAGMENT = gql`
-  fragment EquipmentData on Equipment {
-    id
-    name
-    type
-    usage{
-      value
-      unit
-    }
-    limit {
-      value
-      unit
-    }
-    active
-    createdAt
-  }
-`;
-
 const PROFILE_FRAGMENT = gql`
   fragment ProfileData on User {
     id
