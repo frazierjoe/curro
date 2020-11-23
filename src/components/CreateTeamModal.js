@@ -60,10 +60,10 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 export const CreateTeamModal = (props) => {
-
   const [createTeamMutation, { loading, error, data }] = useMutation(CREATE_TEAM_MUTATION, {
     update(store, { data: { createTeam } }) {
     //   console.log("Before")
+      // console.log(data)
       const data = store.readQuery({
         query: ME_QUERY
       })
@@ -76,12 +76,12 @@ export const CreateTeamModal = (props) => {
         data: {
           me: {
             ...data.me,
-            // __typename: "User",
+            __typename: "User",
             teamList: updatedTeamList
           }
         }
       })
-    //   props.handleClose();
+      props.handleClose();
       
     },
     onError(error) {
@@ -175,7 +175,6 @@ export const CreateTeamModal = (props) => {
       </form>
     </div>
   );
-
   return (
     <div>
       <Modal

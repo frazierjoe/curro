@@ -100,10 +100,16 @@ const TEAM_FRAGMENT = gql`
     name
     description
     profilePictureURL
+    owner {
+      username
+      id
+      first
+      last
+    }
   }
 `;
 export const CREATE_TEAM_MUTATION = gql`
-  mutation createTeam($input: createTeamInput!) {
+  mutation createTeam($input: CreateTeamInput!) {
     createTeam(input: $input) {
       ...TeamData
     }
