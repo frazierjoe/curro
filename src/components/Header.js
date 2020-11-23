@@ -194,7 +194,7 @@ const Header = props => {
             </Typography>
           </Button>
           <div className={classes.spacer}></div>
-          <SearchBar openSearch={state.openSearch} handleSearchOpen={handleSearchOpen} handleDrawerClose={handleDrawerClose} history={history}/>
+          {user && <SearchBar openSearch={state.openSearch} handleSearchOpen={handleSearchOpen} handleDrawerClose={handleDrawerClose} history={history}/>}
           <div ref={menuButtonRef}>
             {!user ? <Button className={classes.loginButton} onClick={
               () => {

@@ -1,5 +1,4 @@
 import React from 'react';
-import { useQuery, gql } from '@apollo/client';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Skeleton from '@material-ui/lab/Skeleton';
@@ -8,7 +7,6 @@ import CardContent from '@material-ui/core/CardContent';
 import IconButton from '@material-ui/core/IconButton';
 import CardHeader from '@material-ui/core/CardHeader';
 import AddIcon from '@material-ui/icons/Add';
-import Equipment from "../../components/Equipment"
 import List from '@material-ui/core/List';
 import TeamListItem from "../../components/TeamListItem"
 
@@ -20,11 +18,6 @@ export const TeamListCard = props => {
     },
     card: {
       margin: 16,
-      marginLeft: 0,
-      [theme.breakpoints.down('xs')]: {
-        marginLeft: 16,
-        marginTop: 0,
-      },
     },
     cardContent: {
       paddingTop: '0px'
@@ -52,7 +45,8 @@ export const TeamListCard = props => {
   if (!props.loading) {
     teamListRender = (props.me ? props.data.me.teamList : props.data.user.teamList).map((e) => 
       ((e.type === props.type) && <TeamListItem 
-        key={e.id} data={e} 
+        key={"profile-team-"+e.id} 
+        data={e} 
         loading={props.loading} 
         history={history}
       />)  
@@ -62,8 +56,7 @@ export const TeamListCard = props => {
   if (props.error) return (<div>
     <Typography variant="h5" style={{ margin: '16px' }}>ERROR: {props.error.message}</Typography>
   </div>);
-//   var titleText = (props.type).toLowerCase() + "s";
-//   titleText = titleText.charAt(0).toUpperCase() + titleText.slice(1);
+
   return (
     <div>
       <Card className={classes.card}>

@@ -42,7 +42,14 @@ export const ActivityTile = props => {
       elevationGain: activity.additionalInfo.elevationGain ? activity.additionalInfo.elevationGain : 0,
       calories: activity.additionalInfo.calories ? activity.additionalInfo.calories : 0
     })
-    props.setSelectedActivity(AllowedActivity[activity.activityId])
+    var selectedActivity = null
+    for(var i=0; i<AllowedActivity.length; i++) {
+      if(AllowedActivity[i].type.replace(/\s+/g, '_').toUpperCase() == activity.type){
+        selectedActivity = AllowedActivity[i]
+        break
+      }
+    }
+    props.setSelectedActivity(selectedActivity)
     props.setOpenActivityDetailModal(true)
   }
   const classes = useStyles();
