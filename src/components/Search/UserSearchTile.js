@@ -32,7 +32,10 @@ export const UserSearchTile = (props) => {
   const { history } = props;
 
   const navigateToUserProfile = () => {
-    history.push('profile/'+props.user.id)
+    history.replace('/profile/'+props.user.id)
+    if(props.handleDrawerClose){
+      props.handleDrawerClose()
+    }
   }
 
   const classes = useStyles();

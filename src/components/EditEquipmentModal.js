@@ -101,7 +101,6 @@ export default function EditEquipmentModal(props) {
         }
       })
       props.handleClose();
-      _editDataMounted = false
 
     },
     onError(error) {
@@ -143,7 +142,6 @@ export default function EditEquipmentModal(props) {
       })
 
       props.handleClose();
-      _editDataMounted = false
     },
     onError(error) {
       console.log(error)
@@ -188,7 +186,6 @@ export default function EditEquipmentModal(props) {
       }
 
       updateEquipmentMutation({ variables: userInput })
-      _editDataMounted = false
     }
   }
   const deleteEq = () => {
@@ -204,7 +201,6 @@ export default function EditEquipmentModal(props) {
     });
     var input = { equipmentId: props.data.id }
     deleteEquipmentMutation({variables: input})
-    _editDataMounted = false
     handleConfirmDeleteClose()
   };
   const cancel = () => {
@@ -218,7 +214,6 @@ export default function EditEquipmentModal(props) {
         },
         active: ""
     });
-    _editDataMounted = false
     props.handleClose();
   }
 

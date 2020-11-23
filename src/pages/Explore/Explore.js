@@ -12,9 +12,9 @@ import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import Pagination from '@material-ui/lab/Pagination';
 import List from '@material-ui/core/List';
-import { UserSearchTile } from './UserSearchTile';
-import { TeamSearchTile } from './TeamSearchTile';
-import { NoResults } from './NoResults';
+import { UserSearchTile } from '../../components/Search/UserSearchTile';
+import { TeamSearchTile } from '../../components/Search/TeamSearchTile';
+import { NoResults } from '../../components/Search/NoResults';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -87,8 +87,10 @@ const TEAM_SEARCH_QUERY = gql`
     searchTeam(search: $search){
       id
       name
-      createdAt
       description
+      profilePictureURL
+      memberCount
+      createdAt
     }
   }
 `;
@@ -118,6 +120,7 @@ export const Explore = (props) => {
       setValidSearch(false)
     }
     setSearchQuery(searchString);
+    submitSearch();
   };
 
   const handleKeypress = event => {
@@ -149,6 +152,7 @@ export const Explore = (props) => {
       <Paper className={classes.root} type="form" onSubmit={submitSearch} noValidate autoComplete="off">
         <InputBase
           className={classes.input}
+          autoFocus
           value={searchQuery}
           onChange={handleSearch}
           onKeyPress={handleKeypress}

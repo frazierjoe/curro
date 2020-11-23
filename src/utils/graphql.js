@@ -20,6 +20,24 @@ const COMMENT_FRAGMENT = gql`
   }
 `;
 
+const EQUIPMENT_FRAGMENT = gql`
+  fragment EquipmentData on Equipment {
+    id
+    name
+    type
+    usage{
+      value
+      unit
+    }
+    limit {
+      value
+      unit
+    }
+    active
+    createdAt
+  }
+`;
+
 const POST_FRAGMENT = gql`
   fragment FeedPagePost on Post {
     id
@@ -42,7 +60,7 @@ const POST_FRAGMENT = gql`
         unit
       }
       equipment{
-        id
+        ...EquipmentData
       }
       additionalInfo{
         averageHeartRate
@@ -60,7 +78,8 @@ const POST_FRAGMENT = gql`
     }
     createdAt
   }
-  ${COMMENT_FRAGMENT}
+  ${COMMENT_FRAGMENT},
+  ${EQUIPMENT_FRAGMENT}
 `;
 
 export const GET_POST_QUERY = gql`
@@ -168,6 +187,16 @@ export const ME_QUERY = gql`
   }
   ${PROFILE_FRAGMENT}
 `;
+
+export const UPDATE_USER_MUTATION = gql`
+  mutation updateUser($input: UpdateUserInput!) {
+        updateUser(input: $input) {
+          ...ProfileData
+          
+        }
+      }
+      ${PROFILE_FRAGMENT}
+    `;
 
 export const USER_QUERY = gql`
   query getUser($id: ID!){
