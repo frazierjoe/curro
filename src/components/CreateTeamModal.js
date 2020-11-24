@@ -155,12 +155,9 @@ export const CreateTeamModal = (props) => {
           variant="outlined"
           fullWidth 
           className={classes.textField} 
-          value={state.description} 
-          onChange={handleChange("description")} 
-          label="Description"
-          multiline={true}
-          rowsMax={5}
-          rows={3}
+          value={state.profilePictureURL} 
+          onChange={handleChange("profilePictureURL")} 
+          label="Team Picture URL"
         />
         <TextField 
           required 
@@ -168,9 +165,12 @@ export const CreateTeamModal = (props) => {
           variant="outlined"
           fullWidth 
           className={classes.textField} 
-          value={state.profilePictureURL} 
-          onChange={handleChange("profilePictureURL")} 
-          label="Team Picture URL"
+          value={state.description} 
+          onChange={handleChange("description")} 
+          label="Description"
+          multiline={true}
+          rowsMax={5}
+          rows={3}
         />
       </form>
     </div>

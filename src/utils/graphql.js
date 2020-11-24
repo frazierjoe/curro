@@ -119,11 +119,9 @@ const TEAM_FRAGMENT = gql`
     name
     description
     profilePictureURL
+    memberCount
     owner {
-      username
       id
-      first
-      last
     }
   }
 `;

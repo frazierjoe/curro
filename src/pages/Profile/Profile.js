@@ -68,7 +68,6 @@ export const Profile = (props) => {
         <Grid item xs={12} sm={6} lg={4}>
           <Grid item xs={12}>
             <ProfileCard loading={loading} error={error} data={data} me={me}/>
-            
           </Grid>
           <Grid item xs={12}>
             <TeamListCard 

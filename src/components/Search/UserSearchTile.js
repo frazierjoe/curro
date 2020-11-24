@@ -32,7 +32,7 @@ export const UserSearchTile = (props) => {
   const { history } = props;
 
   const navigateToUserProfile = () => {
-    history.replace('/profile/'+props.user.id)
+    history.push('/profile/'+props.user.id)
     if(props.handleDrawerClose){
       props.handleDrawerClose()
     }

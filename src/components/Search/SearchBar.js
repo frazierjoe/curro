@@ -80,6 +80,7 @@ const useStyles = makeStyles((theme) => ({
     height: 24,
   },
   filterButton: {
+    borderRadius: 0,
     width: 256,
     [theme.breakpoints.down('sm')]: {
       width: 128,
