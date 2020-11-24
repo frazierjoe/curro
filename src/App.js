@@ -86,11 +86,11 @@ function App() {
               <ProtectedRoute exact path='/' component={ Feed }/>
               <Route exact path='/home' component={ Home }/>
               <Route exact path='/about' component={ About }/>
-              <Route exact path='/explore' component={ Explore }/>
-              <Route exact path='/search' component={ Explore }/>
               <Route exact path='/login' component={ Login }/>
               <Route exact path='/create' component={ CreateAccount }/>
               <Route exact path='/createAccount' component={ CreateAccount }/>
+              <ProtectedRoute exact path='/explore' component={ Explore }/>
+              <ProtectedRoute exact path='/search' component={ Explore }/>
               <ProtectedRoute exact path='/calendar' component={ Calendar }/>
               <ProtectedRoute exact path='/cal' component={ Calendar }/>
               <ProtectedRoute exact path='/feed' component={ Feed }/>
