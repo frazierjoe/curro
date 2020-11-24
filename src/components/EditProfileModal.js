@@ -96,15 +96,16 @@ export const EditProfileModal = (props) => {
     var lastValid = state.last.length > 0;
     var usernameValid = state.username.length > 0;
     var emailValid = emailRegex.test(state.email.toLowerCase());
+    // TODO make private actually hooked up to a real variable with user input
     if (firstValid && lastValid && usernameValid && emailValid) {
       var userInput = {
         input: {
-          userId: props.data.me.id,
           first: state.first,
           last: state.last,
           username: state.username,
           bio: state.bio,
-          profilePictureURL: state.profilePictureURL
+          profilePictureURL: state.profilePictureURL,
+          private: false,
         }
 
       }
