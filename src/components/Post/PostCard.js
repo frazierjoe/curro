@@ -1,4 +1,4 @@
-import React, { useContext, useState, useRef } from 'react';
+import React, { useContext, useState } from 'react';
 import { useMutation, gql } from '@apollo/client';
 import { AuthContext } from '../../auth';
 import { ActivityTile } from './ActivityTile';
@@ -14,24 +14,15 @@ import IconButton from '@material-ui/core/IconButton';
 import CardHeader from '@material-ui/core/CardHeader';
 import CardActions from '@material-ui/core/CardActions';
 import Avatar from '@material-ui/core/Avatar';
-import FormGroup from '@material-ui/core/FormGroup';
 import Tooltip from '@material-ui/core/Tooltip';
 import List from '@material-ui/core/List';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItem from '@material-ui/core/ListItem';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
-import CheckBoxIcon from '@material-ui/icons/CheckBox';
-import Favorite from '@material-ui/icons/Favorite';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
-import MenuItem from '@material-ui/core/MenuItem';
-import Menu from '@material-ui/core/Menu';
-import FavoriteBorder from '@material-ui/icons/FavoriteBorder';
-import FavoriteTwoToneIcon from '@material-ui/icons/FavoriteTwoTone';
-import ReportIcon from '@material-ui/icons/Report';
+// import ListItemIcon from '@material-ui/core/ListItemIcon';
+// import ListItem from '@material-ui/core/ListItem';
+// import MoreVertIcon from '@material-ui/icons/MoreVert';
+// import MenuItem from '@material-ui/core/MenuItem';
+// import Menu from '@material-ui/core/Menu';
+// import ReportIcon from '@material-ui/icons/Report';
 import EditIcon from '@material-ui/icons/Edit';
-import Grid from '@material-ui/core/Grid';
-import Divider from '@material-ui/core/Divider';
 import { GET_POST_QUERY } from '../../utils/graphql';
 import produce from "immer";
 
@@ -100,9 +91,8 @@ export const PostCard = props => {
   
   const [postLikeCount, setPostLikeCount] = useState(props.post.likeList.length)
   const [likePost, setLikePost] = useState(didUserLikePost(props.post.likeList))
-  const [openPostMenu, setOpenPostMenu] = useState(false)
-
-  // This is for if we want to have a report button
+  // TODO This is for if we want to have a report button
+  // const [openPostMenu, setOpenPostMenu] = useState(false)
   // const postButtonRef = useRef()
 
   const LIKE_POST_MUTATION = gql`

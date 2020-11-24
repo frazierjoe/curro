@@ -1,5 +1,4 @@
-import React, { useContext } from 'react';
-import { AuthContext } from '../../auth';
+import React from 'react';
 import { useQuery, gql } from '@apollo/client';
 import { TeamCard } from './TeamCard';
 import { makeStyles } from '@material-ui/core/styles';
@@ -9,11 +8,10 @@ import Grid from '@material-ui/core/Grid';
 export const Team = (props) => {
   const useStyles = makeStyles((theme) => ({
     root: {
-      margin: '32px',
+      overflow: 'hidden',
     },
   }));
 
-  const { user } = useContext(AuthContext)
   const { teamid } = props.match.params
 
   const TEAM_QUERY = gql`
@@ -35,7 +33,7 @@ export const Team = (props) => {
   const classes = useStyles();
 
   return (
-    <div style={{overflow: 'hidden'}}>
+    <div className={classes.root}>
       <Grid container spacing={1}>
         <Grid item xs={12} sm={6} lg={4}>
           <TeamCard loading={loading} error={error} data={data}/>

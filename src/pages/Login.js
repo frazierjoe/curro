@@ -19,7 +19,7 @@ import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
-import Link from '@material-ui/core/Link';
+// import Link from '@material-ui/core/Link';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
 
@@ -166,9 +166,9 @@ const [signinUserMutation, {loading }] = useMutation(SIGNIN_USER_MUTATION, {
     history.push('createAccount')
   }
 
-  const forgotPassword = () => {
-    console.log("TODO API call to forgot password")
-  }
+  // const forgotPassword = () => {
+  //   console.log("TODO API call to forgot password")
+  // }
 
   return (
     <div>

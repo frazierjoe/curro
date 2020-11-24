@@ -1,6 +1,6 @@
 import React, { useState }  from 'react';
 import { AllCaughtUp } from '../components/Post/AllCaughtUp'
-import { useQuery, gql } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import { Waypoint } from 'react-waypoint';
 import { NewActivityModal } from '../components/NewActivityModal';
 import { makeStyles } from '@material-ui/core/styles';
@@ -10,7 +10,6 @@ import ListItem from '@material-ui/core/ListItem';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import AddIcon from '@material-ui/icons/Add';
 import Fab from '@material-ui/core/Fab';
-import Hidden from '@material-ui/core/Hidden';
 import { GET_POST_QUERY } from '../utils/graphql';
 
 const useStyles = makeStyles((theme) => ({

@@ -1,22 +1,17 @@
 import React, { useState, useRef } from 'react';
 import { useLazyQuery, gql } from '@apollo/client';
-import { Footer } from '../../components/Footer';
 import { makeStyles } from '@material-ui/core/styles';
 import Hidden from '@material-ui/core/Hidden';
-import Paper from '@material-ui/core/Paper';
 import InputBase from '@material-ui/core/InputBase';
-import Divider from '@material-ui/core/Divider';
 import Box from '@material-ui/core/Box';
 import IconButton from '@material-ui/core/IconButton';
 import SearchIcon from '@material-ui/icons/Search';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
-import Pagination from '@material-ui/lab/Pagination';
 import List from '@material-ui/core/List';
 import { UserSearchTile } from './UserSearchTile';
 import { TeamSearchTile } from './TeamSearchTile';
-import Collapse from '@material-ui/core/Collapse';
 import { NoResults } from './NoResults';
 
 
@@ -129,7 +124,6 @@ export const SearchBar = (props) => {
     // Make sure there is always a filter selected
     if(newFilters){
       setFilters(newFilters);
-      console.log("filter swapped + "+searchQuery)
       submitSearch(searchQuery, newFilters === "Users")
     }
   };
@@ -137,7 +131,6 @@ export const SearchBar = (props) => {
 
   const handleSearch = (event) => {
     const searchString = String(event.target.value)
-    console.log("handle s: "+searchString)
     setSearchQuery(searchString);
     if(!validSearch && searchString.length >= 1){
       setValidSearch(true)
@@ -177,13 +170,10 @@ export const SearchBar = (props) => {
         search: searchString
       }
     }
-    console.log(searchString)
     if(searchString){
       if(userSearch){
-        console.log("user")
         searchUserQuery(searchInput)
       } else {
-        console.log("team")
         searchTeamQuery(searchInput)
       }
     }

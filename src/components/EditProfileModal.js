@@ -6,7 +6,7 @@ import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Toolbar from '@material-ui/core/Toolbar';
-import { useMutation, gql } from '@apollo/client';
+import { useMutation } from '@apollo/client';
 import { UPDATE_USER_MUTATION } from "../utils/graphql";
 
 
@@ -55,10 +55,11 @@ const useStyles = makeStyles((theme) => ({
 var _isMounted = false;
 export const EditProfileModal = (props) => {
   
-  const [updateUserMutation, { loading, error, data }] = useMutation(UPDATE_USER_MUTATION, {
+  const [updateUserMutation, { loading }] = useMutation(UPDATE_USER_MUTATION, {
     update(_, { data: { updateUser: user } }) {
       console.log(user)
       props.handleClose();
+      window.location.reload(true);
 
     },
     onError(error) {
@@ -112,7 +113,6 @@ export const EditProfileModal = (props) => {
       console.log(userInput)
       updateUserMutation({ variables: userInput })
       _isMounted = false
-      // window.location.reload(true);
     }
   }
   const cancel = () => {

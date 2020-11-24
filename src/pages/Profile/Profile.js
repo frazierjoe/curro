@@ -1,23 +1,22 @@
 import React, { useContext } from 'react';
 import { AuthContext } from '../../auth';
-import { useQuery, gql } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import { ProfileCard } from './ProfileCard';
 import { EquipmentCard } from './EquipmentCard';
 import { TeamListCard } from './TeamListCard';
 import { makeStyles } from '@material-ui/core/styles';
-import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
 import EditEquipmentModal from '../../components/EditEquipmentModal';
 import { CreateEquipmentModal } from '../../components/CreateEquipmentModal';
 import { ME_QUERY, USER_QUERY } from '../../utils/graphql';
 import { CreateTeamModal } from '../../components/CreateTeamModal';
-import UserStats from './Stats/UserStats';
+// import UserStats from './Stats/UserStats';
 
 
 export const Profile = (props) => {
   const useStyles = makeStyles((theme) => ({
     root: {
-      margin: '32px',
+      overflow: 'hidden',
     },
   }));
 
@@ -63,7 +62,7 @@ export const Profile = (props) => {
   const classes = useStyles();
   const { history } = props;
   return (
-    <div style={{overflow: 'hidden'}}>
+    <div className={classes.root}>
       <Grid container spacing={1}>
         <Grid item xs={12} sm={6} lg={4}>
           <Grid item xs={12}>
@@ -75,6 +74,8 @@ export const Profile = (props) => {
               data={data}
               loading={loading}
               error={error}
+              createTeamData={createTeamData}
+              setCreateTeamData={setCreateTeamData}
               setOpenTeamModal={setOpenEquipmentModal} 
               setEditEquipmentData={setEditEquipmentData} 
               setOpenCreateTeamModal={setOpenCreateTeamModal}
@@ -110,10 +111,59 @@ export const Profile = (props) => {
             />
           </Grid>
         </Grid>
-        {/* <Grid item>
-          <UserStats/>
-        </Grid> */}
       </Grid>
+      {/* TODO This will look better for the profile with user stats
+      Comment out above and uncomment this when user stats are dynamic for both mobile and desktop */}
+      {/* <Grid container spacing={1}>
+        <Grid item xs={12} sm={4} lg={4}>
+          <Grid item xs={12}>
+            <ProfileCard loading={loading} error={error} data={data} me={me}/>
+          </Grid>
+          <Grid item xs={12}>
+            <TeamListCard 
+              me={me}
+              data={data}
+              loading={loading}
+              error={error}
+              setOpenTeamModal={setOpenEquipmentModal} 
+              setEditEquipmentData={setEditEquipmentData} 
+              setOpenCreateTeamModal={setOpenCreateTeamModal}
+              history={history}
+            />
+          </Grid>
+          <Grid item xs={12}>
+          <EquipmentCard 
+            me={me}
+            type="SHOE" 
+            data={data}
+            loading={loading}
+            error={error}
+            setOpenEquipmentModal={setOpenEquipmentModal} 
+            setEditEquipmentData={setEditEquipmentData} 
+            setOpenCreateEquipmentModal={setOpenCreateEquipmentModal} 
+            setCreateEquipmentType={setCreateEquipmentType}
+          />
+          </Grid>
+          <Grid item xs={12}>
+            <EquipmentCard 
+              me={me}
+              type="BIKE" 
+              data={data}
+              loading={loading}
+              error={error}
+              setOpenEquipmentModal={setOpenEquipmentModal} 
+              setEditEquipmentData={setEditEquipmentData} 
+              setOpenCreateEquipmentModal={setOpenCreateEquipmentModal} 
+              setCreateEquipmentType={setCreateEquipmentType}
+            />
+          </Grid>
+        </Grid>
+        <Grid item xs={12} sm={8} lg={8}>
+          <Grid item xs={12}>
+            <UserStats/>
+          </Grid>
+        </Grid>
+      </Grid> */}
       {me && <EditEquipmentModal data={editEquipmentData} openModal={openEquipmentModal} handleClose={() => setOpenEquipmentModal(false)}/>}
       {me && <CreateEquipmentModal type={createEquipmentType} openModal={openCreateEquipmentModal} handleClose={() => setOpenCreateEquipmentModal(false)}/>}
       {me && <CreateTeamModal openModal={openCreateTeamModal} handleClose={() => setOpenCreateTeamModal(false)}/>}
