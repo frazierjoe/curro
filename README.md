@@ -13,6 +13,6 @@ Run Create React App
 
 ## Architecture
 <p>
-  <img align="center" src="diagrams/architecture.png" height="400">
+  <img align="center" src="diagrams/architecture.png" height="600">
 </p>
 <br>
