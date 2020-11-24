@@ -67,7 +67,7 @@ const Header = props => {
       flexGrow: 1,
     },
     loginButton: {
-      color: 'white',
+      
     },
     homeButton: {
       color: 'white',
