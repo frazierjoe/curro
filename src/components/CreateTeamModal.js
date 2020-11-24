@@ -6,12 +6,7 @@ import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Toolbar from '@material-ui/core/Toolbar';
-import { useMutation, gql } from '@apollo/client';
-import Select from '@material-ui/core/Select';
-import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
-import FormControl from '@material-ui/core/FormControl';
-import Grid from '@material-ui/core/Grid';
+import { useMutation } from '@apollo/client';
 import { CREATE_TEAM_MUTATION, ME_QUERY } from '../utils/graphql';
 
 
@@ -60,10 +55,8 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 export const CreateTeamModal = (props) => {
-  const [createTeamMutation, { loading, error, data }] = useMutation(CREATE_TEAM_MUTATION, {
+  const [createTeamMutation, { loading }] = useMutation(CREATE_TEAM_MUTATION, {
     update(store, { data: { createTeam } }) {
-    //   console.log("Before")
-      // console.log(data)
       const data = store.readQuery({
         query: ME_QUERY
       })

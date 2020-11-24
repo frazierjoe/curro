@@ -3,18 +3,12 @@ import { AuthContext } from '../../auth';
 import { useMutation, gql } from '@apollo/client';
 import { LikeButton } from './LikeButton';
 import { makeStyles } from '@material-ui/core/styles';
-import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
-import Divider from '@material-ui/core/Divider';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import Avatar from '@material-ui/core/Avatar';
 import Typography from '@material-ui/core/Typography';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
-import IconButton from '@material-ui/core/IconButton';
-import Favorite from '@material-ui/icons/Favorite';
-import FavoriteBorder from '@material-ui/icons/FavoriteBorder';
-import FavoriteTwoToneIcon from '@material-ui/icons/FavoriteTwoTone';
 import { GET_POST_QUERY } from '../../utils/graphql';
 import produce from "immer";
 
@@ -168,8 +162,6 @@ export const Comment = props => {
         
       />
       <Typography component="span" variant="body2" color="textPrimary" style={{marginTop: 6}}>{formatDate(props.comment.createdAt)}</Typography>
-
-
       <ListItemSecondaryAction className={classes.likeCommentSection}>
         <LikeButton likeCount={commentLikeCount} isLiked={likeComment} handleLike={handleLike} loading={likeLoading}/>
       </ListItemSecondaryAction>

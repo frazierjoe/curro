@@ -7,7 +7,6 @@ import CardContent from '@material-ui/core/CardContent';
 import CardHeader from '@material-ui/core/CardHeader';
 import Avatar from '@material-ui/core/Avatar';
 import Box from '@material-ui/core/Box';
-import Button from '@material-ui/core/Button';
 
 
 export const TeamCard = props => {
@@ -40,7 +39,8 @@ export const TeamCard = props => {
   }));
 
   const [joined, setJoined] = useState(false);
-  const [requestPending, setRequestPending] = useState(false);
+  // TODO for when we hook up requests
+  // const [requestPending, setRequestPending] = useState(false);
 
   const formatDate = (createdAt) => {
     var options = { year: 'numeric', month: 'long', day: 'numeric' };

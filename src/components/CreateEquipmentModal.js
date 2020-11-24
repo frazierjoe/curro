@@ -6,7 +6,7 @@ import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Toolbar from '@material-ui/core/Toolbar';
-import { useMutation, gql } from '@apollo/client';
+import { useMutation } from '@apollo/client';
 import Select from '@material-ui/core/Select';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -61,7 +61,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 export const CreateEquipmentModal = (props) => {
 
-  const [createEquipmentMutation, { loading, error, data }] = useMutation(CREATE_EQUIPMENT_MUTATION, {
+  const [createEquipmentMutation, { loading }] = useMutation(CREATE_EQUIPMENT_MUTATION, {
     update(store, { data: { createEquipment } }) {
       console.log("Before")
       const data = store.readQuery({
@@ -134,13 +134,13 @@ export const CreateEquipmentModal = (props) => {
   }
 
   const handleChange = (prop) => (event) => {
-    if (prop == "limitValue") {
+    if (prop === "limitValue") {
       setState({ ...state, limit: {
         value: String(event.target.value),
         unit: state.limit.unit
       }});
     }
-    else if (prop == "unit") {
+    else if (prop === "unit") {
       setState({ ...state, 
         limit: {
           value: state.limit.value,
