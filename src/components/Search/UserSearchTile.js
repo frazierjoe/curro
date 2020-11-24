@@ -5,6 +5,9 @@ import ListItemText from '@material-ui/core/ListItemText';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import Avatar from '@material-ui/core/Avatar';
 import Typography from '@material-ui/core/Typography';
+import Box from '@material-ui/core/Box';
+import LinesEllipsis from 'react-lines-ellipsis'
+
 
 const useStyles = makeStyles((theme) => ({
   inline: {
@@ -12,18 +15,15 @@ const useStyles = makeStyles((theme) => ({
   },
   resultItem: {
     backgroundColor: "#ffffff",
-  }, 
-  profilePicture: {
     cursor: 'pointer',
-  },
-  profileClick: {
-    cursor: 'pointer',
-    userSelect: 'none',
     "&:hover": {
-      textDecoration: 'underline',
-      color: theme.palette.secondary.main,
+      backgroundColor: '#fafafa',
     },
-  }
+    minHeight: 94,
+    [theme.breakpoints.down('sm')]: {
+      minHeight: 112
+    },
+  }, 
 }));
 
 
@@ -41,12 +41,12 @@ export const UserSearchTile = (props) => {
   const classes = useStyles();
 
   return (
-    <ListItem alignItems="flex-start" className={classes.resultItem} divider>
+    <ListItem alignItems="flex-start" className={classes.resultItem} onClick={navigateToUserProfile} divider>
         <ListItemAvatar>
-          <Avatar alt="Profile Picture" src={props.user.profilePictureURL} className={classes.profilePicture} onClick={navigateToUserProfile}/>
+          <Avatar alt="Profile Picture" src={props.user.profilePictureURL}/>
         </ListItemAvatar>
         <ListItemText
-          primary={<span className={classes.profileClick} onClick={navigateToUserProfile}>{props.user.first + ' ' + props.user.last}</span>}
+          primary={props.user.first + ' ' + props.user.last}
           secondary={
             <React.Fragment>
               <Typography
@@ -55,9 +55,9 @@ export const UserSearchTile = (props) => {
                 className={classes.inline}
                 color="textPrimary"
               >
-                <span className={classes.profileClick} onClick={navigateToUserProfile}>{props.user.username}</span>
+                {props.user.username}
               </Typography>
-              {props.user.bio && (" — " + props.user.bio)}
+                {props.user.bio && (" — " + props.user.bio)}
             </React.Fragment>
           }
         />

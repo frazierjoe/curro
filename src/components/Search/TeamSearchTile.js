@@ -12,18 +12,15 @@ const useStyles = makeStyles((theme) => ({
   },
   resultItem: {
     backgroundColor: "#ffffff",
-  }, 
-  profilePicture: {
     cursor: 'pointer',
-  },
-  profileClick: {
-    cursor: 'pointer',
-    userSelect: 'none',
     "&:hover": {
-      textDecoration: 'underline',
-      color: theme.palette.secondary.main,
+      backgroundColor: '#fafafa',
     },
-  }
+    minHeight: 94,
+    [theme.breakpoints.down('sm')]: {
+      minHeight: 112
+    },
+  }, 
 }));
 
 export const TeamSearchTile = (props) => {
@@ -40,18 +37,16 @@ export const TeamSearchTile = (props) => {
   const classes = useStyles();
 
   return (
-    <ListItem alignItems="flex-start" className={classes.resultItem} divider>
+    <ListItem alignItems="flex-start" onClick={navigateToTeamProfile} className={classes.resultItem} divider>
         <ListItemAvatar>
           <Avatar 
             variant="square" 
             alt="Team Logo" 
             src={props.team.profilePictureURL} 
-            className={classes.profilePicture} 
-            onClick={navigateToTeamProfile}
           />
         </ListItemAvatar>
         <ListItemText
-          primary={<span className={classes.profileClick} onClick={navigateToTeamProfile}>{props.team.name}</span>}
+          primary={props.team.name}
           secondary={
             <React.Fragment>
               <Typography
