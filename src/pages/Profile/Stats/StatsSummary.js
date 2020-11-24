@@ -9,14 +9,29 @@ const StatsSummary = ({ leadingDate, durationDataPoints, DAYS_TO_DISPLAY, ALLOWE
     let totalTimeMap = accumulateActivityMap(inRangePointsMap);
     console.log('totalTime :>> ', totalTime);
     console.log('totalTimeMap :>> ', totalTimeMap);
+
+    let individualActivityTime = [];
+    for (const activityEnum in totalTimeMap) {
+        individualActivityTime.push((<div key={`stats-summary-${activityEnum}-${totalTimeMap[activityEnum]}`}>
+            {`${activityEnum}: ${totalTimeMap[activityEnum]}`}
+        </div>));
+    }
+
+    console.log('leadingDate :>> ', leadingDate);
+    let endDate = startOfDay(leadingDate);
+    let beginningDate = subDays(endDate, DAYS_TO_DISPLAY - 1);
     return (
         <div>
-            Total Time: {totalTime}
+            <div>
+                Total Activity Time from {beginningDate.toLocaleDateString(undefined, {month: 'numeric', day: 'numeric'})} to {endDate.toLocaleDateString(undefined, {month: 'numeric', day: 'numeric'})}: {totalTime} min
+            </div>
+            {individualActivityTime}
         </div>
     );
 }
 
 export default StatsSummary;
+
 
 // Returns an object of enum: {x: date, y: minutes}
 function extractActivitiesWithinRange(durationDataPoints, leadingDate, DAYS_TO_DISPLAY, ALLOWED_ACTIVITIES) {

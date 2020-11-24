@@ -9,28 +9,16 @@ import MuiAlert from '@material-ui/lab/Alert';
 import ErrorSnackbar from './ErrorSnackbar';
 
 const useStyles = makeStyles((theme) => ({
-    root: {
-        margin: '32px',
-        display: "flex",
-        justifyContent: "center",
-        flexDirection: "column"
-    },
-    profileWrapper: {
-        maxWidth: '1080px',
-        display: "flex",
-        alignItems: "center",
-        flexDirection: "column"
-    },
     spinnerWrapper: {
         display: 'flex',
         justifyContent: 'center',
         alignContent: 'center',
         height: '100%'
     }
-
 }));
 
-
+// Hm... Hardcoded Activities will cause issues if we ever change our enum
+const ALLOWED_ACTIVITIES = ['RUN', 'BIKE', 'SWIM', 'SLEEP', 'CLIMB', 'ALTERG', 'YOGA', 'AQUA_JOG' ,'HIKE'];
 
 // API Calls
 const GET_ALL_ACTIVITIES = gql`
@@ -67,8 +55,8 @@ const GET_ALL_ACTIVITIES = gql`
 
 const UserStats = () => {
     const classes = useStyles();
-    const [activity, setActivity] = React.useState('');
-
+    const [activity, setActivity] = React.useState('ALL');
+    const [mode, setMode] = useState('DURATION');
     const { data, loading, error } = useQuery(GET_ALL_ACTIVITIES);
 
     if (error) {
@@ -83,7 +71,6 @@ const UserStats = () => {
         )
     }
 
-
     if (!loading) {
         console.log('data :>> ', data);
     }
@@ -94,18 +81,13 @@ const UserStats = () => {
                 title="Stats"
             />
             <CardContent>
-                <UserStatsActivitySelect activity={activity} setActivity={setActivity} />
-                
+                <UserStatsActivitySelect mode={mode} setMode={setMode} activity={activity} setActivity={setActivity} ALLOWED_ACTIVITIES={ALLOWED_ACTIVITIES}/>
                 {loading ? 
-                (
-                    <div className={classes.spinnerWrapper}>
+                    (<div className={classes.spinnerWrapper}>
                         <CircularProgress color="primary" />
-                    </div>
-                )
-                : <UserStatsChartWrapper postList={data.me.postList} />
+                    </div>)
+                    : <UserStatsChartWrapper mode={mode} setMode={setMode} activity={activity} postList={data.me.postList} ALLOWED_ACTIVITIES={ALLOWED_ACTIVITIES}/>
                 }
-
-
             </CardContent>
         </Card>
     );

@@ -5,9 +5,6 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 
-const ALLOWED_ACTIVITIES = ['RUN', 'BIKE', 'SWIM', 'SLEEP', 'CLIMB', 'ALTERG', 'YOGA', 'AQUA_JOG' ,'HIKE'];
-
-
 const useStyles = makeStyles((theme) => ({
   formControl: {
     margin: theme.spacing(1),
@@ -18,18 +15,20 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function UserStatsActivitySelect({activity, setActivity}) {
+export default function UserStatsActivitySelect({activity, setActivity, mode, setMode, ALLOWED_ACTIVITIES}) {
   const classes = useStyles();
 
   const handleChange = (event) => {
     setActivity(event.target.value);
+    setMode('DURATION');
   };
 
   let activityOptions = ALLOWED_ACTIVITIES.map(activityEnum => {
     return (
         <MenuItem value={activityEnum} key={`-activityOption${activityEnum}`}>{activityEnum}</MenuItem>
     )
-  })
+  });
+  activityOptions.unshift(<MenuItem value={'ALL'}>ALL</MenuItem>);
 
   return (
     <div>

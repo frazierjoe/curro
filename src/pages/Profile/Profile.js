@@ -11,6 +11,7 @@ import EditEquipmentModal from '../../components/EditEquipmentModal';
 import { CreateEquipmentModal } from '../../components/CreateEquipmentModal';
 import { ME_QUERY, USER_QUERY } from '../../utils/graphql';
 import { CreateTeamModal } from '../../components/CreateTeamModal';
+import UserStats from './Stats/UserStats';
 
 
 export const Profile = (props) => {
@@ -58,7 +59,6 @@ export const Profile = (props) => {
   const [createEquipmentType, setCreateEquipmentType] = React.useState("");
 
   const { loading, error, data } = useQuery(me ? ME_QUERY : USER_QUERY, {variables: {id: userid}});
-
 
   const classes = useStyles();
   const { history } = props;
@@ -111,6 +111,7 @@ export const Profile = (props) => {
             />
           </Grid>
         </Grid>
+        <UserStats/>
       </Grid>
       {me && <EditEquipmentModal data={editEquipmentData} openModal={openEquipmentModal} handleClose={() => setOpenEquipmentModal(false)}/>}
       {me && <CreateEquipmentModal type={createEquipmentType} openModal={openCreateEquipmentModal} handleClose={() => setOpenCreateEquipmentModal(false)}/>}

@@ -13,9 +13,11 @@ const colorMap = {
     'AQUA_JOG': 'blue',
     'HIKE': 'pink'
 }
-const Legend = () => {
+
+// Takes in a list of activityEnums
+const Legend = ({activities}) => {
     let legendItems = [];
-    ALLOWED_ACTIVITIES.forEach(activityEnum => {
+    activities.forEach(activityEnum => {
         let entry = {
             title: activityEnum,
             color: colorMap[activityEnum],
@@ -25,7 +27,7 @@ const Legend = () => {
     });
 
     return (
-        <DiscreteColorLegend width={300} height={200} items={legendItems}/>
+        <DiscreteColorLegend width={300} items={legendItems}/>
     );
 }
  
