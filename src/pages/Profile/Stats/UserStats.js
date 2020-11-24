@@ -9,6 +9,9 @@ import MuiAlert from '@material-ui/lab/Alert';
 import ErrorSnackbar from './ErrorSnackbar';
 
 const useStyles = makeStyles((theme) => ({
+    card: {
+        margin: '16px'
+    },
     spinnerWrapper: {
         display: 'flex',
         justifyContent: 'center',
@@ -76,7 +79,7 @@ const UserStats = () => {
     }
 
     return (
-        <Card>
+        <Card className={classes.card}>
             <CardHeader
                 title="Stats"
             />

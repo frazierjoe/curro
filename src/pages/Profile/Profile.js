@@ -111,7 +111,9 @@ export const Profile = (props) => {
             />
           </Grid>
         </Grid>
-        <UserStats/>
+        <Grid item>
+          <UserStats/>
+        </Grid>
       </Grid>
       {me && <EditEquipmentModal data={editEquipmentData} openModal={openEquipmentModal} handleClose={() => setOpenEquipmentModal(false)}/>}
       {me && <CreateEquipmentModal type={createEquipmentType} openModal={openCreateEquipmentModal} handleClose={() => setOpenCreateEquipmentModal(false)}/>}

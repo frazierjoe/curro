@@ -188,11 +188,11 @@ const SingleActivityStats = ({
                 {verticalBarComponent}
             </XYPlot>
             <Legend activities={[activity]} />
-            <div>
+            <h3>
                 {beginningDate.toLocaleDateString(undefined, {month: 'numeric', day: 'numeric'})} to {endDate.toLocaleDateString(undefined, {month: 'numeric', day: 'numeric'})}:
-            </div>
+            </h3>
             <div>
-                {Math.floor(sum)}
+                Total: {Math.floor(sum)}
             </div>
         </div>
     );

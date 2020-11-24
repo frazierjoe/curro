@@ -111,7 +111,7 @@ const AllActivityStackedBarChart = ({ durationDataPoints, leadingDate, DAYS_TO_D
 
             </XYPlot>
             <Legend activities={ALLOWED_ACTIVITIES}/>
-
+            <hr></hr>
             {durationDataPoints ?
                 <StatsSummary
                     leadingDate={leadingDate}

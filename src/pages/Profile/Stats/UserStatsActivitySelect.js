@@ -28,7 +28,7 @@ export default function UserStatsActivitySelect({activity, setActivity, mode, se
         <MenuItem value={activityEnum} key={`-activityOption${activityEnum}`}>{activityEnum}</MenuItem>
     )
   });
-  activityOptions.unshift(<MenuItem value={'ALL'}>ALL</MenuItem>);
+  activityOptions.unshift(<MenuItem value={'ALL'} key={'activity-select-unique'}>ALL</MenuItem>);
 
   return (
     <div>

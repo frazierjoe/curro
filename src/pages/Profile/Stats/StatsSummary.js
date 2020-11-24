@@ -22,9 +22,10 @@ const StatsSummary = ({ leadingDate, durationDataPoints, DAYS_TO_DISPLAY, ALLOWE
     let beginningDate = subDays(endDate, DAYS_TO_DISPLAY - 1);
     return (
         <div>
-            <div>
-                Total Activity Time from {beginningDate.toLocaleDateString(undefined, {month: 'numeric', day: 'numeric'})} to {endDate.toLocaleDateString(undefined, {month: 'numeric', day: 'numeric'})}: {totalTime} min
-            </div>
+            <h3>
+                {beginningDate.toLocaleDateString(undefined, {month: 'numeric', day: 'numeric'})} to {endDate.toLocaleDateString(undefined, {month: 'numeric', day: 'numeric'})}
+            </h3>
+            <div>Total Activity Time: {totalTime} min</div>
             {individualActivityTime}
         </div>
     );
