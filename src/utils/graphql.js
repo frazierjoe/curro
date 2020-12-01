@@ -170,7 +170,6 @@ export const UPDATE_USER_MUTATION = gql`
   mutation updateUser($input: UpdateUserInput!) {
         updateUser(input: $input) {
           ...ProfileData
-          
         }
       }
       ${PROFILE_FRAGMENT}

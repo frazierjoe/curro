@@ -48,7 +48,6 @@ export const CreateAccount = props => {
     confirm: '',
     confirmError: false,
     confirmErrorMessage: '',
-    showConfirm: false,
     errorMessage: ''
   });
 
@@ -69,10 +68,6 @@ export const CreateAccount = props => {
 
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
-  };
-
-  const handleClickShowConfirm = () => {
-    setValues({ ...values, showConfirm: !values.showConfirm });
   };
 
   const handleMouseDownConfirm = (event) => {
@@ -322,7 +317,7 @@ export const CreateAccount = props => {
                 <InputLabel htmlFor="create-confirm">Confirm Password</InputLabel>
                 <OutlinedInput
                   id="create-confirm"
-                  type={values.showConfirm ? 'text' : 'password'}
+                  type={values.showPassword ? 'text' : 'password'}
                   value={values.confirm}
                   label="Confirm Password"
                   variant="outlined"
@@ -331,11 +326,11 @@ export const CreateAccount = props => {
                     <InputAdornment position="end">
                       <IconButton
                         aria-label="toggle password visibility"
-                        onClick={handleClickShowConfirm}
+                        onClick={handleClickShowPassword}
                         onMouseDown={handleMouseDownConfirm}
                         edge="end"
                       >
-                        {values.showConfirm ? <Visibility /> : <VisibilityOff />}
+                        {values.showPassword ? <Visibility /> : <VisibilityOff />}
                       </IconButton>
                     </InputAdornment>
                   }

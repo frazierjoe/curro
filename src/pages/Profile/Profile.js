@@ -42,9 +42,8 @@ export const Profile = (props) => {
   const { userid } = props.match.params
   var me = false
   if(userid && user.id !== userid){
-    console.log(userid)
+    me = false
   } else {
-    console.log("me")
     me = true
   }
   

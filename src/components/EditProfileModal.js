@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
+import { ImagePicker } from './Form/ImagePicker';
 import Modal from '@material-ui/core/Modal';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
@@ -13,6 +14,7 @@ import { UPDATE_USER_MUTATION } from "../utils/graphql";
 const useStyles = makeStyles((theme) => ({
   modal: {
     top: 48,
+    overflow: 'hidden'
   },
   paper: {
     position: 'absolute',
@@ -51,10 +53,18 @@ const useStyles = makeStyles((theme) => ({
       },
     },
   },
+  or: {
+    textAlign: 'center',
+    display: 'block',
+    paddingTop: 4,
+    marginBottom: -16,
+  }
 }));
 var _isMounted = false;
 export const EditProfileModal = (props) => {
-  
+
+  const [file, setFile] = useState(null);
+
   const [updateUserMutation, { loading }] = useMutation(UPDATE_USER_MUTATION, {
     update(_, { data: { updateUser: user } }) {
       console.log(user)
@@ -85,6 +95,7 @@ export const EditProfileModal = (props) => {
       last: props.data.me.last,
       username: props.data.me.username,
       email: props.data.me.email,
+      file: file,
       bio: props.data.me.bio,
       profilePictureURL: props.data.me.profilePictureURL
     });
@@ -105,7 +116,8 @@ export const EditProfileModal = (props) => {
           last: state.last,
           username: state.username,
           bio: state.bio,
-          profilePictureURL: state.profilePictureURL,
+          file: {file},
+          profilePictureURL: file ? '' : state.profilePictureURL,
           private: false,
         }
 
@@ -143,15 +155,15 @@ export const EditProfileModal = (props) => {
         </Button>
       </Toolbar>
       <form onSubmit={save}>
-        <TextField required id="standard-basic" fullWidth className={classes.textField} value={state.first} onChange={handleChange('first')} label="First Name"
+        <TextField required fullWidth className={classes.textField} value={state.first} onChange={handleChange('first')} label="First Name"
           error={state.first.length <= 0}
           helperText={state.first.length <= 0 ? 'First Name Required' : ' '}
         />
-        <TextField required id="standard-basic" fullWidth className={classes.textField} value={state.last} onChange={handleChange('last')} label="Last Name"
+        <TextField required fullWidth className={classes.textField} value={state.last} onChange={handleChange('last')} label="Last Name"
           error={state.last.length <= 0}
           helperText={state.last.length <= 0 ? 'Last Name Required' : ' '}
         />
-        <TextField required id="standard-basic" fullWidth className={classes.textField} value={state.username} onChange={handleChange('username')} label="Username"
+        <TextField required fullWidth className={classes.textField} value={state.username} onChange={handleChange('username')} label="Username"
           error={state.username.length <= 0}
           helperText={state.username.length <= 0 ? 'Username Required' : ' '}
         />
@@ -159,27 +171,34 @@ export const EditProfileModal = (props) => {
           error={!emailRegex.test(state.email)}
           helperText={!emailRegex.test(state.email) ? 'Invalid Email' : ' '}
         /> */}
-        <TextField id="standard-basic" fullWidth className={classes.textField} value={state.profilePictureURL} onChange={handleChange('profilePictureURL')} label="Profile Picture URL" 
+        <Typography variant="body2" color='textSecondary'>Profile Image</Typography>
+        <ImagePicker 
+          fileToUpload={file} 
+          setFileToUpload={setFile} 
+          onSuccess={() => setState({...state, profilePictureURL: ''})} 
+          rounded={true}
+        />
+        <Typography variant="h6" className={classes.or}>OR</Typography>
+        <TextField fullWidth className={classes.textField} value={state.profilePictureURL} onChange={handleChange('profilePictureURL')} label="Profile Picture URL" 
           helperText={' '}
         />
-        <TextField id="standard-basic" variant="outlined" fullWidth className={classes.textField} value={state.bio} multiline={true} rowsMax={5} rows={3} onChange={handleChange('bio')} label="Bio" />
+        <TextField variant="outlined" fullWidth className={classes.textField} value={state.bio} multiline={true} rowsMax={5} rows={3} onChange={handleChange('bio')} label="Bio" />
       </form>
     </div>
   );
 
   return (
-    <div>
-      <Modal
-        style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-        className={classes.modal}
-        open={props.openModal}
-        onClose={props.handleClose}
-        disableBackdropClick
-        aria-labelledby="simple-modal-tditle"
-        aria-describedby="simple-modal-description"
-      >
-        {body}
-      </Modal>
-    </div>
+    <Modal
+      style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+      className={classes.modal}
+      open={props.openModal}
+      onClose={props.handleClose}
+      disableBackdropClick
+      aria-labelledby="simple-modal-tditle"
+      aria-describedby="simple-modal-description"
+    >
+      {body}
+    </Modal>
+   
   );
 }
