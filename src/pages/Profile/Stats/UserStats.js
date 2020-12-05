@@ -9,6 +9,7 @@ import { useEffect } from 'react';
 import { ACTIVITY_MAP } from './ActivityConstants';
 import { startOfDay } from 'date-fns';
 import CumulativeBarChart from './CumulativeBarChart';
+import SingleBarChart from './SingleBarChart';
 
 
 // Not the time for pagination. I need access to all posts they've ever made. Move this stuff to calendar though.
@@ -228,15 +229,17 @@ const UserStats = ({ userid }) => {
     );
     console.log('Stats data :>> ', data);
 
-
     return (
         <>
             <Grid item xs={12} lg={6}>
-                <BasicLayout title={'Activity History'}>
+                <BasicLayout title={'Combined Activity History'}>
                     {activityDataMap && <CumulativeBarChart activityDataMap={activityDataMap} />}
                 </BasicLayout>
-
+                <BasicLayout title={'Single Activity History'}>
+                    {activityDataMap && <SingleBarChart activityDataMap={activityDataMap} />}
+                </BasicLayout>
             </Grid>
+
             <Grid item xs={12} lg={6}>
                 <BasicLayout title={'Numbers'}>
                     {activityDataMap &&
@@ -245,7 +248,6 @@ const UserStats = ({ userid }) => {
                             activityDataMap={activityDataMap}
                         />}
                 </BasicLayout>
-
             </Grid>
         </>
     );

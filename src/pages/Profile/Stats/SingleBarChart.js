@@ -6,6 +6,7 @@ import { addDays, endOfDay, startOfDay, subDays } from 'date-fns/esm';
 import React, { useEffect, useState } from 'react';
 import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { ACTIVITY_MAP } from './ActivityConstants';
+import SingleActivityHistorySelect from './SingleActivityHistorySelect';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -132,12 +133,13 @@ function isInDateRange(date, earlierDate, laterDate) {
     return (earlierDate.getTime() <= date.getTime()) && (date.getTime() <= laterDate.getTime());
 }
 
-const CumulativeBarChart = ({ activityDataMap }) => {
+const SingleBarChart = ({ activityDataMap }) => {
     const classes = useStyles();
     const [durationData, setDurationData] = useState(null);
     const [distanceData, setDistanceData] = useState(null);
     const [leadingDate, setLeadingDate] = useState(new Date());
     const [numDaysToDisplay, setNumDaysToDisplay] = useState(14);
+    const [displayedActivity, setDisplayedActivity] = useState('RUN');
     const [mode, setMode] = useState("DURATION");
 
     // Don't process data every render. Only do it when we need to.
@@ -148,8 +150,40 @@ const CumulativeBarChart = ({ activityDataMap }) => {
         setDistanceData(newDistanceData);
     }, [activityDataMap, leadingDate, numDaysToDisplay])
 
+    function metersToUnit(meters, unitInput) {
+        let unit = unitInput.toUpperCase();
+        let value = meters;
+        switch (unit) {
+            case 'KM':
+                value /= 1000;
+                break;
+
+            case 'YDS':
+                value *= .9144;
+                break;
+
+            case 'MI':
+                value *= .000621371;
+                break;
+
+            case 'M':
+                break;
+
+            default:
+                console.error("Unrecognized unit type: ", unit);
+                break;
+        }
+        return value;
+    }
+    const formatDistanceToolTip = (value, name, props) => {
+        return metersToUnit(value, defaultUnit).toFixed(1);
+    }
+
     const formatYAxis = (tickItem) => {
         return Math.round(tickItem / 1000 / 60);
+    }
+    const formatDistanceYAxis = (tickItem) => {
+        return Math.round(metersToUnit(tickItem, defaultUnit));
     }
     const formatToolTip = (value, name, props) => {
         return Math.round(value / 1000 / 60);
@@ -171,6 +205,10 @@ const CumulativeBarChart = ({ activityDataMap }) => {
         let newDate = addDays(leadingDate, numDaysToDisplay);
         setLeadingDate(newDate);
     }
+    const handleChange = (e) => {
+        setMode("DURATION");
+        setDisplayedActivity(e.target.value);
+    }
 
 
     function generateBarComponents(modeStr) {
@@ -185,21 +223,22 @@ const CumulativeBarChart = ({ activityDataMap }) => {
         }
 
         let barComponents = [];
-        for (const activityEnum in ACTIVITY_MAP) {
-            let activityConstantData = ACTIVITY_MAP[activityEnum];
-            if (activityConstantData[key]) {
-                barComponents.push(
-                    <Bar
-                        dataKey={activityConstantData.type}
-                        stackId="a"
-                        fill={activityConstantData.color}
-                        key={`-cumulativeBar-${modeStr}-${activityEnum}`}
-                    />
-                )
-            }
+        let activityConstantData = ACTIVITY_MAP[displayedActivity];
+        if (activityConstantData[key]) {
+            barComponents.push(
+                <Bar
+                    dataKey={activityConstantData.type}
+                    stackId="a"
+                    fill={activityConstantData.color}
+                    key={`-singleBar-${modeStr}-${displayedActivity}`}
+                />
+            )
         }
+
         return barComponents;
     }
+    let defaultUnit = ACTIVITY_MAP[displayedActivity]?.defaultUnit;
+
     let chart = null;
     let barComponents = generateBarComponents(mode);
     if (mode === "DURATION") {
@@ -209,7 +248,7 @@ const CumulativeBarChart = ({ activityDataMap }) => {
                     margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="name" />
-                    <YAxis domain={[0, 'dataMax']} unit={"min"} tickFormatter={formatYAxis} />
+                    <YAxis domain={[0, 'dataMax']} unit={'min'} tickFormatter={formatYAxis} />
                     <Tooltip formatter={formatToolTip} />
                     <Legend />
                     {barComponents}
@@ -223,8 +262,8 @@ const CumulativeBarChart = ({ activityDataMap }) => {
                     margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="name" />
-                    <YAxis domain={[0, 'dataMax']} unit={"m"} tickFormatter={(tickItem) => Math.round(tickItem)} />
-                    <Tooltip formatter={(value) => Math.round(value)} />
+                    <YAxis domain={[0, 'dataMax']} unit={defaultUnit} tickFormatter={formatDistanceYAxis} />
+                    <Tooltip formatter={formatDistanceToolTip} />
                     <Legend />
                     {barComponents}
                 </BarChart>
@@ -238,6 +277,7 @@ const CumulativeBarChart = ({ activityDataMap }) => {
                 durationData && distanceData &&
                 (
                     <>
+                        <SingleActivityHistorySelect displayedActivity={displayedActivity} handleChange={handleChange}/>
                         {chart}
                         <div className={classes.root}>
                             <div className={classes.timeButtonsWrapper}>
@@ -253,8 +293,14 @@ const CumulativeBarChart = ({ activityDataMap }) => {
                             </div>
 
                             <ButtonGroup className={classes.buttonWrapper}>
-                                <Button className={classes.modeButtons} onClick={handleDurationClick}>Duration</Button>
-                                <Button className={classes.modeButtons} onClick={handleDistanceClick}>Distance</Button>
+                                {ACTIVITY_MAP[displayedActivity].durationAllowed 
+                                ? <Button className={classes.modeButtons} onClick={handleDurationClick}>Duration</Button>
+                                : <Button disabled className={classes.modeButtons} onClick={handleDurationClick}>Duration</Button>}
+                                {ACTIVITY_MAP[displayedActivity].distanceAllowed 
+                                ? <Button className={classes.modeButtons} onClick={handleDistanceClick}>Distance</Button>
+                                : <Button disabled className={classes.modeButtons} onClick={handleDistanceClick}>Distance</Button>
+                                }
+                                
                             </ButtonGroup>
                         </div>
                     </>
@@ -264,4 +310,4 @@ const CumulativeBarChart = ({ activityDataMap }) => {
     );
 }
 
-export default CumulativeBarChart;
+export default SingleBarChart;
