@@ -10,6 +10,7 @@ import EditEquipmentModal from '../../components/EditEquipmentModal';
 import { CreateEquipmentModal } from '../../components/CreateEquipmentModal';
 import { ME_QUERY, USER_QUERY } from '../../utils/graphql';
 import { CreateTeamModal } from '../../components/CreateTeamModal';
+import UserStats from './Stats/UserStats';
 // import UserStats from './Stats/UserStats';
 
 
@@ -111,6 +112,12 @@ export const Profile = (props) => {
             />
           </Grid>
         </Grid>
+        {!error && !loading && data &&
+        (<Grid container item xs={12} sm={6} lg={4}>
+          <Grid item xs={12}>
+            <UserStats userid={data.me?.id || data.user?.id}/>
+          </Grid>
+        </Grid>)}
       </Grid>
       {/* TODO This will look better for the profile with user stats
       Comment out above and uncomment this when user stats are dynamic for both mobile and desktop */}
