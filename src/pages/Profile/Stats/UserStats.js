@@ -1,6 +1,6 @@
 // Sole data source of stats
 import { gql, useQuery } from '@apollo/client';
-import { Button, Card, CardContent, CardHeader, CircularProgress } from '@material-ui/core';
+import { Button, Card, CardContent, CardHeader, CircularProgress, Grid } from '@material-ui/core';
 import MuiAlert from '@material-ui/lab/Alert';
 import { makeStyles } from '@material-ui/core/styles';
 import React, { useState } from 'react';
@@ -71,7 +71,11 @@ const GET_POSTLIST_STATS_DATA_BY_ID = gql`
 
 const useStyles = makeStyles((theme) => ({
     card: {
-        margin: 16
+        margin: 16,
+        marginTop: 0,
+    },
+    cardContent: {
+        paddingTop: 0
     }
 }));
 
@@ -81,13 +85,12 @@ const UserStats = ({ userid }) => {
         return (
             <Card className={classes.card}>
                 <CardHeader title={props.title} />
-                <CardContent>
+                <CardContent className={classes.cardContent}>
                     {props.children}
                 </CardContent>
             </Card>
         )
     }
-    console.log('userid :>> ', userid);
 
     const { data, loading, error } = useQuery(GET_POSTLIST_STATS_DATA_BY_ID, {
         variables: { userId: userid }
@@ -197,7 +200,7 @@ const UserStats = ({ userid }) => {
                             sameDateObject.duration += current.duration;   // In ms
                         }
                         if (current.additionalInfo) {
-                        // Summation doesn't make sense for averageHeartRate or elevationGain. I'm leaving those two out.
+                            // Summation doesn't make sense for averageHeartRate or elevationGain. I'm leaving those two out.
                             // sameDateObject.additionalInfo.averageHeartRate += current.additionalInfo.averageHeartRate;
                             // sameDateObject.additionalInfo.elevationGain += current.additionalInfo.elevationGain;
                             sameDateObject.additionalInfo.calories += current.additionalInfo.calories;
@@ -228,40 +231,22 @@ const UserStats = ({ userid }) => {
 
     return (
         <>
-        <BasicLayout title={'Numbers'}>
-            {activityDataMap && <SingleActivityStats
-                data={data}
-                activityDataMap={activityDataMap}
-            />}
-            {/* {
-                data.postListByDateRange &&
-                data.postListByDateRange.hasMore &&
-                (isLoadingMore ? (
-                    <CircularProgress />
-                ) : (
-                        <Button
-                            onClick={async () => {
-                                setIsLoadingMore(true);
-                                await fetchMore({
-                                    variables: {
-                                        numDaysToGrab: numDaysToGrab,
-                                        after: data.postListByDateRange.cursor,
-                                        leadingDateISOString: data.postListByDateRange.leadingDateISOString
-                                    }
-                                });
+            <Grid item xs={12} lg={6}>
+                <BasicLayout title={'Activity History'}>
+                    {activityDataMap && <CumulativeBarChart activityDataMap={activityDataMap} />}
+                </BasicLayout>
 
-                                setIsLoadingMore(false);
-                            }}
-                        >
-                            Load More
-                        </Button>
-                    ))
-            } */}
-        </BasicLayout>
-        {activityDataMap && 
-        <BasicLayout title={'Activity History'}>
-            <CumulativeBarChart activityDataMap={activityDataMap}/>
-        </BasicLayout>}
+            </Grid>
+            <Grid item xs={12} lg={6}>
+                <BasicLayout title={'Numbers'}>
+                    {activityDataMap &&
+                        <SingleActivityStats
+                            data={data}
+                            activityDataMap={activityDataMap}
+                        />}
+                </BasicLayout>
+
+            </Grid>
         </>
     );
 }

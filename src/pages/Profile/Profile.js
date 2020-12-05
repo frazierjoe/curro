@@ -64,7 +64,7 @@ export const Profile = (props) => {
   const { history } = props;
   return (
     <div className={classes.root}>
-      <Grid container spacing={1}>
+      <Grid container>
         <Grid item xs={12} sm={6} lg={4}>
           <Grid item xs={12}>
             <ProfileCard loading={loading} error={error} data={data} me={me}/>
@@ -113,10 +113,8 @@ export const Profile = (props) => {
           </Grid>
         </Grid>
         {!error && !loading && data &&
-        (<Grid container item xs={12} sm={6} lg={4}>
-          <Grid item xs={12}>
+        (<Grid container item xs={12} lg={8}>
             <UserStats userid={data.me?.id || data.user?.id}/>
-          </Grid>
         </Grid>)}
       </Grid>
       {/* TODO This will look better for the profile with user stats

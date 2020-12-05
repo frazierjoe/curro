@@ -18,9 +18,7 @@ export const EquipmentCard = props => {
     },
     card: {
       margin: 16,
-      marginLeft: 0,
       [theme.breakpoints.down('xs')]: {
-        marginLeft: 16,
         marginTop: 0,
       },
     },
