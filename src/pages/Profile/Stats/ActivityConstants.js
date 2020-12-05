@@ -6,7 +6,8 @@ export const ACTIVITY_MAP = {
         equipmentAllowed: "Shoes",
         equipmentName: "SHOE",
         additionalInfoAllowed: true,
-        defaultUnit: "mi"
+        defaultUnit: "mi",
+        color: "#82CA9D"
     },
     'BIKE': {
         type: "Bike",
@@ -15,7 +16,8 @@ export const ACTIVITY_MAP = {
         equipmentAllowed: "Bikes",
         equipmentName: "BIKE",
         additionalInfoAllowed: true,
-        defaultUnit: "mi"
+        defaultUnit: "mi",
+        color: "#FF8811"
     },
     'SWIM': {
         type: "Swim",
@@ -23,21 +25,24 @@ export const ACTIVITY_MAP = {
         distanceAllowed: true,
         equipmentAllowed: false,
         additionalInfoAllowed: true,
-        defaultUnit: "yds"
+        defaultUnit: "yds",
+        color: "#8884D8"
     },
     'SLEEP': {
         type: "Sleep",
         durationAllowed: true,
         distanceAllowed: false,
         equipmentAllowed: false,
-        additionalInfoAllowed: true
+        additionalInfoAllowed: true,
+        color: "#FFCBDD"
     },
     'CLIMB': {
         type: "Climb",
         durationAllowed: true,
         distanceAllowed: false,
         equipmentAllowed: false,
-        additionalInfoAllowed: true
+        additionalInfoAllowed: true,
+        color: "#F61067"
     },
     'ALTERG': {
         type: "AlterG",
@@ -45,21 +50,24 @@ export const ACTIVITY_MAP = {
         distanceAllowed: true,
         equipmentAllowed: false,
         additionalInfoAllowed: true,
-        defaultUnit: 'mi'
+        defaultUnit: 'mi',
+        color: "#454851"
     },
     'YOGA': {
         type: "Yoga",
         durationAllowed: true,
         distanceAllowed: false,
         equipmentAllowed: false,
-        additionalInfoAllowed: false
+        additionalInfoAllowed: false,
+        color: "#000000"
     },
     'AQUA_JOG': {
         type: "Aqua Jog",
         durationAllowed: true,
         distanceAllowed: false,
         equipmentAllowed: false,
-        additionalInfoAllowed: true
+        additionalInfoAllowed: true,
+        color: "#FFBE0B"
     },
     'HIKE': {
         type: "Hike",
@@ -67,7 +75,8 @@ export const ACTIVITY_MAP = {
         distanceAllowed: true,
         equipmentAllowed: "SHOE",
         additionalInfoAllowed: true,
-        defaultUnit: 'mi'
+        defaultUnit: 'mi',
+        color: "#FF6B6B"
     }
 }
 

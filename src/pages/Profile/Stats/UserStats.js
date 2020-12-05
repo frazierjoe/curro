@@ -8,6 +8,7 @@ import SingleActivityStats from './SingleActivityStats';
 import { useEffect } from 'react';
 import { ACTIVITY_MAP } from './ActivityConstants';
 import { startOfDay } from 'date-fns';
+import CumulativeBarChart from './CumulativeBarChart';
 
 
 // Not the time for pagination. I need access to all posts they've ever made. Move this stuff to calendar though.
@@ -79,7 +80,7 @@ const UserStats = ({ userid }) => {
     const BasicLayout = (props) => {
         return (
             <Card className={classes.card}>
-                <CardHeader title={"Stats"} />
+                <CardHeader title={props.title} />
                 <CardContent>
                     {props.children}
                 </CardContent>
@@ -213,12 +214,12 @@ const UserStats = ({ userid }) => {
     }, [data, loading, error]);
 
     if (loading) return (
-        <BasicLayout>
+        <BasicLayout title={'Numbers'}>
             <CircularProgress />
         </BasicLayout>
     );
     if (error) return (
-        <BasicLayout>
+        <BasicLayout title={'Numbers'}>
             <MuiAlert variant="filled" severity="error">Failed to retrieve data</MuiAlert>
         </BasicLayout>
     );
@@ -226,7 +227,8 @@ const UserStats = ({ userid }) => {
 
 
     return (
-        <BasicLayout>
+        <>
+        <BasicLayout title={'Numbers'}>
             {activityDataMap && <SingleActivityStats
                 data={data}
                 activityDataMap={activityDataMap}
@@ -256,6 +258,11 @@ const UserStats = ({ userid }) => {
                     ))
             } */}
         </BasicLayout>
+        {activityDataMap && 
+        <BasicLayout title={'Activity History'}>
+            <CumulativeBarChart activityDataMap={activityDataMap}/>
+        </BasicLayout>}
+        </>
     );
 }
 
