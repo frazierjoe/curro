@@ -18,7 +18,7 @@ export const ProfileCard = props => {
       margin: '32px',
     },
     card: {
-      margin: theme.spacing(2),
+      margin: 16,
     },
     cardContent: {
       paddingTop: '0px'

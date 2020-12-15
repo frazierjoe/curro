@@ -37,6 +37,22 @@ export const cache = new InMemoryCache({
               posts: [...oldPosts, ...newPosts]
             }
           }
+        },
+        postListByDateRange: {
+          keyArgs: false,
+          merge(existing, incoming) {
+            let posts = [];
+            if (existing && existing.posts) {
+              posts = posts.concat(existing.posts);
+            }
+            if (incoming && incoming.posts) {
+              posts = posts.concat(incoming.posts);
+            }
+            return {
+              ...incoming,
+              posts: posts
+            };
+          }
         }
       }
     }
