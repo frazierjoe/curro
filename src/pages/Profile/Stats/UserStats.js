@@ -227,7 +227,7 @@ const UserStats = ({ userid }) => {
             <MuiAlert variant="filled" severity="error">Failed to retrieve data</MuiAlert>
         </BasicLayout>
     );
-    console.log('Stats data :>> ', data);
+    console.log('API Stats data :>> ', data);
 
     return (
         <>

@@ -47,7 +47,7 @@ function extractStackedDataByMode(leadingDate, numDaysAgo, activityDataMap, mode
     }
 
     let laterBound = endOfDay(leadingDate);
-    let earlierBound = startOfDay(subDays(laterBound, numDaysAgo));
+    let earlierBound = startOfDay(subDays(laterBound, numDaysAgo - 1));
 
     // Initialize our padded Activity Map
     let paddedActivityDataMap = {};

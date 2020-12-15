@@ -46,7 +46,7 @@ function extractStackedDataByMode(leadingDate, numDaysAgo, activityDataMap, mode
     }
 
     let laterBound = endOfDay(leadingDate);
-    let earlierBound = startOfDay(subDays(laterBound, numDaysAgo));
+    let earlierBound = startOfDay(subDays(laterBound, numDaysAgo - 1));
 
     // Initialize our padded Activity Map
     let paddedActivityDataMap = {};
@@ -93,9 +93,10 @@ function padActivityObjects(activityObjects, leadingDate, numDaysAgo) {
 
     // Check day by day whether we need to add padding or not.
     let i = 0;
-    let currentIndex = startOfDay(subDays(leadingDate, numDaysAgo - 1));
+    let currentIndex = startOfDay(subDays(leadingDate, numDaysAgo - 1)); // This had caused an issue before
     let endCondition = startOfDay(addDays(leadingDate, 1));
     while (i < activityObjects.length) {
+        // console.log('ok');  // Infinite Loop Here, INFINITE LOOP?
         let dataObject = activityObjects[i];
         if (dataObject.date.getTime() === currentIndex.getTime()) {
             paddedActivityObjects.push(activityObjects[i]);
