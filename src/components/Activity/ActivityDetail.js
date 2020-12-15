@@ -266,7 +266,6 @@ export const ActivityDetail = (props) => {
         }
         { (props.activity.equipmentAllowed && !loading) && (
           <FormControl variant="outlined" fullWidth className={classes.inputField}>
-            {/* TODO Change equipment to be shoes or bikes depending on activity */}
             <InputLabel id="equipment-select">{props.activity.equipmentAllowed}</InputLabel>
             <Select
               labelId="equipment-select"

@@ -7,6 +7,7 @@ import CardContent from '@material-ui/core/CardContent';
 import CardHeader from '@material-ui/core/CardHeader';
 import Avatar from '@material-ui/core/Avatar';
 import Box from '@material-ui/core/Box';
+import Button from '@material-ui/core/Button';
 
 
 export const TeamCard = props => {
@@ -40,7 +41,7 @@ export const TeamCard = props => {
 
   const [joined, setJoined] = useState(false);
   // TODO for when we hook up requests
-  // const [requestPending, setRequestPending] = useState(false);
+  const [requestPending, setRequestPending] = useState(false);
 
   const formatDate = (createdAt) => {
     var options = { year: 'numeric', month: 'long', day: 'numeric' };
@@ -108,7 +109,7 @@ export const TeamCard = props => {
                   </Typography>
                 </Box>
                 {/* TODO Create Team follow button */}
-                {/* <Button 
+                <Button 
                   variant={(joined || requestPending) ? "outlined" : "contained"} 
                   color="secondary" 
                   size="small" 
@@ -117,7 +118,7 @@ export const TeamCard = props => {
                   disabled={requestPending}
                   className={classes.requestButton}>
                   { requestPending ? "Request Pending" : (joined ? "Leave Team" : "Request To Join")}
-                </Button> */}
+                </Button>
 
                 <Typography variant="body1" component="p">{props.data.team.description}</Typography>
                 <Typography variant="body2" color="textSecondary" component="p" style={{ marginTop: '16px' }}>

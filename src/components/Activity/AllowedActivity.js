@@ -49,7 +49,7 @@ export const AllowedActivity = [
     type: "AlterG",
     durationAllowed: true,
     distanceAllowed: true,
-    equipmentAllowed: false,
+    equipmentAllowed: true,
     additionalInfoAllowed: true,
     defaultUnit: "mi"
   },
