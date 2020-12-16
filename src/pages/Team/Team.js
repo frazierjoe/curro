@@ -23,6 +23,12 @@ export const Team = (props) => {
         createdAt
         memberCount
         profilePictureURL
+        owner {
+          id
+        }
+        memberList {
+          id
+        }
       }
     }
   `;

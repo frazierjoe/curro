@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
+import { useQuery, useMutation, gql } from '@apollo/client';
 import Typography from '@material-ui/core/Typography';
 import Skeleton from '@material-ui/lab/Skeleton';
 import Card from '@material-ui/core/Card';
@@ -43,6 +44,77 @@ export const TeamCard = props => {
   // TODO for when we hook up requests
   const [requestPending, setRequestPending] = useState(false);
 
+  const ME_QUERY = gql`
+    query {
+      me {
+        id
+        teamList {
+          id
+        }
+      }
+    }
+  `;
+
+  const JOIN_TEAM = gql`
+    mutation joinTeam($input: UserTeamInput!) {
+      joinTeam(input: $input) {
+        message
+        success
+      }
+    }
+  `;
+
+  const LEAVE_TEAM = gql`
+    mutation leaveTeam($input: UserTeamInput!) {
+      leaveTeam(input: $input) {
+        message
+        success
+      }
+    }
+  `;
+
+  const { loading: meLoading, error, data } = useQuery(ME_QUERY)
+
+  // Check if the user is a part of the team
+  if(!meLoading && data && props.data && props.data.team){
+    if(!joined){
+      // loop through all of their teams and check for team id
+      for(var i=0; i<data.me.teamList.length; i++){
+        if(data.me.teamList[i].id === props.data.team.id){
+          setJoined(true)
+          break;
+        }
+      }
+    }
+  } 
+
+  const [joinTeamMutation, {loading: joinLoading}] = useMutation(JOIN_TEAM, {
+    update(_, {data: result}) {
+      setJoined(result.joinTeam.success)
+      if(result.joinTeam.success){
+        // TODO update cache to add user to team member list
+        // this might nor be nessasary if we have requests and notfications tho
+        window.location.reload()
+      }
+    },
+    onError(error) {
+      console.log(error)
+    }
+  })
+
+  const [leaveTeamMutation, {loading: leaveLoading}] = useMutation(LEAVE_TEAM, {
+    update(_, {data: result}) {
+      setJoined(!result.leaveTeam.success)
+      if(result.leaveTeam.success){
+        // TODO update cache to remove user to team member list
+        window.location.reload()
+      }
+    },
+    onError(error) {
+      console.log(error)
+    }
+  })
+
   const formatDate = (createdAt) => {
     var options = { year: 'numeric', month: 'long', day: 'numeric' };
 
@@ -52,12 +124,16 @@ export const TeamCard = props => {
   }
   
   const requestTeam = () => {
+    const userInput = {
+      input: {
+        teamId: props.data.team.id
+      }
+    }
     if(joined){
-      console.log("TODO API call for Leaving Team :(")
-      setJoined(false)
+      leaveTeamMutation({ variables: userInput })
     } else {
-      console.log("TODO API call for Sending Request to join team")
-      setJoined(true)
+      joinTeamMutation({ variables: userInput })
+      
     }
   }
 
@@ -115,7 +191,7 @@ export const TeamCard = props => {
                   size="small" 
                   fullWidth 
                   onClick={requestTeam}
-                  disabled={requestPending}
+                  disabled={requestPending || joinLoading}
                   className={classes.requestButton}>
                   { requestPending ? "Request Pending" : (joined ? "Leave Team" : "Request To Join")}
                 </Button>
