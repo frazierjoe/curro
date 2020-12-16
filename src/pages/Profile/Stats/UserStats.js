@@ -73,7 +73,6 @@ const GET_POSTLIST_STATS_DATA_BY_ID = gql`
 const useStyles = makeStyles((theme) => ({
     card: {
         margin: 16,
-        marginTop: 0,
     },
     cardContent: {
         paddingTop: 0
@@ -231,7 +230,7 @@ const UserStats = ({ userid }) => {
 
     return (
         <>
-            <Grid item xs={12} lg={6}>
+            <Grid item xs={12} lg={12}>
                 <BasicLayout title={'Combined Activity History'}>
                     {activityDataMap && <CumulativeBarChart activityDataMap={activityDataMap} />}
                 </BasicLayout>
@@ -240,7 +239,7 @@ const UserStats = ({ userid }) => {
                 </BasicLayout>
             </Grid>
 
-            <Grid item xs={12} lg={6}>
+            <Grid item xs={12} lg={12}>
                 <BasicLayout title={'Numbers'}>
                     {activityDataMap &&
                         <SingleActivityStats

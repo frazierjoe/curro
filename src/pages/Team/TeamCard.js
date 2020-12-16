@@ -10,7 +10,6 @@ import Avatar from '@material-ui/core/Avatar';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 
-
 export const TeamCard = props => {
 
   const useStyles = makeStyles((theme) => ({
@@ -77,14 +76,20 @@ export const TeamCard = props => {
 
   // Check if the user is a part of the team
   if(!meLoading && data && props.data && props.data.team){
-    if(!joined){
-      // loop through all of their teams and check for team id
-      for(var i=0; i<data.me.teamList.length; i++){
-        if(data.me.teamList[i].id === props.data.team.id){
-          setJoined(true)
-          break;
-        }
+    
+    var foundTeamFlag = false
+
+    // loop through all of their teams and check for team id
+    for(var i=0; i<data.me.teamList.length; i++){
+      if(data.me.teamList[i].id === props.data.team.id){
+        foundTeamFlag = true
+        break;
       }
+    }
+
+    // prevent the page from doing too many re-renders
+    if(joined !== foundTeamFlag){
+      setJoined(foundTeamFlag) 
     }
   } 
 
