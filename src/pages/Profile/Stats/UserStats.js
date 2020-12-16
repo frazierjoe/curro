@@ -102,6 +102,10 @@ const UserStats = ({ userid }) => {
     useEffect(() => {
         if (!loading && !error && data) {
             function distanceObjectToMeters(distanceObject) {
+                // Null case, return 0
+                if (distanceObject === null) {
+                    return 0;
+                }
                 let value = distanceObject.value;
                 let unit = distanceObject.unit;
 
@@ -136,7 +140,6 @@ const UserStats = ({ userid }) => {
                     return timeStampA - timeStampB;
                 }
             );
-
             // Hash Map to hold all of the extracted data. 
             // activity: [{x: timeStamp, y: distanceInMeters}]
             let statsMap = {};
@@ -152,15 +155,15 @@ const UserStats = ({ userid }) => {
                 let postDate = new Date(post.postDate);
                 postDate = startOfDay(postDate);
                 dataObject['date'] = postDate;
-
+                console.log('post :>> ', post);
                 // Push data from each activity of a post into the activity map's arrays
                 for (let i = 0; i < post.activityList.length; i++) {
                     const activity = post.activityList[i];
                     if (ACTIVITY_MAP[activity.type].distanceAllowed) {
-                        dataObject['distance'] = distanceObjectToMeters(activity.distance);
+                        dataObject['distance'] = distanceObjectToMeters(activity.distance); // Can be null
                     }
                     if (ACTIVITY_MAP[activity.type].durationAllowed) {
-                        dataObject['duration'] = activity.duration;
+                        dataObject['duration'] = activity.duration;                         // Can be null
                     }
                     if (ACTIVITY_MAP[activity.type].additionalInfoAllowed) {
                         dataObject['additionalInfo'] = { ...activity.additionalInfo.calories };
