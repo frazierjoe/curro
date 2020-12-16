@@ -63,7 +63,7 @@ export const Profile = (props) => {
   const { history } = props;
   return (
     <div className={classes.root}>
-      <Grid container>
+      {/* <Grid container>
         <Grid item xs={12} sm={6} lg={4}>
           <Grid item xs={12}>
             <ProfileCard loading={loading} error={error} data={data} me={me}/>
@@ -115,11 +115,11 @@ export const Profile = (props) => {
         (<Grid container item xs={12} lg={8}>
             <UserStats userid={data.me?.id || data.user?.id}/>
         </Grid>)}
-      </Grid>
+      </Grid> */}
       {/* TODO This will look better for the profile with user stats
       Comment out above and uncomment this when user stats are dynamic for both mobile and desktop */}
-      {/* <Grid container spacing={1}>
-        <Grid item xs={12} sm={4} lg={4}>
+      <Grid container spacing={1}>
+        <Grid item xs={12} sm={12} md={4} lg={4}>
           <Grid item xs={12}>
             <ProfileCard loading={loading} error={error} data={data} me={me}/>
           </Grid>
@@ -162,12 +162,14 @@ export const Profile = (props) => {
             />
           </Grid>
         </Grid>
-        <Grid item xs={12} sm={8} lg={8}>
-          <Grid item xs={12}>
-            <UserStats/>
-          </Grid>
+        <Grid item xs={12} sm={12} md={8} lg={8}>
+
+        {!error && !loading && data &&
+          (<Grid container item xs={12} lg={12}>
+              <UserStats userid={data.me?.id || data.user?.id}/>
+          </Grid>)}
         </Grid>
-      </Grid> */}
+      </Grid>
       {me && <EditEquipmentModal data={editEquipmentData} openModal={openEquipmentModal} handleClose={() => setOpenEquipmentModal(false)}/>}
       {me && <CreateEquipmentModal type={createEquipmentType} openModal={openCreateEquipmentModal} handleClose={() => setOpenCreateEquipmentModal(false)}/>}
       {me && <CreateTeamModal openModal={openCreateTeamModal} handleClose={() => setOpenCreateTeamModal(false)}/>}
