@@ -1,5 +1,7 @@
 import { Card, CardHeader, makeStyles } from '@material-ui/core';
+import { add } from 'date-fns';
 import React from 'react';
+import { useSwipeable } from 'react-swipeable';
 import DayViewPost from './DayViewPost';
 
 const useStyles = makeStyles((theme) => ({
@@ -18,9 +20,34 @@ const useStyles = makeStyles((theme) => ({
 
 
 
-const DayView = ({ postList, date }) => {
+const DayView = ({ postList, date, setDate }) => {
     const classes = useStyles();
 
+    // Event Handlers
+    const next = () => {
+        console.log("Swiped next month/week/day")
+        setDate(prevDate => {
+            let copy = new Date(prevDate);
+            console.log('copy :>> ', copy);
+            return add(copy, {days: 1});
+        });
+    }
+
+    const previous = () => {
+        console.log("Swiped previous month/week/day");
+        setDate(prevDate => {
+            let copy = new Date(prevDate);
+            console.log('copy :>> ', copy);
+            return add(copy, {days: -1});
+        });
+    }
+
+    const swipeHandlers = useSwipeable({
+        onSwipedLeft: () => next(),
+        onSwipedRight: () => previous(),
+        preventDefaultTouchmoveEvent: true,
+        trackMouse: true
+    });
 
 
     // Linear Scan through postList to find a matching date
@@ -49,7 +76,7 @@ const DayView = ({ postList, date }) => {
     }
 
     return (
-        <div className={classes.dayViewPostsWrapper}>
+        <div {...swipeHandlers} className={classes.dayViewPostsWrapper}>
             {noPostMessage}
             {postComponents}
         </div>

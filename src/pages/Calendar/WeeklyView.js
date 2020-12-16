@@ -1,6 +1,9 @@
 import { makeStyles } from '@material-ui/core/styles';
 import React, { cloneElement } from 'react';
 import WeekColumn from './WeekColumn';
+import { useSwipeable } from 'react-swipeable';
+import { add } from 'date-fns';
+
 
 const useStyles = makeStyles((theme) => ({
     gridParent: {
@@ -63,6 +66,32 @@ const WeeklyView = ({ postList, date, setDate, setView, firstDayOfWeek }) => {
         }
         return weekColumns;
     }
+
+    // Event Handlers
+    const next = () => {
+        console.log("Swiped next month/week/day")
+        setDate(prevDate => {
+            let copy = new Date(prevDate);
+            console.log('copy :>> ', copy);
+            return add(copy, {days: 7});
+        });
+    }
+
+    const previous = () => {
+        console.log("Swiped previous month/week/day");
+        setDate(prevDate => {
+            let copy = new Date(prevDate);
+            console.log('copy :>> ', copy);
+            return add(copy, {days: -7});
+        });
+    }
+
+    const swipeHandlers = useSwipeable({
+        onSwipedLeft: () => next(),
+        onSwipedRight: () => previous(),
+        preventDefaultTouchmoveEvent: true,
+        trackMouse: true
+    });
 
 
     // Todo: Right now, I'm just linear scanning through all posts. Needs optimization.
@@ -129,7 +158,7 @@ const WeeklyView = ({ postList, date, setDate, setView, firstDayOfWeek }) => {
     let weekColumns = injectPostsInWeekColumns(uninjectedWeekColumns);
 
     return (
-        <div className={classes.gridParent}>
+        <div {...swipeHandlers} className={classes.gridParent}>
             {weekColumns}
         </div>
     );

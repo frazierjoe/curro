@@ -38,7 +38,7 @@ const EQUIPMENT_FRAGMENT = gql`
   }
 `;
 
-const POST_FRAGMENT = gql`
+export const POST_FRAGMENT = gql`
   fragment FeedPagePost on Post {
     id
     title

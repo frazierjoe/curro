@@ -12,6 +12,7 @@ import Fab from '@material-ui/core/Fab';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
 import { gql, useQuery } from '@apollo/client';
+import TeamPostView from './TeamPostView';
 
 const useStyles = makeStyles((theme) => ({
     addFab: {
@@ -41,6 +42,22 @@ const GET_POSTLIST = gql`
   query getPostList{
     me {
         first
+        teamList {
+            id
+            name
+            description
+            profilePictureURL
+            owner {
+                id
+                first
+                last
+                username
+                profilePictureURL
+            }
+            memberList {
+                first
+            }
+        }
         postList{
             id
             title
@@ -86,6 +103,7 @@ export const Calendar = () => {
 
     // API State
     const { data, loading, error } = useQuery(GET_POSTLIST);
+
     console.log('data :>> ', data);
 
     let postList = undefined;
@@ -99,6 +117,11 @@ export const Calendar = () => {
     const [view, setView] = useState("month");
     const [openModal, setOpenModal] = useState(false);
     const [firstDayOfWeek, setFirstDayOfWeek] = useState("Sunday");
+
+    // Team View State
+    const [selectedTeamId, setSelectedTeamId] = useState(null);
+    const [numDaysToDisplayInTeamView, setNumDaysToDisplayInTeamView] = useState(3);    // Hard coded to 3 in UI
+
 
     // Event Handlers ********
     const viewSwitchKeyPressListener = (e) => {
@@ -121,6 +144,15 @@ export const Calendar = () => {
     })
 
     // Display Logic
+    if (loading) {
+        return (<div className={classes.spinnerWrapper}><CircularProgress color="primary" /></div>)
+    }
+    if (error) { return <div>Error</div> };
+    
+    //
+
+
+    // Personal Calendar
     let currentViewComponent = null;
     switch (view) {
         case "month":
@@ -130,7 +162,10 @@ export const Calendar = () => {
             currentViewComponent = <WeeklyView postList={postList} date={date} setDate={setDate} setView={setView} firstDayOfWeek={firstDayOfWeek} />;
             break;
         case "day":
-            currentViewComponent = <DayView postList={postList} date={date} />;
+            currentViewComponent = <DayView postList={postList} date={date} setDate={setDate}/>;
+            break;
+        case "team":
+            currentViewComponent = <TeamPostView selectedTeamId={selectedTeamId} date={date} numDaysToDisplayInTeamView={numDaysToDisplayInTeamView}/>;
             break;
         default:
             currentViewComponent = null;
@@ -140,13 +175,17 @@ export const Calendar = () => {
 
     return (
         <div styles={{ height: 670, alignItems: "stretch" }}>
-            <ToolBar date={date} setDate={setDate} view={view} setView={setView} setFirstDayOfWeek={setFirstDayOfWeek} />
-            {loading ? (
-                <div className={classes.spinnerWrapper}>
-                    <CircularProgress color="primary" />
-                </div>
-            )
-                : currentViewComponent}
+            <ToolBar 
+                date={date} 
+                setDate={setDate} 
+                view={view} 
+                setView={setView} 
+                setFirstDayOfWeek={setFirstDayOfWeek} 
+                numDaysToDisplayInTeamView={numDaysToDisplayInTeamView}
+                teamList={data.me.teamList}
+                setSelectedTeamId={setSelectedTeamId}
+            />
+            {currentViewComponent}
             <NewActivityModal openModal={openModal} handleClose={() => setOpenModal(false)} />
             <span className={classes.addFab}>
                 <Fab color="secondary" aria-label="add" onClick={() => setOpenModal(true)}>

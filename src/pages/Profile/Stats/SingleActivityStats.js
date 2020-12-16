@@ -1,7 +1,6 @@
 import { makeStyles } from '@material-ui/core/styles';
 import React from 'react';
 import { useState } from 'react';
-import CumulativeBarChart from './CumulativeBarChart';
 import SingleActivitySelect from './SingleActivitySelect';
 import SingleActivityTable from './SingleActivityTable';
 

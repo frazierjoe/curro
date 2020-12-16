@@ -18,9 +18,11 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import NativeSelect from '@material-ui/core/NativeSelect';
 import Tooltip from '@material-ui/core/Tooltip';
-import { Button, Hidden } from '@material-ui/core';
+import { Button, ButtonGroup, Hidden, Menu } from '@material-ui/core';
 import CalendarSettings from './CalendarSettings';
 import add from 'date-fns/add';
+import TeamSelectDropdown from './TeamSelectDropdown';
+import { addDays, subDays } from 'date-fns';
 
 
 
@@ -51,14 +53,18 @@ const useStyles = makeStyles((theme) => ({
     },
     shortcutText: {
         color: theme.palette.background.main
+    },
+    teamButtonGroup: {
+        margin: 5
     }
 }));
 
 
 
-export const ToolBar = ({ date, setDate, view, setView, setFirstDayOfWeek }) => {
+export const ToolBar = ({ date, setDate, view, setView, setFirstDayOfWeek, teamList, numDaysToDisplayInTeamView, setSelectedTeamId }) => {
     const classes = useStyles();
 
+    console.log('teamList :>> ', teamList);
     // Event Handlers **********
     // Buttons
     const handleViewChange = (event) => {
@@ -93,6 +99,13 @@ export const ToolBar = ({ date, setDate, view, setView, setFirstDayOfWeek }) => 
                     return add(copy, {days: -1});
                 });
                 break;
+            case "team":
+                setDate(prevDate => {
+                    let copy = new Date(prevDate);
+                    console.log('subDays(copy, numDaysToDisplayInTeamView) :>> ', subDays(copy, numDaysToDisplayInTeamView));
+                    return subDays(copy, numDaysToDisplayInTeamView);
+                });
+                break;
             default:
                 alert("Sanity Check: Unrecognized view in ToolBar.js");
                 break;
@@ -121,6 +134,12 @@ export const ToolBar = ({ date, setDate, view, setView, setFirstDayOfWeek }) => 
                     return add(copy, {days: 1});
                 });
                 break;
+            case "team":
+                setDate(prevDate => {
+                    let copy = new Date(prevDate);
+                    return addDays(copy, numDaysToDisplayInTeamView);
+                });
+                break;
             default:
                 alert("Sanity Check: Unrecognized view in ToolBar.js");
                 break;
@@ -139,6 +158,9 @@ export const ToolBar = ({ date, setDate, view, setView, setFirstDayOfWeek }) => 
             break;
         case "day":
             options = { year: 'numeric', month: 'long', day: 'numeric' };
+            break;
+        case "team":
+            options = options = { year: 'numeric', month: 'long' };
             break;
         default:
             options = null;
@@ -161,11 +183,20 @@ export const ToolBar = ({ date, setDate, view, setView, setFirstDayOfWeek }) => 
                 <Hidden xsDown>
                     <TodayIcon className={classes.iconButton} />
                 </Hidden>
-                <Hidden xsDown>
+                {/* <Hidden xsDown>
                     <Typography variant="h5" className={classes.title} >
                         Calendar
                     </Typography>
-                </Hidden>
+                </Hidden> */}
+                <ButtonGroup className={classes.teamButtonGroup}>
+                    <Button size="small" onClick={() => setView("month")}>Me</Button>
+                    <TeamSelectDropdown 
+                        numDaysToDisplayInTeamView={numDaysToDisplayInTeamView} 
+                        setView={setView} 
+                        teamList={teamList}
+                        setSelectedTeamId={setSelectedTeamId}
+                    />
+                </ButtonGroup>
                 <Hidden xsDown>
                     <Tooltip title={date.toDateString()} enterDelay={400} >
                         <Button variant="outlined" size="small" className={classes.iconButton} onClick={todayButton} >Today</Button>
@@ -184,6 +215,7 @@ export const ToolBar = ({ date, setDate, view, setView, setFirstDayOfWeek }) => 
                 <Typography variant="h5" color="textSecondary" className={classes.displayCurrent}>
                     {toolbarTitle}
                 </Typography>
+
                 {/* Component File */}
                 <CalendarSettings setFirstDayOfWeek={setFirstDayOfWeek}></CalendarSettings>
                 <FormControl>
