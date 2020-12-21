@@ -67,7 +67,6 @@ export const EditProfileModal = (props) => {
 
   const [updateUserMutation, { loading }] = useMutation(UPDATE_USER_MUTATION, {
     update(_, { data: { updateUser: user } }) {
-      console.log(user)
       props.handleClose();
       window.location.reload(true);
 

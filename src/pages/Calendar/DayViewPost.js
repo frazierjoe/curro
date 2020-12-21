@@ -14,7 +14,6 @@ const useStyles = makeStyles((theme) => ({
 
 const DayViewPost = ({ post }) => {
     const classes = useStyles();
-    console.log('post :>> ', post);
 
     let activityTiles = post.activityList.map((activity) => (
         <ActivityTile

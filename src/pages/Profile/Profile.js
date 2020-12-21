@@ -40,7 +40,9 @@ export const Profile = (props) => {
   }
 
   const { user } = useContext(AuthContext)
+  console.log(user)
   const { userid } = props.match.params
+  console.log(userid)
   var me = false
   if(userid && user.id !== userid){
     me = false

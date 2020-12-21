@@ -80,7 +80,6 @@ const TeamPostView = ({ selectedTeamId, date, numDaysToDisplayInTeamView }) => {
     const { data, loading, error } = useQuery(GET_TEAM_POSTS, { variables: { id: selectedTeamId } });
     if (error) { return <div>Error!</div> }
     if (loading) { return <CircularProgress color="primary"></CircularProgress> }
-    console.log('data :>> ', data);
 
     function TeamPostTableHead({ date, numDaysToDisplayInTeamView }) {
         const cells = [];
@@ -139,7 +138,6 @@ const TeamPostView = ({ selectedTeamId, date, numDaysToDisplayInTeamView }) => {
             })
             filteredPostsMap[userid] = { name, postList, profilePictureURL };
         }
-        console.log('filteredPostsMap :>> ', filteredPostsMap);
 
         // Iterate through every single user. One row is created per user.
         let tableRows = [];
@@ -202,7 +200,6 @@ const TeamPostView = ({ selectedTeamId, date, numDaysToDisplayInTeamView }) => {
             )
         }
 
-        console.log('combinedPosts :>> ', combinedPostsMap);
         return (
             <TableBody>
                 {tableRows}

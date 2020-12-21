@@ -63,13 +63,10 @@ export const CreateEquipmentModal = (props) => {
 
   const [createEquipmentMutation, { loading }] = useMutation(CREATE_EQUIPMENT_MUTATION, {
     update(store, { data: { createEquipment } }) {
-      console.log("Before")
       const data = store.readQuery({
         query: ME_QUERY
       })
-      console.log(data)
       const updatedEquipmentList = [createEquipment, ...data.me.equipmentList]
-      console.log(updatedEquipmentList)
 
       store.writeQuery({
         query: ME_QUERY,
@@ -116,7 +113,6 @@ export const CreateEquipmentModal = (props) => {
         }
 
       }
-      console.log(userInput)
       createEquipmentMutation({ variables: userInput })
 
     }

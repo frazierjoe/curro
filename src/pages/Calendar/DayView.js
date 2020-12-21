@@ -28,7 +28,6 @@ const DayView = ({ postList, date, setDate }) => {
         console.log("Swiped next month/week/day")
         setDate(prevDate => {
             let copy = new Date(prevDate);
-            console.log('copy :>> ', copy);
             return add(copy, {days: 1});
         });
     }
@@ -37,7 +36,6 @@ const DayView = ({ postList, date, setDate }) => {
         console.log("Swiped previous month/week/day");
         setDate(prevDate => {
             let copy = new Date(prevDate);
-            console.log('copy :>> ', copy);
             return add(copy, {days: -1});
         });
     }
@@ -64,10 +62,8 @@ const DayView = ({ postList, date, setDate }) => {
     let postComponents = postsToday.map(post => <DayViewPost post={post} key={`-dayView-post-${post.id}`}/>);
 
 
-    console.log('postsToday :>> ', postsToday);
     let noPostMessage = null;
     if (postsToday.length === 0){
-        console.log('0');
         noPostMessage = (
             <Card className={classes.card}>
                 <CardHeader title="No Posts Today :(" />

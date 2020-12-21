@@ -7,12 +7,9 @@ const initialState = {
 
 if(localStorage.getItem("token")){
   const decodedToken = jwtDecode(localStorage.getItem("token"))
-  if(decodedToken.exp * 1000 < Date.now()){
-    localStorage.removeItem("token")
-    // TODO user refresh token
-  } else {
-    initialState.user = decodedToken
-  }
+  initialState.user = decodedToken
+} else {
+  initialState.user = null
 }
 
 const AuthContext = createContext({

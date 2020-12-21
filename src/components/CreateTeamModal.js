@@ -60,9 +60,7 @@ export const CreateTeamModal = (props) => {
       const data = store.readQuery({
         query: ME_QUERY
       })
-      console.log(data)
       const updatedTeamList = [createTeam, ...data.me.teamList]
-      console.log(updatedTeamList)
 
       store.writeQuery({
         query: ME_QUERY,
@@ -102,7 +100,6 @@ export const CreateTeamModal = (props) => {
         }
 
       }
-      console.log(userInput)
       createTeamMutation({ variables: userInput })
 
     }

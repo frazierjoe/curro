@@ -113,7 +113,6 @@ const Month = ({ postList, date, setDate, setView, firstDayOfWeek }) => {
 
             injectedWeekComponents.push(injectedWeekComponent);
         });
-        console.log('injectedWeekComponents :>> ', injectedWeekComponents);
         return injectedWeekComponents;
     }
 

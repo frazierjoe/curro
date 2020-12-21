@@ -60,7 +60,6 @@ export const CalendarView = ({ postList, date, setDate, setView, firstDayOfWeek 
         console.log("Swiped next month/week/day")
         setDate(prevDate => {
             let copy = new Date(prevDate);
-            console.log('copy :>> ', copy);
             return add(copy, {months: 1});
         });
     }
@@ -69,7 +68,6 @@ export const CalendarView = ({ postList, date, setDate, setView, firstDayOfWeek 
         console.log("Swiped previous month/week/day");
         setDate(prevDate => {
             let copy = new Date(prevDate);
-            console.log('copy :>> ', copy);
             return add(copy, {months: -1});
         });
     }

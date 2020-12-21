@@ -64,12 +64,10 @@ const useStyles = makeStyles((theme) => ({
 export const ToolBar = ({ date, setDate, view, setView, setFirstDayOfWeek, teamList, numDaysToDisplayInTeamView, setSelectedTeamId }) => {
     const classes = useStyles();
 
-    console.log('teamList :>> ', teamList);
     // Event Handlers **********
     // Buttons
     const handleViewChange = (event) => {
         setView(event.target.value);
-        console.log("View changed to " + event.target.value)
         // setViewType(getViewSelected(event.target.value))
     };
 

@@ -105,8 +105,6 @@ export const PostCard = props => {
 
   const [likePostMutation, { loading: likeLoading }] = useMutation(LIKE_POST_MUTATION, {
     update(store, { data: { likePost } }) {
-      console.log(likePost.liked)
-      console.log(props.post.id)
       const data = store.readQuery({
         query: GET_POST_QUERY
       })

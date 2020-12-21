@@ -17,17 +17,23 @@ import { Login } from './pages/Login';
 import { CreateAccount } from './pages/CreateAccount'
 import Header from './components/Header';
 import { ApolloClient, createHttpLink, ApolloProvider } from '@apollo/client';
+import { ApolloLink } from "apollo-link";
+import { TokenRefreshLink } from "apollo-link-token-refresh";
+import { onError } from "apollo-link-error";
+import jwtDecode from 'jwt-decode'
 import { setContext } from '@apollo/client/link/context';
 import { cache } from './cache';
 
+let prod_uri_base = "curro-api.herokuapp.com"
 // Connect to deployed backend if in production. Else localhost.
 let uri = 'http://localhost:4000/graphql';
 if (process.env.NODE_ENV === 'production'){
-  uri = 'https://curro-api.herokuapp.com/graphql';
+  uri = 'https://' + prod_uri_base + '/graphql';
 }
 
 const httpLink = createHttpLink({
   uri: uri,
+  credentials: 'include',
 });
 
 const authLink = setContext((_, { headers }) => {
@@ -43,8 +49,56 @@ const authLink = setContext((_, { headers }) => {
 });
 
 const client = new ApolloClient({
-  link: authLink.concat(httpLink),
-  cache: cache
+  link: ApolloLink.from([
+    new TokenRefreshLink({
+      accessTokenField: "token",
+      isTokenValidOrUndefined: () => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+          return true;
+        }
+
+        try {
+          const { exp } = jwtDecode(token);
+          test = jwtDecode(token)
+          if (Date.now() >= exp * 1000) {
+            return false;
+          } else {
+            return true;
+          }
+        } catch {
+          return false;
+        }
+      },
+      fetchAccessToken: () => {
+        let refresh_uri = 'http://localhost:4000/refresh_token';
+        if (process.env.NODE_ENV === 'production'){
+          refresh_uri = 'https://' + prod_uri_base + '/refresh_token';
+        }
+        return fetch(refresh_uri, {
+          method: "POST",
+          credentials: "include"
+        });
+      },
+      handleFetch: accessToken => {
+        if(accessToken){
+          localStorage.setItem("token", accessToken)
+        } else {
+          localStorage.removeItem('token')
+        }
+      },
+      handleError: error => {
+        console.error(error);
+      }
+    }),
+    onError(({ graphQLErrors, networkError }) => {
+      console.log(graphQLErrors);
+      console.log(networkError);
+    }),
+    authLink,
+    httpLink
+  ]),
+  cache
 });
 
 var theme = createMuiTheme({

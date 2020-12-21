@@ -155,7 +155,6 @@ const UserStats = ({ userid }) => {
                 let postDate = new Date(post.postDate);
                 postDate = startOfDay(postDate);
                 dataObject['date'] = postDate;
-                console.log('post :>> ', post);
                 // Push data from each activity of a post into the activity map's arrays
                 for (let i = 0; i < post.activityList.length; i++) {
                     const activity = post.activityList[i];
@@ -229,7 +228,6 @@ const UserStats = ({ userid }) => {
             <MuiAlert variant="filled" severity="error">Failed to retrieve data</MuiAlert>
         </BasicLayout>
     );
-    console.log('API Stats data :>> ', data);
 
     return (
         <>

@@ -104,8 +104,6 @@ export const Calendar = () => {
     // API State
     const { data, loading, error } = useQuery(GET_POSTLIST);
 
-    console.log('data :>> ', data);
-
     let postList = undefined;
     if (data) {
         postList = data.me.postList;
