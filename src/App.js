@@ -17,6 +17,7 @@ import { Login } from './pages/Login';
 import { CreateAccount } from './pages/CreateAccount'
 import Header from './components/Header';
 import { ApolloClient, createHttpLink, ApolloProvider } from '@apollo/client';
+import { createUploadLink } from 'apollo-upload-client';
 import { ApolloLink } from "apollo-link";
 import { TokenRefreshLink } from "apollo-link-token-refresh";
 import { onError } from "apollo-link-error";
@@ -31,7 +32,7 @@ if (process.env.NODE_ENV === 'production'){
   uri = 'https://' + prod_uri_base + '/graphql';
 }
 
-const httpLink = createHttpLink({
+const httpLink = createUploadLink({
   uri: uri,
   credentials: 'include',
 });

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { ImagePicker } from './Form/ImagePicker';
 import Modal from '@material-ui/core/Modal';
@@ -68,8 +68,15 @@ export const EditProfileModal = (props) => {
   const [updateUserMutation, { loading }] = useMutation(UPDATE_USER_MUTATION, {
     update(_, { data: { updateUser: user } }) {
       props.handleClose();
-      window.location.reload(true);
-
+      setState({
+        first: user.first,
+        last: user.last,
+        username: user.username,
+        email: user.email,
+        file: file,
+        bio: user.bio,
+      });
+      _isMounted = false;
     },
     onError(error) {
       console.log(error)
@@ -84,21 +91,22 @@ export const EditProfileModal = (props) => {
     username: "",
     email: "",
     bio: "",
-    profilePictureURL: ""
   });
 
-  if (props.openModal && !props.loading && props.data.me && !_isMounted) {
-    _isMounted = true;
-    setState({
-      first: props.data.me.first,
-      last: props.data.me.last,
-      username: props.data.me.username,
-      email: props.data.me.email,
-      file: file,
-      bio: props.data.me.bio,
-      profilePictureURL: props.data.me.profilePictureURL
-    });
-  }
+  useEffect(() => {
+    if (props.openModal && !props.loading && props.data.me && !_isMounted) {
+      _isMounted = true;
+      setState({
+        first: props.data.me.first,
+        last: props.data.me.last,
+        username: props.data.me.username,
+        email: props.data.me.email,
+        file: file,
+        bio: props.data.me.bio,
+      });
+    }
+  });
+
   // Standard for validating email addresses
   // https://stackoverflow.com/questions/201323/how-to-validate-an-email-address-using-a-regular-expression
   var emailRegex = /^(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:+)\])$/;
@@ -115,15 +123,12 @@ export const EditProfileModal = (props) => {
           last: state.last,
           username: state.username,
           bio: state.bio,
-          file: {file},
-          profilePictureURL: file ? '' : state.profilePictureURL,
+          file: file,
           private: false,
         }
 
       }
-      console.log(userInput)
       updateUserMutation({ variables: userInput })
-      _isMounted = false
     }
   }
   const cancel = () => {
@@ -133,7 +138,6 @@ export const EditProfileModal = (props) => {
       username: props.data.me.username,
       email: props.data.me.email,
       bio: props.data.me.bio,
-      profilePictureURL: props.data.me.profilePictureURL
     });
     _isMounted = false
     props.handleClose();
@@ -172,14 +176,10 @@ export const EditProfileModal = (props) => {
         /> */}
         <Typography variant="body2" color='textSecondary'>Profile Image</Typography>
         <ImagePicker 
+          preview={props.data.me.profilePictureURL}
           fileToUpload={file} 
           setFileToUpload={setFile} 
-          onSuccess={() => setState({...state, profilePictureURL: ''})} 
           rounded={true}
-        />
-        <Typography variant="h6" className={classes.or}>OR</Typography>
-        <TextField fullWidth className={classes.textField} value={state.profilePictureURL} onChange={handleChange('profilePictureURL')} label="Profile Picture URL" 
-          helperText={' '}
         />
         <TextField variant="outlined" fullWidth className={classes.textField} value={state.bio} multiline={true} rowsMax={5} rows={3} onChange={handleChange('bio')} label="Bio" />
       </form>

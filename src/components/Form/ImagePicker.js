@@ -46,7 +46,7 @@ export const ImagePicker = props => {
     
   }));
 
-  const [preview, setPreview] = useState();
+  const [preview, setPreview] = useState(props.preview);
 
   const [errors, setErrors] = useState();
 
@@ -58,7 +58,6 @@ export const ImagePicker = props => {
         setPreview(URL.createObjectURL(file));
         setErrors('')
         props.setFileToUpload(file);
-        props.onSuccess()
       } else {
         setErrors(
           'Something went wrong. Check file type (jpeg, png) and size (max. 1 MB)',
