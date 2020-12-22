@@ -1,5 +1,5 @@
 import React from 'react';
-import { Footer } from '../components/Footer';
+import { Footer } from '../../components/Footer/Footer';
 import Typography from '@material-ui/core/Typography';
 
 // TODO Create an about page to give recognition and credits to everyone that has worked on the project

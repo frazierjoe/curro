@@ -1,7 +1,7 @@
 import React, {useContext} from 'react';
-import { AuthContext } from '../auth';
+import { AuthContext } from '../../auth';
 import { useMutation, gql } from '@apollo/client';
-import { Footer } from '../components/Footer';
+import { Footer } from '../../components/Footer/Footer';
 import Typography from '@material-ui/core/Typography';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';

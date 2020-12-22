@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { NewActivityModal } from '../../components/NewActivityModal';
+import { NewActivityModal } from '../../components/Modal/NewActivityModal';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import AddIcon from '@material-ui/icons/Add';

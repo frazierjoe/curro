@@ -13,6 +13,7 @@ export const ImagePicker = props => {
       flexDirection: 'column',
       alignItems: 'center',
       padding: 16,
+      marginBottom: 16,
       borderWidth: 2,
       borderRadius: 2,
       borderColor: theme.palette.secondary.main,

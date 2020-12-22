@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import DayView from './DayView';
-import { NewActivityModal } from '../../components/NewActivityModal';
+import { NewActivityModal } from '../../components/Modal/NewActivityModal';
 import { ToolBar } from './ToolBar';
 import { CalendarView } from './CalendarView';
 import WeeklyView from './WeeklyView';

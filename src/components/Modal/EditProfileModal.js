@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { ImagePicker } from './Form/ImagePicker';
+import { ImagePicker } from '../Form/ImagePicker';
 import Modal from '@material-ui/core/Modal';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
@@ -8,7 +8,7 @@ import Typography from '@material-ui/core/Typography';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Toolbar from '@material-ui/core/Toolbar';
 import { useMutation } from '@apollo/client';
-import { UPDATE_USER_MUTATION } from "../utils/graphql";
+import { UPDATE_USER_MUTATION } from "../../utils/graphql";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -176,7 +176,7 @@ export const EditProfileModal = (props) => {
         /> */}
         <Typography variant="body2" color='textSecondary'>Profile Image</Typography>
         <ImagePicker 
-          preview={props.data.me.profilePictureURL}
+          preview={(props.data && props.data.me) ? props.data.me.profilePictureURL : null}
           fileToUpload={file} 
           setFileToUpload={setFile} 
           rounded={true}

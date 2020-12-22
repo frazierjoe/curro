@@ -6,10 +6,10 @@ import { EquipmentCard } from './EquipmentCard';
 import { TeamListCard } from './TeamListCard';
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
-import EditEquipmentModal from '../../components/EditEquipmentModal';
-import { CreateEquipmentModal } from '../../components/CreateEquipmentModal';
+import EditEquipmentModal from '../../components/Modal/EditEquipmentModal';
+import { CreateEquipmentModal } from '../../components/Modal/CreateEquipmentModal';
 import { ME_QUERY, USER_QUERY } from '../../utils/graphql';
-import { CreateTeamModal } from '../../components/CreateTeamModal';
+import { CreateTeamModal } from '../../components/Modal/CreateTeamModal';
 import UserStats from './Stats/UserStats';
 // import UserStats from './Stats/UserStats';
 

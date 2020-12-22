@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
+import { ImagePicker } from '../Form/ImagePicker';
 import Modal from '@material-ui/core/Modal';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
@@ -7,7 +8,7 @@ import Typography from '@material-ui/core/Typography';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Toolbar from '@material-ui/core/Toolbar';
 import { useMutation } from '@apollo/client';
-import { CREATE_TEAM_MUTATION, ME_QUERY } from '../utils/graphql';
+import { CREATE_TEAM_MUTATION, ME_QUERY } from '../../utils/graphql';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -55,6 +56,9 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 export const CreateTeamModal = (props) => {
+
+  const [file, setFile] = useState(null);
+
   const [createTeamMutation, { loading }] = useMutation(CREATE_TEAM_MUTATION, {
     update(store, { data: { createTeam } }) {
       const data = store.readQuery({
@@ -82,10 +86,10 @@ export const CreateTeamModal = (props) => {
   })
 
   const classes = useStyles();
-  const [state, setState] = React.useState({
+  const [state, setState] = useState({
     name: "",
     description: "",
-    profilePictureURL: ""
+    file: file,
   });
   
  const save = () => {
@@ -96,7 +100,7 @@ export const CreateTeamModal = (props) => {
         input: {
           name: state.name,
           description: state.description,
-          profilePictureURL: state.profilePictureURL
+          file: file
         }
 
       }
@@ -139,16 +143,13 @@ export const CreateTeamModal = (props) => {
           error={state.name.length <= 0}
           helperText={state.name.length <= 0 ? 'Name Required' : ' '}
         />
-        <TextField 
-          required 
-          id="standard-basic" 
-          variant="outlined"
-          fullWidth 
-          className={classes.textField} 
-          value={state.profilePictureURL} 
-          onChange={handleChange("profilePictureURL")} 
-          label="Team Picture URL"
+        <Typography variant="body2" color='textSecondary'>Team Image</Typography>
+        <ImagePicker 
+          preview={null}
+          fileToUpload={file} 
+          setFileToUpload={setFile} 
         />
+
         <TextField 
           required 
           id="standard-basic" 

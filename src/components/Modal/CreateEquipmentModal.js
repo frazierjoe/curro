@@ -12,7 +12,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Grid from '@material-ui/core/Grid';
-import { CREATE_EQUIPMENT_MUTATION, ME_QUERY } from '../utils/graphql';
+import { CREATE_EQUIPMENT_MUTATION, ME_QUERY } from '../../utils/graphql';
 
 
 const useStyles = makeStyles((theme) => ({

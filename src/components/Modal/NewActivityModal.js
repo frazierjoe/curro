@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { useMutation, gql } from '@apollo/client';
 import produce from "immer";
-import { ActivityTile } from './Activity/ActivityTile';
-import { ActivityDetail } from './Activity/ActivityDetail';
-import { AllowedActivity } from './Activity/AllowedActivity';
-import { AddActivityButton } from './Activity/AddActivityButton';
+import { ActivityTile } from '../Activity/ActivityTile';
+import { ActivityDetail } from '../Activity/ActivityDetail';
+import { AllowedActivity } from '../Activity/AllowedActivity';
+import { AddActivityButton } from '../Activity/AddActivityButton';
 import { makeStyles } from '@material-ui/core/styles';
-import { SelectActivity } from './Activity/SelectActivity';
+import { SelectActivity } from '../Activity/SelectActivity';
 import { ConfirmDelete } from './ConfirmDelete';
 import Modal from '@material-ui/core/Modal';
 import Typography from '@material-ui/core/Typography';
@@ -24,9 +24,9 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
-import { GET_POST_QUERY } from '../utils/graphql';
-import { UPDATE_POST_MUTATION } from '../utils/graphql';
-import { CREATE_POST_MUTATION } from '../utils/graphql';
+import { GET_POST_QUERY } from '../../utils/graphql';
+import { UPDATE_POST_MUTATION } from '../../utils/graphql';
+import { CREATE_POST_MUTATION } from '../../utils/graphql';
 
 
 const useStyles = makeStyles((theme) => ({

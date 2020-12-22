@@ -1,6 +1,6 @@
 import React, { useContext, useState, useRef } from 'react';
-import { AuthContext } from '../auth';
-import { SearchBar } from './Search/SearchBar';
+import { AuthContext } from '../../auth';
+import { SearchBar } from '../Search/SearchBar';
 import { withRouter } from 'react-router-dom';
 import { useLazyQuery, useMutation, gql, useApolloClient } from '@apollo/client';
 import Button from '@material-ui/core/Button';

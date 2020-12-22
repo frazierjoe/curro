@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useLazyQuery, gql } from '@apollo/client';
-import { Footer } from '../../components/Footer';
+import { Footer } from '../../components/Footer/Footer';
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import InputBase from '@material-ui/core/InputBase';

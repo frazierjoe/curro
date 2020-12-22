@@ -1,16 +1,16 @@
 import React, { useState }  from 'react';
-import { AllCaughtUp } from '../components/Post/AllCaughtUp'
+import { AllCaughtUp } from '../../components/Post/AllCaughtUp'
 import { useQuery } from '@apollo/client';
 import { Waypoint } from 'react-waypoint';
-import { NewActivityModal } from '../components/NewActivityModal';
+import { NewActivityModal } from '../../components/Modal/NewActivityModal';
 import { makeStyles } from '@material-ui/core/styles';
-import { PostCard } from '../components/Post/PostCard';
+import { PostCard } from '../../components/Post/PostCard';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import AddIcon from '@material-ui/icons/Add';
 import Fab from '@material-ui/core/Fab';
-import { GET_POST_QUERY } from '../utils/graphql';
+import { GET_POST_QUERY } from '../../utils/graphql';
 
 const useStyles = makeStyles((theme) => ({
   mainContent: {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Footer } from '../components/Footer';
+import { Footer } from '../../components/Footer/Footer';
 import Typography from '@material-ui/core/Typography';
 import {Link} from 'react-router-dom';
 import Box from '@material-ui/core/Box';

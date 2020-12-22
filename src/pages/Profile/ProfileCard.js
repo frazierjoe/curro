@@ -8,7 +8,7 @@ import IconButton from '@material-ui/core/IconButton';
 import CardHeader from '@material-ui/core/CardHeader';
 import Avatar from '@material-ui/core/Avatar';
 import Box from '@material-ui/core/Box';
-import { EditProfileModal } from "../../components/EditProfileModal"
+import { EditProfileModal } from "../../components/Modal/EditProfileModal"
 import EditIcon from '@material-ui/icons/Edit';
 
 export const ProfileCard = props => {
