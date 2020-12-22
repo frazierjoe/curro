@@ -40,9 +40,10 @@ export const ImagePicker = props => {
     },
     avatarPreview: {
       display: 'block',
-      width: 'auto',
       height: '100%',
-      borderRadius: props.rounded ? 32 : 0
+      width: '100%',
+      objectFit: 'cover',
+      borderRadius: props.rounded ? 32 : 0,
     },
     
   }));
@@ -77,7 +78,7 @@ export const ImagePicker = props => {
   } = useDropzone({
     onDrop,
     accept: 'image/jpeg, image/png',
-    maxSize: 1024000,
+    maxSize: 1024000*4, // 4 mb
   });
 
   const classes = useStyles();
