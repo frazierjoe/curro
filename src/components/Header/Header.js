@@ -167,6 +167,7 @@ const Header = props => {
       id
       username
       profilePictureURL
+      unreadNotificationCount
     }
   }
 `;
@@ -178,7 +179,6 @@ const Header = props => {
     getMe()
   }
 
-  
   const { history } = props;
   const classes = useStyles();
 
@@ -203,7 +203,7 @@ const Header = props => {
           </Button>
           <div className={classes.spacer}></div>
           {user && <SearchBar openSearch={state.openSearch} handleSearchOpen={handleSearchOpen} handleDrawerClose={handleDrawerClose} history={history}/>}
-          {user && <NotificationBell openNotification={state.openNotification} handleNotificationOpen={handleNotificationOpen} handleDrawerClose={handleDrawerClose} history={history}/>}
+          {user && <NotificationBell openNotification={state.openNotification} notificationCount={(!loading && data && data.me) ? data.me.unreadNotificationCount : 0} handleNotificationOpen={handleNotificationOpen} handleDrawerClose={handleDrawerClose} history={history}/>}
           <div ref={menuButtonRef}>
             {!user ? <Button className={classes.loginButton} onClick={
               () => {
